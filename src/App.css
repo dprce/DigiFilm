@@ -1,0 +1,39 @@
+body {
+  background: linear-gradient(to bottom right, rgb(64, 101, 197), rgb(55, 197, 55));
+}
+
+#root {
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.login {
+  padding: 0.5em;
+
+  input {
+    margin: 1em;
+    height: 2em;
+  }
+
+  input.tekst {
+    border: none;
+    border-bottom: 2px solid white;
+    background: none;
+  }
+
+  input.submit {
+    background: rgb(55, 197, 55);
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+
+  input.submit:hover {
+    background: rgb(64, 101, 197);
+  }
+
+  ::placeholder {
+    color: white;
+  }
+}
