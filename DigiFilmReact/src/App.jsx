@@ -1,6 +1,6 @@
 import { useState } from "react";
 import './App.css';
-import React from 'react';
+//import React from 'react';
 import {Container, GlobalStyles, Paper, Typography, TextField,Button} from '@mui/material';
 import {brown, red} from '@mui/material/colors';
 import { grey } from '@mui/material/colors';
@@ -57,7 +57,7 @@ const App = () => {
             <GlobalStyles
                 styles={{
                     body:{
-                        backgroundImage:'url(/film.jpg)',
+                        backgroundImage:'url(/public/film.jpg)',
                         backgroundSize:'cover',
                         backgroundPosition:'center',
                         backgroundRepeat:'no-repeat',
@@ -69,7 +69,7 @@ const App = () => {
                 }}
             />
             <div className="app">
-                <Container maxxWidth="sm"
+                <Container maxWidth="sm"
                            sx={{
                                display: 'flex',
                                justifyContent: 'center', // Horizontally center
