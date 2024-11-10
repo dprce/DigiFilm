@@ -4,3 +4,14 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 
+# Ignore other build artifacts
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+*.msi
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
