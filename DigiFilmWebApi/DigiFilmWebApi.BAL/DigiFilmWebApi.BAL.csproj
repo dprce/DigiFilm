@@ -5,8 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
-        <UserSecretsId>aspnet-DigiFilmWebApi-1FDCD6F5-2AD2-4F2B-AF3F-1791EC9A52B3</UserSecretsId>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <UserSecretsId>aspnet-DigiFilmWebApi.BAL-3358D528-94D3-4BE2-815F-D65670E77557</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,7 +26,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DigiFilmWebApi.BAL\DigiFilmWebApi.BAL.csproj" />
       <ProjectReference Include="..\DigiFilmWebApi.DAL\DigiFilmWebApi.DAL.csproj" />
       <ProjectReference Include="..\DigiFilmWebApi.Modeli\DigiFilmWebApi.Modeli.csproj" />
     </ItemGroup>

@@ -1,0 +1,6 @@
+@DigiFilmWebApi.BAL_HostAddress = http://localhost:5160
+
+GET {{DigiFilmWebApi.BAL_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

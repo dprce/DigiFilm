@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DigiFilmWebApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a4749bf3a55ead338035e4fb32ec0f5823bfefd2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0597300cbbc7383394cdc52770eee82e68805e6")]
 [assembly: System.Reflection.AssemblyProductAttribute("DigiFilmWebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DigiFilmWebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

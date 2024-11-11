@@ -5,8 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
-        <UserSecretsId>aspnet-DigiFilmWebApi-1FDCD6F5-2AD2-4F2B-AF3F-1791EC9A52B3</UserSecretsId>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <UserSecretsId>aspnet-DigiFilmWebApi.Modeli-1C2FF199-ADF0-483F-A4F7-57396036B501</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -24,12 +23,6 @@
         <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="2.15.2"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
         <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\DigiFilmWebApi.BAL\DigiFilmWebApi.BAL.csproj" />
-      <ProjectReference Include="..\DigiFilmWebApi.DAL\DigiFilmWebApi.DAL.csproj" />
-      <ProjectReference Include="..\DigiFilmWebApi.Modeli\DigiFilmWebApi.Modeli.csproj" />
     </ItemGroup>
 
 </Project>
