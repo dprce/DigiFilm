@@ -17,6 +17,11 @@ public class UserService
     {
         var user = await _userRepositoryInterface.GetUserByEmailAsync(email);
 
+        if(user == null)
+        {
+            return null;
+        }
+
         if (!_passwordService.VerifyPassword(password, user.PasswordHash))
         {
             return null;  
