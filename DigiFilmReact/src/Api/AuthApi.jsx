@@ -1,7 +1,7 @@
 export async function login(email, password) {
     try {
         const response = await fetch(
-            ${import.meta.env.VITE_REACT_BACKEND_URL}/Authenticate/login,
+            `${import.meta.env.VITE_REACT_BACKEND_URL}/Authenticate/login`,
             {
               method: "POST",
               headers: {
@@ -34,7 +34,7 @@ export async function login(email, password) {
 export async function logout(){
     try {
         const response = await fetch(
-            ${import.meta.env.VITE_REACT_BACKEND_URL}/Authenticate/logout,
+            `${import.meta.env.VITE_REACT_BACKEND_URL}/Authenticate/logout`,
             {
               method: "POST",
               headers: {
