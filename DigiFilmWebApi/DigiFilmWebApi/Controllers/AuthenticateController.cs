@@ -50,6 +50,22 @@ public class AuthenticateController : ControllerBase
 
         await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, hashedRefreshToken);
 
+        Response.Cookies.Append("accessToken", accessToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,  //Za potrebe razvoja
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddHours(1)
+        });
+
+        Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false, //Za potrebe razvoja
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(7)
+        });
+
         return Ok(new { AccessToken = accessToken, RefreshToken = refreshToken, RoleID = user.RoleId});
     }
     
