@@ -1,5 +1,6 @@
 // src/pages/LoginPage.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container, Paper, Typography, TextField, Button, GlobalStyles } from "@mui/material";
 import { brown, red, grey } from "@mui/material/colors";
 
@@ -21,13 +22,14 @@ const hexToRgba = (hex, alpha) => {
 };
 
 const LoginPage = () => {
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [usernameError, setUsernameError] = useState(false); // Novo stanje za grešku u korisničkom imenu
 
     const isUsernameValid = () => {
-        return username.includes("@fer.hr") || username.includes("@fer.unizg.hr");
+        return username.endsWith("@fer.hr") || username.endsWith("@fer.unizg.hr");
     };
 
     const handleSubmit = (event) => {
@@ -35,14 +37,12 @@ const LoginPage = () => {
 
         if (!username.trim() || !password.trim()) {
             setError("Polja Korisnik i Lozinka moraju biti ispunjeni.");
-        } else if (
-            !username.includes("@fer.hr") &&
-            !username.includes("@fer.unizg.hr")
-        ) {
+        } else if (!isUsernameValid()) {
             setError("Morate se prijaviti s FER računom.");
         } else {
             setError("");
-            alert("Uspješno ste se prijavili, podatci poslani serveru.");
+            navigate("/home");
+            //alert("Uspješno ste se prijavili, podatci poslani serveru.");
         }
     };
 
@@ -57,7 +57,7 @@ const LoginPage = () => {
             <GlobalStyles
                 styles={{
                     body: {
-                        backgroundImage: 'url(/public/film.jpg)',
+                        backgroundImage: 'url(/film.jpg)',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
