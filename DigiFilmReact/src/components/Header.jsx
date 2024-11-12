@@ -1,13 +1,26 @@
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../css/header.css'
+import { logout } from '../api/AuthApi'; "";
 
 const Header = () => {
     const navigate = useNavigate();
 
     const handleClick = (event) => {
         event.preventDefault();
-        navigate("/");
+
+        (async () => {
+            try {
+                const response = await logout();
+                if (response) {
+                    navigate("/");
+                }
+
+            } catch (error) {
+                console.error("Error: ", error);
+            }
+        })();
+
     }
 
     return (
