@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/header.css'
-import { logout } from '../api/AuthApi'; "";
+import { logout } from '../api/AuthApi';
 
 const Header = () => {
     const navigate = useNavigate();

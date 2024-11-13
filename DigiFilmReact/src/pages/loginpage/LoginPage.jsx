@@ -1,10 +1,12 @@
 // src/pages/LoginPage.jsx
+// eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from "../../authConfig";
 import { Container, Paper, Typography, TextField, Button, GlobalStyles } from "@mui/material";
 import { brown, red, grey } from "@mui/material/colors";
-
-
+import {login} from "../../Api/AuthApi.jsx";
 
 const color1 = brown["700"];
 const color2 = grey["50"];
@@ -22,6 +24,7 @@ const hexToRgba = (hex, alpha) => {
 };
 
 const LoginPage = () => {
+    const { instance } = useMsal();
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -30,6 +33,10 @@ const LoginPage = () => {
 
     const isUsernameValid = () => {
         return username.endsWith("@fer.hr") || username.endsWith("@fer.unizg.hr");
+    };
+
+    const handleLogin = () => {
+        instance.loginRedirect(loginRequest).catch((error) => console.error(error));
     };
 
     const handleSubmit = (event) => {
@@ -204,8 +211,11 @@ const LoginPage = () => {
                                 }}
                             >Log In
                             </Button>
-
-
+                            <Button
+                                onClick={() => handleLogin("redirect")}
+                            >
+                                <img src="/signin.png" alt="Button Image" />
+                            </Button>
                         </form>
                     </Paper>
                 </Container>
