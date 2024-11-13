@@ -6,6 +6,7 @@ import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "../../authConfig";
 import { Container, Paper, Typography, TextField, Button, GlobalStyles } from "@mui/material";
 import { brown, red, grey } from "@mui/material/colors";
+import {login} from "../../Api/AuthApi.jsx";
 
 const color1 = brown["700"];
 const color2 = grey["50"];
