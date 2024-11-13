@@ -47,7 +47,21 @@ const LoginPage = () => {
             setError("Morate se prijaviti s FER računom.");
         } else {
             setError("");
-            navigate("/home");
+            //navigate("/home");
+            (async () => {
+                            try {
+                                const response = await login(username, password);
+                                if(response){
+                                    navigate("/home");
+                                }
+                                else{
+                                    setError("Pogrešna email adresa ili lozinka.");
+                                }
+
+                            } catch (error) {
+                                console.error("Error: ", error);
+                            }
+             })();
             //alert("Uspješno ste se prijavili, podatci poslani serveru.");
         }
     };

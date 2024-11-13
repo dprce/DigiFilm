@@ -1,3 +1,149 @@
 
-DigiFilmReact/package.json
-DigiFilmReact/package.json
+# Ignore Visual Studio temporary files, build results, and
+# user-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Auto-generated files from the Solution Explorer (VS)
+.vscode/
+.vs/
+.idea/
+*.sln.cache
+*.sln.binlog
+*.props
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rtifacts/
+[Bb]in/
+[Oo]bj/
+
+# Rider
+.idea/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.dll
+*.exe
+*.log
+*.sql
+*.pdb
+*.cache
+*.zip
+*.pyc
+*.pyo
+*.deploy.cmd
+*.deploy.log
+appsettings.development.json
+
+# NuGet packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+*.dstore
+!src/packages/
+Project.lock.json
+[Nn]uget/
+
+# Entity Framework Migrations
+**/Migrations/*
+
+# VS Code
+.vscode/*
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code files
+.vscode/
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Others
+*.log
+*.tlog
+
+# Database files
+*.sdf
+*.sqlite
+
+# Node modules (if using JavaScript with .NET, such as for frontend in Blazor or React)
+node_modules/
+yarn.lock
+package-lock.json
+
+# JetBrains Rider
+.idea/
+
+# Azure Functions
+.local.settings.json
+
+# User secrets
+secrets.json
+
+# Mac and Linux files
+*.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+.idea/
+
+# Logs and debug
+*.log
+.vscode/
+
+# Temporary files
+~$*
+*.tmp
+*.temp
+
+# Visual Studio Code workspace and cache files
+.vscode/
+.vscode/settings.json
+.vscode/launch.json
+
+# Docker
+**/[Dd]ockerfile*
+**/[Dd]ocker-compose*
+**/[Dd]ockerignore
+.env
+
+# Local history for JetBrains
+.history/
+
+# Coverage
+coverage/
+
+# DotCover
+.dotCover
+
+# StyleCop
+*.cache
+
+# Additional extensions
+*.log
+*.config
+*.config.bak
+*.testresults.xml
+*.coverage
+*.coveragexml
+*.config
+

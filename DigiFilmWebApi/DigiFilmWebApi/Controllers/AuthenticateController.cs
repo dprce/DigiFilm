@@ -50,8 +50,35 @@ public class AuthenticateController : ControllerBase
 
         await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, hashedRefreshToken);
 
+        Response.Cookies.Append("accessToken", accessToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,  //Za potrebe razvoja
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddHours(1)
+        });
+
+        Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false, //Za potrebe razvoja
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(7)
+        });
+
         return Ok(new { AccessToken = accessToken, RefreshToken = refreshToken, RoleID = user.RoleId});
     }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+
+        Response.Cookies.Delete("accessToken");
+        Response.Cookies.Delete("refreshToken");
+
+        return Ok(new { message = "User logged out successfully."});
+    }
+
     
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)
