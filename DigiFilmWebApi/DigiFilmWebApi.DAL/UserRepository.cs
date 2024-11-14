@@ -43,7 +43,7 @@ public class UserRepository : DALBaseClass, UserRepositoryInterface
             user.PhoneNumber,
             user.Email,
             user.PasswordHash,
-            CreatedDate = DateTime.UtcNow,
+            user.CreatedDate,
             user.ModifiedDate
         });
         return userId;
