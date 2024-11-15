@@ -27,9 +27,9 @@ const AddEmployee = () => {
                 <legend>Add Employee</legend>
                 <p><label><input type="text" name="name" placeholder="Name" value={employee.name} onChange={handleChange} required></input></label></p>
                 <p><label><input type="text" name="surname" placeholder="Surname" value={employee.surname} onChange={handleChange} required></input></label></p>
-                <p><label><input type="email" name="mail" placeholder="Mail" value={employee.email} onChange={handleChange} required></input></label></p>
+                <p><label><input type="email" name="email" placeholder="Mail" value={employee.email} onChange={handleChange} required></input></label></p>
                 <p><label><input type="text" name="password" placeholder="Initial Password" value={employee.password} onChange={handleChange} required></input></label></p>
-                <p><label><input type="tel" name="phoneNumber" placeholder="Phone Number" value={employee.phone} onChange={handleChange} required></input></label></p>
+                <p><label><input type="tel" name="phone" placeholder="Phone Number" value={employee.phone} onChange={handleChange} required></input></label></p>
                 <p>
                     <label>Role</label>
                     <select name="roles" aria-placeholder="Select Role" value={employee.role} onChange={handleChange} required>
