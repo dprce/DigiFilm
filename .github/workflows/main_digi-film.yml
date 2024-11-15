@@ -62,5 +62,5 @@ jobs:
         with:
           app-name: 'Digi-Film'  # Your Azure Web App name
           slot-name: 'Production'  # Slot name
-          package: ./dist  # Directly deploy the contents of the dist folder
+          package: .  # Directly deploy the contents of the dist folder
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B04EDD0D60294BCC9A1DF83E5362E28D }}  # Your Azure publish profile
