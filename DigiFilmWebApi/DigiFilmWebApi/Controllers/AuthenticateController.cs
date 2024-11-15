@@ -83,7 +83,14 @@ namespace DigiFilmWebApi.Controllers
             // Return the claims
             return Ok(claims);
         }
+        
+        [HttpGet("all-roles")]
+        public async Task<IActionResult> GetAllRoles()
+        {
+            var roles = await _userService.GetAllRolesAsync();
 
+            return Ok(new {roles = roles, message = "Role uspješno dohvaćene." });
+        }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterNewEmployeeRequest request)

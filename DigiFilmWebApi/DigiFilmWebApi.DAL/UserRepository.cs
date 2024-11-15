@@ -25,6 +25,13 @@ public class UserRepository : DALBaseClass, UserRepositoryInterface
             await conn.QueryAsync<User>("SELECT * FROM [User] WHERE Id = @Id", new { Id = id });
         return result.FirstOrDefault();
     }
+    
+    public async Task<List<Role>> GetAllRolesAsync()
+    {
+        using IDbConnection conn = CentralConnection;
+        var result = await conn.QueryAsync<Role>("SELECT * FROM [Role]");
+        return result.ToList();
+    }
 
     public async Task<int> CreateUserAsync(User user)
     {

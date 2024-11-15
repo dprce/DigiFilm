@@ -8,4 +8,5 @@ public interface UserRepositoryInterface
     Task SaveRefreshTokenAsync(int userId, string refreshToken);  
     Task<(string RefreshToken, DateTime ExpiryTime)> GetRefreshTokenWithExpiryAsync(int userId);
     Task UpdateUserAsync(User user); 
+    Task<List<Role>> GetAllRolesAsync();
 }

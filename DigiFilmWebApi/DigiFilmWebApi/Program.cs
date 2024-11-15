@@ -11,11 +11,17 @@ using DigiFilmWebApi.BAL;
 using DigiFilmWebApi.DAL;
 using DigiFilmWebApi.Modeli;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Define initial scopes for downstream API
 IEnumerable<string>? initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ');
+
+builder.Services.AddControllers();
+builder.Services.AddMvcCore();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // CORS Configuration
 builder.Services.AddCors(options =>
@@ -109,17 +115,21 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserRepositoryInterface, UserRepository>(); 
 builder.Services.AddScoped<UserRepository>(); 
 builder.Services.AddScoped<RoleRepositoryInterface, RoleRepository>();
+builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<PasswordService>();
 
 // Dapper - SQL Database Connection
 builder.Services.AddScoped<IDbConnection>(sp =>
     new SqlConnection(builder.Configuration.GetConnectionString("DigiFilmDatabase")));
 
+// Add Swagger to services
+builder.Services.AddSwaggerGen();
+
 // Build the application
 var app = builder.Build();
 
 // CORS middleware must be added before Authentication & Authorization
-app.UseCors("AllowFrontend");  // Use the CORS policy that was defined earlier
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -129,6 +139,9 @@ app.UseRouting();
 // Authentication and Authorization middlewares
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Docs"));
 
 // Map Razor Pages and Controllers
 app.MapRazorPages();

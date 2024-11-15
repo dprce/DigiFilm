@@ -65,10 +65,10 @@ public class UserService
         await _userRepositoryInterface.CreateUserAsync(newUser);
     }
 
-    public async Task<User> GetUserByEmailAsync(string email) 
+    public async Task<List<Role>> GetAllRolesAsync()
     {
-        var user = await _userRepositoryInterface.GetUserByEmailAsync(email);
+        var roles = await _userRepositoryInterface.GetAllRolesAsync();
 
-        return user;
+        return roles;
     }
 }
