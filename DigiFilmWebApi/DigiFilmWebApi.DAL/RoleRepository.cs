@@ -19,11 +19,19 @@ namespace DigiFilmWebApi.DAL
             return result.FirstOrDefault();
         }
 
+        public async Task<Role> GetRoleByIdAsync(int id)
+        {
+            using IDbConnection conn = CentralConnection;
+            var result = await conn.QueryAsync<Role>("SELECT * FROM [Role] WHERE ID = @Id",
+                new { ID = id });
+            return result.FirstOrDefault();
+        }
+
         public async Task<List<Role>> GetAllRolesAsync()
         {
             using IDbConnection conn = CentralConnection;
-            var result = await conn.QueryAsync<List<Role>>("SELECT * FROM [Role]");
-            return result.FirstOrDefault();
+            var result = await conn.QueryAsync<Role>("SELECT * FROM [Role]");
+            return result.ToList();
         }
     }
 }

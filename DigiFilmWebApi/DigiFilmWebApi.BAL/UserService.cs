@@ -34,7 +34,7 @@ public class UserService
     public async Task RegisterNewEmployeeAsync(RegisterNewEmployeeRequest request, int tenantId)
     {
         
-        var role = await _roleRepositoryInterface.GetRoleByNameAsync(request.RoleName); 
+        var role = await _roleRepositoryInterface.GetRoleByIdAsync(request.RoleId); 
         if (role == null)
         {
             throw new ArgumentException("Role ne postoji u bazi.");
@@ -51,7 +51,7 @@ public class UserService
 
         var newUser = new User
         {
-            RoleId = role.Id,
+            RoleId = request.RoleId,
             TenantId = tenantId,
             FirstName = request.FirstName,
             LastName = request.LastName,
@@ -63,5 +63,12 @@ public class UserService
         };
 
         await _userRepositoryInterface.CreateUserAsync(newUser);
+    }
+
+    public async Task<User> GetUserByEmailAsync(string email) 
+    {
+        var user = await _userRepositoryInterface.GetUserByEmailAsync(email);
+
+        return user;
     }
 }
