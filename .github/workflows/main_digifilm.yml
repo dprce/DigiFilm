@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - DigiFilm
+name: Build and deploy ASP.Net Core app to Azure Web App - DigiFilm (Backend)
 
 on:
   push:
@@ -16,21 +16,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Set up .NET for the backend
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      # Change directory to DigiFilmWebApi folder and build
+      - name: Build the backend app
+        run: |
+          cd ./DigiFilmWebApi
+          dotnet build --configuration Release
 
+      # Publish the backend app to a directory
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: |
+          cd ./DigiFilmWebApi
+          dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
+      # Upload artifact for deployment job
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
+          name: backend-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
@@ -40,26 +48,27 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-
+      id-token: write  # This is required for requesting the JWT
+    
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
+          name: backend-app
+
+      # Login to Azure
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_0176E878CF22444BAAA1FB35301F3DE7 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B86946A69A0D4E96894A1996054CCD52 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_1E93FA7CFFD942B0A4BD0D30086FD1F3 }}
+          client-id: ${{ secrets.__clientidsecretname__ }}
+          tenant-id: ${{ secrets.__tenantidsecretname__ }}
+          subscription-id: ${{ secrets.__subscriptionidsecretname__ }}
 
+      # Deploy the backend to Azure Web App
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'DigiFilm'
+          app-name: 'DigiFilmBackend'  # Your backend Azure App Service name
           slot-name: 'Production'
-          package: .
-          
+          package: ./DigiFilmWebApi/myapp  # Path to the published backend app
