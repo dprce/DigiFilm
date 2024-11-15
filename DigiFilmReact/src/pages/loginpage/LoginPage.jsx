@@ -1,12 +1,10 @@
 // src/pages/LoginPage.jsx
-// eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "../../authConfig";
 import { Container, Paper, Typography, TextField, Button, GlobalStyles } from "@mui/material";
 import { brown, red, grey } from "@mui/material/colors";
-import {login} from "../../Api/AuthApi.jsx";
+import { login } from "../../Api/AuthApi.jsx";
 
 const color1 = brown["700"];
 const color2 = grey["50"];
@@ -24,19 +22,24 @@ const hexToRgba = (hex, alpha) => {
 };
 
 const LoginPage = () => {
-    const { instance } = useMsal();
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [usernameError, setUsernameError] = useState(false); // Novo stanje za grešku u korisničkom imenu
+    const [usernameError, setUsernameError] = useState(false);
 
     const isUsernameValid = () => {
         return username.endsWith("@fer.hr") || username.endsWith("@fer.unizg.hr");
     };
 
-    const handleLogin = () => {
-        instance.loginRedirect(loginRequest).catch((error) => console.error(error));
+    const handleLogin = async () => {
+        try {
+            // Directly redirect to the backend authentication URL to trigger the login flow
+            window.location.href = "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login";
+        } catch (error) {
+            console.error("Error initiating login:", error);
+            setError("Something went wrong during login.");
+        }
     };
 
     const handleSubmit = (event) => {
@@ -48,30 +51,15 @@ const LoginPage = () => {
             setError("Morate se prijaviti s FER računom.");
         } else {
             setError("");
-            //navigate("/home");
-            (async () => {
-                            try {
-                                const response = await login(username, password);
-                                if(response){
-                                    navigate("/home");
-                                }
-                                else{
-                                    setError("Pogrešna email adresa ili lozinka.");
-                                }
-
-                            } catch (error) {
-                                console.error("Error: ", error);
-                            }
-             })();
-            //alert("Uspješno ste se prijavili, podatci poslani serveru.");
+            // This can be an API call to authenticate using the username/password if needed
+            // But in this case, we trigger the login with backend
+            handleLogin();
         }
     };
 
     const handleUsernameBlur = () => {
-        // Postavlja `usernameError` na `true` ako `username` nije validan
         setUsernameError(!isUsernameValid());
     };
-
 
     return (
         <>
@@ -91,16 +79,16 @@ const LoginPage = () => {
             />
             <div className="app">
                 <Container maxWidth="sm"
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center', // Horizontally center
-                        alignItems: 'center', // Vertically center
-                        minHeight: '100vh', // Full height of the viewport
-                        width: '90%',
-                        height: '100%',
-                    }}>
+                           sx={{
+                               display: 'flex',
+                               justifyContent: 'center',
+                               alignItems: 'center',
+                               minHeight: '100vh',
+                               width: '90%',
+                               height: '100%',
+                           }}>
                     <Paper elevation={3} style={{
-                        padding: '50px', borderRadius: '8px', backgroundColor: hexToRgba('#8d6e63', 0.4), // Bijela boja sa 80% neprozirnosti
+                        padding: '50px', borderRadius: '8px', backgroundColor: hexToRgba('#8d6e63', 0.4),
                         backdropFilter: 'blur(10px)',
                     }}>
                         <form className="login" onSubmit={handleSubmit}>
@@ -127,40 +115,18 @@ const LoginPage = () => {
 
                             {error && <p className="error">{error}</p>}
 
-
                             <div>
                                 <TextField
                                     variant="outlined"
-                                    className="tekst"
                                     type="text"
                                     name="username"
                                     placeholder="Username"
                                     label="Username"
                                     value={username}
                                     onBlur={handleUsernameBlur}
-
                                     sx={{
                                         marginTop: '25px', marginBottom: '5px',
-                                        height: '55px',           // Fiksna visina
-                                        '& .MuiInputBase-root': {  // Stiliziranje unutarnjeg dijela TextField-a
-                                            height: '100%', // Unutarnja visina usklađena s vanjskom visinom
-
-                                        },
-                                        '& .MuiOutlinedInput-root': {
-                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                                borderColor: usernameError ? red[500] : 'white', // Postavlja bijeli obrub na fokusu
-                                            },
-                                            '& fieldset': {
-                                                borderColor: usernameError ? red[500] : 'white' // Granica kad polje nije u fokusu
-                                            },
-                                        },
-
-                                        '& .MuiInputLabel-root': {
-                                            color: 'white', // Opcionalno, postavlja boju oznake na bijelo
-                                        },
-                                        '& .MuiInputLabel-root.Mui-focused': { // Stiliziranje boje oznake u fokusu
-                                            color: 'white',
-                                        },
+                                        height: '55px',
                                     }}
                                     onChange={(e) => setUsername(e.target.value)}
                                 />
@@ -168,32 +134,14 @@ const LoginPage = () => {
                             <div>
                                 <TextField
                                     variant="outlined"
-                                    className="tekst"
                                     type="password"
                                     name="password"
-                                    placeholder="Passsword"
+                                    placeholder="Password"
                                     label="Password"
                                     value={password}
                                     sx={{
                                         marginBottom: '15px',
-                                        height: '55px',           // Fiksna visina
-                                        '& .MuiInputBase-root': {  // Stiliziranje unutarnjeg dijela TextField-a
-                                            height: '100%',          // Unutarnja visina usklađena s vanjskom visinom
-                                        },
-                                        '& .MuiOutlinedInput-root': {
-                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                                borderColor: (!password) ? red[500] : 'white', // Postavlja bijeli obrub na fokusu
-                                            },
-                                            '& fieldset': {
-                                                borderColor: 'white' // Granica kad polje nije u fokusu
-                                            },
-                                        },
-                                        '& .MuiInputLabel-root': {
-                                            color: 'white', // Opcionalno, postavlja boju oznake na bijelo
-                                        },
-                                        '& .MuiInputLabel-root.Mui-focused': { // Stiliziranje boje oznake u fokusu
-                                            color: 'white',
-                                        },
+                                        height: '55px',
                                     }}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
@@ -201,20 +149,20 @@ const LoginPage = () => {
                             <Button
                                 variant="contained"
                                 type="submit"
-                                className="submit"
                                 sx={{
-                                    backgroundColor: color2, // Prilagođena boja pozadine
-                                    color: color1,           // Boja teksta
+                                    backgroundColor: color2,
+                                    color: color1,
                                     '&:hover': {
-                                        backgroundColor: color3, // Prilagođena boja pozadine pri hover-u
+                                        backgroundColor: color3,
                                     },
                                 }}
-                            >Log In
+                            >
+                                Log In
                             </Button>
                             <Button
-                                onClick={() => handleLogin("redirect")}
+                                onClick={handleLogin}
                             >
-                                <img src="/signin.png" alt="Button Image" />
+                                <img src="/signin.png" alt="Sign In" />
                             </Button>
                         </form>
                     </Paper>

@@ -1,6 +1,7 @@
+// Header.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/header.css'
+import '../css/header.css';
 import { logout } from '../api/AuthApi';
 
 const Header = () => {
@@ -13,22 +14,22 @@ const Header = () => {
             try {
                 const response = await logout();
                 if (response) {
-                    navigate("/");
+                    navigate("/");  // Navigate to home or login page after successful logout
+                } else {
+                    console.error("Logout failed");
                 }
-
             } catch (error) {
                 console.error("Error: ", error);
             }
         })();
-
-    }
+    };
 
     return (
         <header>
             <h1>DigiFilm</h1>
             <button onClick={handleClick}>Logout</button>
         </header>
-    )
-}
+    );
+};
 
 export default Header;

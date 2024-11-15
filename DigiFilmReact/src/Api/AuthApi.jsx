@@ -31,34 +31,20 @@ export async function login(email, password) {
     }
 }
 
-export async function logout(){
+export const logout = async () => {
     try {
-        const response = await fetch(
-            `${import.meta.env.VITE_REACT_BACKEND_URL}/Authenticate/logout`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include"
-            }
-          );
+        const response = await fetch('https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/logout', { // Update this to match your backend endpoint
+            method: 'POST',
+            credentials: 'include', // Include cookies or any session data
+        });
 
         if (response.ok) {
-            const data = await response.json();
-            console.log('Logout successful:', data);
-
-            return data;
-
+            return true;
         } else {
-            const errorData = await response.json();
-            console.error('Logout failed:', errorData);
-
-            return null;
+            throw new Error('Failed to logout');
         }
     } catch (error) {
-        console.error('Network error:', error);
-
-        return null;
+        console.error('Logout failed:', error);
+        return false;
     }
-}
+};
