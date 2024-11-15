@@ -24,16 +24,13 @@ jobs:
         run: |
           cd DigiFilmReact
           npm install
-
       - name: Build React app with Vite
         run: |
           cd DigiFilmReact
           npm run build  # This will create the dist folder
-
       - name: Verify dist folder exists
         run: |
           ls -R DigiFilmReact/dist  # Check if dist folder exists and contains build files
-
       # Upload build artifacts for deployment job
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -52,7 +49,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: react-app  # Should match the artifact name in upload step
+          name: react-app  # The artifact name in the upload step
 
       - name: List contents of the working directory
         run: |
@@ -65,5 +62,5 @@ jobs:
         with:
           app-name: 'Digi-Film'  # Your Azure Web App name
           slot-name: 'Production'  # Slot name
-          package: .  # Correct path to the dist folder inside the downloaded artifact
+          package: ./dist  # Directly deploy the contents of the dist folder
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B04EDD0D60294BCC9A1DF83E5362E28D }}  # Your Azure publish profile
