@@ -43,18 +43,22 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: react-app
 
+      - name: List contents of react-app folder
+        run: |
+          ls -R react-app  # Check the folder structure after download
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'Digi-Film'  # Your Azure Web App name
-          slot-name: 'Production'  # Or another slot if needed
-          package: .  # Correct path to the dist folder
+          slot-name: 'Production'  # Slot name
+          package: ./react-app/DigiFilmReact/dist  # Path to the dist folder inside the downloaded artifact
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B04EDD0D60294BCC9A1DF83E5362E28D }}  # Your Azure publish profile
