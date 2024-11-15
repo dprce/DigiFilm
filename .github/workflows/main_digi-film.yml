@@ -34,8 +34,8 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: react-app
-          path: DigiFilmReact/dist  # Ensure this path is correct
+          name: react-app  # Name of the artifact
+          path: DigiFilmReact/dist  # Path to the dist folder
 
   deploy:
     runs-on: ubuntu-latest
@@ -43,16 +43,17 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
+    
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: react-app
+          name: react-app  # Should match the artifact name in upload step
 
-      - name: List contents of react-app folder
+      - name: List contents of the working directory
         run: |
-          ls -R react-app  # Check the folder structure after download
+          echo "Listing current directory contents..."
+          ls -R  # List everything in the current directory
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -60,5 +61,5 @@ jobs:
         with:
           app-name: 'Digi-Film'  # Your Azure Web App name
           slot-name: 'Production'  # Slot name
-          package: ./react-app/DigiFilmReact/dist  # Path to the dist folder inside the downloaded artifact
+          package: ./react-app/DigiFilmReact/dist  # Correct path to the dist folder inside the downloaded artifact
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B04EDD0D60294BCC9A1DF83E5362E28D }}  # Your Azure publish profile
