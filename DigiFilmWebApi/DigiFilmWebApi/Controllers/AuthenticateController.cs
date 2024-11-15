@@ -85,7 +85,6 @@ namespace DigiFilmWebApi.Controllers
         }
 
 
-        [Authorize(Roles = "4")]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterNewEmployeeRequest request)
         {
