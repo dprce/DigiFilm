@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'DigiFilm'
           slot-name: 'Production'
-          package: ${{env.DOTNET_ROOT}}/myapp
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0908ACF974034119A0F41D2BD38A072B }}
