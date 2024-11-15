@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/header.css';
-import { logout } from '../api/AuthApi';
+import { logout } from 'src/Api/AuthApi.jsx';
 
 const Header = () => {
     const navigate = useNavigate();
