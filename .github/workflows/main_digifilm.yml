@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - DigiFilm (Backend)
+name: Build and deploy ASP.Net Core app to Azure Web App - DigiFilm
 
 on:
   push:
@@ -16,29 +16,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Set up .NET for the backend
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
-      # Change directory to DigiFilmWebApi folder and build
-      - name: Build the backend app
-        run: |
-          cd ./DigiFilmWebApi
-          dotnet build --configuration Release
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
 
-      # Publish the backend app to a directory
       - name: dotnet publish
-        run: |
-          cd ./DigiFilmWebApi
-          dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
-      # Upload artifact for deployment job
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: backend-app
+          name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
@@ -47,28 +39,18 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write  # This is required for requesting the JWT
     
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: backend-app
-
-      # Login to Azure
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.__clientidsecretname__ }}
-          tenant-id: ${{ secrets.__tenantidsecretname__ }}
-          subscription-id: ${{ secrets.__subscriptionidsecretname__ }}
-
-      # Deploy the backend to Azure Web App
+          name: .net-app
+      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'DigiFilmBackend'  # Your backend Azure App Service name
+          app-name: 'DigiFilm'
           slot-name: 'Production'
-          package: ./DigiFilmWebApi/myapp  # Path to the published backend app
+          package: .
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0908ACF974034119A0F41D2BD38A072B }}
