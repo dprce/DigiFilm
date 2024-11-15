@@ -30,6 +30,10 @@ jobs:
           cd DigiFilmReact
           npm run build  # This will create the dist folder
 
+      - name: Verify dist folder exists
+        run: |
+          ls -R DigiFilmReact/dist  # Check if dist folder exists and contains build files
+
       # Upload build artifacts for deployment job
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
