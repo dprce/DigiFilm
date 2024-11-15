@@ -17,16 +17,32 @@ var builder = WebApplication.CreateBuilder(args);
 // Define initial scopes for downstream API
 IEnumerable<string>? initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ');
 
+// CORS Configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5174")  // React frontend origin
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();  // Allow credentials (cookies, etc.)
+        });
+});
+
 // Add Microsoft Identity platform (OpenID Connect) authentication
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
     .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-    .AddInMemoryTokenCaches();
+    .AddInMemoryTokenCaches();  // This helps store the token in-memory for later use
 
+// Configure OpenID Connect Options
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
     options.Events.OnTokenValidated = async context =>
     {
+        options.SaveTokens = true;  // Ensures that the tokens are saved to the authentication properties
+        
         var userPrincipal = context.Principal;
         var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
         
@@ -38,20 +54,25 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
 
         if (userEmail != null)
         {
+            // Get the user repository service to check if the user exists in your system
             var userRepository = context.HttpContext.RequestServices.GetRequiredService<UserRepository>();
 
             var user = await userRepository.GetUserByEmailAsync(userEmail);
 
             if (user == null)
             {
+                // User not found in your system, log them out and fail authentication
                 await context.HttpContext.SignOutAsync();
-                context.Fail("User does not exist in the system.");
+                context.Response.Redirect("http://localhost:5174/");
             }
             else
             {
+                // Add roles and additional claims to the identity
                 var claimsIdentity = userPrincipal.Identity as ClaimsIdentity;
-                claimsIdentity?.AddClaim(new Claim(ClaimTypes.Role, user.RoleId.ToString()));
-                claimsIdentity?.AddClaim(new Claim("TenantId", user.TenantId.ToString()));
+                claimsIdentity?.AddClaim(new Claim(ClaimTypes.Role, user.RoleId.ToString())); // Add Role
+                claimsIdentity?.AddClaim(new Claim("TenantId", user.TenantId.ToString())); // Add TenantId
+                
+                // Optionally, print the claims for debugging purposes
                 Console.WriteLine("User authenticated. Claims:");
                 foreach (var claim in claimsIdentity?.Claims ?? Enumerable.Empty<Claim>())
                 {
@@ -59,36 +80,59 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
                 }
             }
         }
+        else
+        {
+            context.Response.Redirect("http://localhost:5174/");
+        }
+        
+        options.Events.OnRedirectToIdentityProvider = context =>
+        {
+            // Explicitly tell the middleware to redirect to the frontend URL
+            context.Response.Redirect("http://localhost:5174/");  // Redirect to the React frontend
+            return Task.CompletedTask;
+        };
     };
 });
 
+// Add Razor Pages and MVC
 builder.Services.AddRazorPages().AddMvcOptions(options =>
 {
+    // Ensure that all pages require authentication by default
     var policy = new AuthorizationPolicyBuilder()
                   .RequireAuthenticatedUser()
                   .Build();
-    options.Filters.Add(new AuthorizeFilter(policy));
-}).AddMicrosoftIdentityUI();
+    options.Filters.Add(new AuthorizeFilter(policy)); // Global authorization policy
+}).AddMicrosoftIdentityUI(); // For login and logout UI handling by Microsoft Identity Web
 
+// Dependency Injection for services
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserRepositoryInterface, UserRepository>(); 
 builder.Services.AddScoped<UserRepository>(); 
 builder.Services.AddScoped<RoleRepositoryInterface, RoleRepository>();
 builder.Services.AddScoped<PasswordService>();
+
+// Dapper - SQL Database Connection
 builder.Services.AddScoped<IDbConnection>(sp =>
     new SqlConnection(builder.Configuration.GetConnectionString("DigiFilmDatabase")));
 
+// Build the application
 var app = builder.Build();
+
+// CORS middleware must be added before Authentication & Authorization
+app.UseCors("AllowFrontend");  // Use the CORS policy that was defined earlier
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
+// Authentication and Authorization middlewares
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map Razor Pages and Controllers
 app.MapRazorPages();
 app.MapControllers();
 
+// Start the application
 app.Run();
