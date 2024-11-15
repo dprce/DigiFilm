@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchRoles, registerEmployee } from '../Api/RoleApi.jsx';
+import { fetchRoles, registerEmployee } from '../api/RoleApi.jsx';
 
 const AddEmployee = () => {
     const [roles, setRoles] = useState([]);

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { loginRequest } from "../../authConfig";
 import { Container, Paper, Typography, TextField, Button, GlobalStyles } from "@mui/material";
 import { brown, red, grey } from "@mui/material/colors";
-import { login } from "../../Api/AuthApi.jsx";
+import { login } from "../../api/AuthApi.jsx";
 
 const color1 = brown["700"];
 const color2 = grey["50"];
