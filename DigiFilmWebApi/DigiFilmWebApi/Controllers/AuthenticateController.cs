@@ -42,25 +42,48 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("login")]
         public IActionResult Login()
         {
-            return Challenge(new AuthenticationProperties { RedirectUri = "/" }, OpenIdConnectDefaults.AuthenticationScheme);
+            // Specify the correct redirect URI after login
+            var redirectUri = "http://localhost:5174/home";  // Redirect to the frontend homepage
+
+            return Challenge(new AuthenticationProperties
+            {
+                RedirectUri = redirectUri  // Set the redirect URI to frontend homepage
+            }, OpenIdConnectDefaults.AuthenticationScheme);
         }
+
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-
-            return SignOut(new AuthenticationProperties { RedirectUri = "/" },
+            // Sign out from both OpenID Connect and the cookie authentication
+            return SignOut(new AuthenticationProperties { 
+                    RedirectUri = "http://localhost:5174/" // Redirect to the frontend after logout
+                },
                 OpenIdConnectDefaults.AuthenticationScheme, 
                 CookieAuthenticationDefaults.AuthenticationScheme);
-
         }
         
+        [Authorize]
         [HttpGet("claims")]
-        public IActionResult GetClaims()
+        public async Task<IActionResult> GetClaims()
         {
+            // Get claims from the current user
             var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+
+            // Get the access token and ID token asynchronously
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var idToken = await HttpContext.GetTokenAsync("id_token");
+
+            // Log the token values (for debugging purposes)
+            Console.WriteLine("Access Token:");
+            Console.WriteLine(accessToken);
+            Console.WriteLine("ID Token:");
+            Console.WriteLine(idToken);
+
+            // Return the claims
             return Ok(claims);
         }
+
 
         [Authorize(Roles = "4")]
         [HttpPost("register")]
