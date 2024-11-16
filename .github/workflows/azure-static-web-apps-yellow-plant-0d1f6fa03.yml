@@ -54,7 +54,7 @@ jobs:
           action: "upload"
           app_location: "./DigiFilmReact"  # Path to your React app source
           api_location: ""  # Leave empty if no API
-          output_location: "./DigiFilmReact/dist"  # Correct path to the build output folder
+          output_location: .  # Correct path to the build output folder
           github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
