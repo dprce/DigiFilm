@@ -15,33 +15,36 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     permissions:
-       id-token: write
-       contents: read
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
 
-      - name: Install OIDC Client from Core Package
-        run: npm install @actions/core@1.6.0 @actions/http-client
+      - name: Install Dependencies
+        run: |
+          cd DigiFilmReact
+          npm install
+
+      - name: Build App
+        run: |
+          cd DigiFilmReact
+          npm run build
+
+      - name: Verify Build Output
+        run: |
+          ls -al DigiFilmReact/dist  # List contents of the 'dist' folder to verify build output
 
       - name: Get Id Token
         uses: actions/github-script@v6
         id: idtoken
         with:
           script: |
-              const coredemo = require('@actions/core')
-              return await coredemo.getIDToken()
+              const core = require('@actions/core');
+              return await core.getIDToken();
           result-encoding: string
-
-      - name: Install Dependencies
-        run: npm install
-        working-directory: ./DigiFilmReact
-
-      - name: Build App
-        run: npm run build
-        working-directory: ./DigiFilmReact
 
       - name: Build And Deploy
         id: builddeploy
@@ -49,13 +52,9 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_YELLOW_PLANT_0D1F6FA03 }}
           action: "upload"
-          # App source code path
-          app_location: "./DigiFilmReact"
-          # API source code path (leave empty if not using Azure Functions)
-          api_location: ""
-          # Built app content directory (set to the 'dist' directory where Vite outputs files)
-          output_location: "./DigiFilmReact/dist"
-          # GitHub OIDC token for deployment authorization
+          app_location: "./DigiFilmReact"  # Path to your React app source
+          api_location: ""  # Leave empty if no API
+          output_location: .  # Correct path to the build output folder
           github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
