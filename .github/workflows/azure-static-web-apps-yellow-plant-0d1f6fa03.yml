@@ -1,0 +1,71 @@
+name: Azure Static Web Apps CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+
+jobs:
+  build_and_deploy_job:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: false
+
+      - name: Install Dependencies
+        run: |
+          cd DigiFilmReact
+          npm install
+
+      - name: Build App
+        run: |
+          cd DigiFilmReact
+          npm run build
+
+      - name: Verify Build Output
+        run: |
+          ls -al DigiFilmReact/dist  # List contents of the 'dist' folder to verify build output
+
+      - name: Get ID Token
+        uses: actions/github-script@v6
+        id: idtoken
+        with:
+          script: |
+            const { GITHUB_TOKEN } = process.env;
+            return GITHUB_TOKEN;
+          result-encoding: string
+
+      - name: Deploy to Azure Static Web App
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_YELLOW_PLANT_0D1F6FA03 }}
+          action: "upload"
+          app_location: "./DigiFilmReact"  # Source code path
+          api_location: ""  # Leave empty if no backend API
+          output_location: "./"  # Path to build output
+          skip_app_build: false  # Ensure app is built in the workflow
+          github_id_token: ${{ steps.idtoken.outputs.result }}
+
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    steps:
+      - name: Close Pull Request
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          action: "close"
