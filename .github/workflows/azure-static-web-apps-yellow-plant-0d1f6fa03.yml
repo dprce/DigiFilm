@@ -42,7 +42,8 @@ jobs:
         id: idtoken
         with:
           script: |
-            return await github.context.auth;
+            const { GITHUB_TOKEN } = process.env;
+            return GITHUB_TOKEN;
           result-encoding: string
 
       - name: Build And Deploy
