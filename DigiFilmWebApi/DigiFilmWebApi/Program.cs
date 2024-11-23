@@ -30,7 +30,6 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins("http://localhost:5174", "https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app")
-
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();  // Allow credentials (cookies, etc.)
