@@ -43,7 +43,7 @@ namespace DigiFilmWebApi.Controllers
         public IActionResult Login()
         {
             // Specify the correct redirect URI after login
-            var redirectUri = "http://localhost:5174/home";  // Redirect to the frontend homepage
+            var redirectUri = "https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app/home";  // Redirect to the frontend homepage
 
             return Challenge(new AuthenticationProperties
             {
@@ -57,8 +57,8 @@ namespace DigiFilmWebApi.Controllers
         {
             // Sign out from both OpenID Connect and the cookie authentication
             return SignOut(new AuthenticationProperties { 
-                    RedirectUri = "http://localhost:5174/" // Redirect to the frontend after logout
-                },
+                    RedirectUri = "https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app" // Redirect to the frontend after logout
+            },
                 OpenIdConnectDefaults.AuthenticationScheme, 
                 CookieAuthenticationDefaults.AuthenticationScheme);
         }
