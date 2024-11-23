@@ -43,7 +43,7 @@ namespace DigiFilmWebApi.Controllers
         public IActionResult Login()
         {
             // Specify the correct redirect URI after login
-            var redirectUri = "https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app/home";  // Redirect to the frontend homepage
+            var redirectUri = "https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app";  // Redirect to the frontend homepage
 
             return Challenge(new AuthenticationProperties
             {
