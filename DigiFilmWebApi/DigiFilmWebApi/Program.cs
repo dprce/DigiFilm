@@ -29,7 +29,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5174")  // React frontend origin
+            policy.WithOrigins("http://localhost:5174", "https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app")
+
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();  // Allow credentials (cookies, etc.)
@@ -69,7 +70,8 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             {
                 // User not found in your system, log them out and fail authentication
                 await context.HttpContext.SignOutAsync();
-                context.Response.Redirect("http://localhost:5174/");
+                context.Response.Redirect("https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app");
+
             }
             else
             {
@@ -88,13 +90,14 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
         }
         else
         {
-            context.Response.Redirect("http://localhost:5174/");
+            context.Response.Redirect("https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app");
+
         }
-        
+
         options.Events.OnRedirectToIdentityProvider = context =>
         {
             // Explicitly tell the middleware to redirect to the frontend URL
-            context.Response.Redirect("http://localhost:5174/");  // Redirect to the React frontend
+            context.Response.Redirect("https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app");            // Redirect to the React frontend
             return Task.CompletedTask;
         };
     };
