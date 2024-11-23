@@ -35,6 +35,7 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .AllowCredentials();  // Allow credentials (cookies, etc.)
         });
+
 });
 
 // Add Microsoft Identity platform (OpenID Connect) authentication
@@ -132,7 +133,6 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // CORS middleware must be added before Authentication & Authorization
-app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -140,6 +140,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // Authentication and Authorization middlewares
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
