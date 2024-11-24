@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5174", "https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app")
+            policy.WithOrigins("http://localhost:5174", "https://digi-film-react-luka-kolacevics-projects.vercel.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();  // Allow credentials (cookies, etc.)
@@ -70,7 +70,7 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             {
                 // User not found in your system, log them out and fail authentication
                 await context.HttpContext.SignOutAsync();
-                context.Response.Redirect("https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app");
+                context.Response.Redirect("https://digi-film-react-luka-kolacevics-projects.vercel.app");
 
             }
             else
@@ -90,7 +90,7 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
         }
         else
         {
-            context.Response.Redirect("https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app");
+            context.Response.Redirect("https://digi-film-react-luka-kolacevics-projects.vercel.app");
 
         }
     };
