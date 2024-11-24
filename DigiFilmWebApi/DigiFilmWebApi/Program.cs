@@ -46,10 +46,10 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 // Configure OpenID Connect Options
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
+    options.SaveTokens = true;  // Ensures that the tokens are saved to the authentication properties
     options.Events.OnTokenValidated = async context =>
     {
-        options.SaveTokens = true;  // Ensures that the tokens are saved to the authentication properties
-        
+       
         var userPrincipal = context.Principal;
         var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
         
