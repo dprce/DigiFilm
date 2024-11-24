@@ -42,20 +42,23 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("login")]
         public IActionResult Login()
         {
-            // Specify the correct redirect URI after login
-            var redirectUri = "https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app/home";  // Redirect to the frontend homepage
-
+            var redirectUri = Url.Action("PostLoginRedirect", "Authenticate", null, Request.Scheme);
             return Challenge(new AuthenticationProperties
             {
-                RedirectUri = redirectUri  // Set the redirect URI to frontend homepage
+                RedirectUri = redirectUri
             }, OpenIdConnectDefaults.AuthenticationScheme);
         }
-
-
+        
+        [Authorize]
+        [HttpGet("post-login-redirect")]
+        public IActionResult PostLoginRedirect()
+        {
+            return Redirect("https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app/home");
+        }
+        
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            // Sign out from both OpenID Connect and the cookie authentication
             return SignOut(new AuthenticationProperties { 
                     RedirectUri = "https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app" // Redirect to the frontend after logout
             },
@@ -67,20 +70,16 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("claims")]
         public async Task<IActionResult> GetClaims()
         {
-            // Get claims from the current user
             var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
 
-            // Get the access token and ID token asynchronously
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var idToken = await HttpContext.GetTokenAsync("id_token");
 
-            // Log the token values (for debugging purposes)
             Console.WriteLine("Access Token:");
             Console.WriteLine(accessToken);
             Console.WriteLine("ID Token:");
             Console.WriteLine(idToken);
 
-            // Return the claims
             return Ok(claims);
         }
         

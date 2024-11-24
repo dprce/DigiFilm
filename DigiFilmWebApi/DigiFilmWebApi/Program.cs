@@ -46,10 +46,10 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 // Configure OpenID Connect Options
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
+    options.SaveTokens = true;  // Ensures that the tokens are saved to the authentication properties
     options.Events.OnTokenValidated = async context =>
     {
-        options.SaveTokens = true;  // Ensures that the tokens are saved to the authentication properties
-        
+       
         var userPrincipal = context.Principal;
         var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
         
@@ -93,13 +93,6 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             context.Response.Redirect("https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app");
 
         }
-
-        options.Events.OnRedirectToIdentityProvider = context =>
-        {
-            // Explicitly tell the middleware to redirect to the frontend URL
-            context.Response.Redirect("https://digi-film-react-fgxm05fwf-luka-kolacevics-projects.vercel.app");            // Redirect to the React frontend
-            return Task.CompletedTask;
-        };
     };
 });
 
