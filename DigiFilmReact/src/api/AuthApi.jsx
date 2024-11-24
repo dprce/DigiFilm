@@ -33,9 +33,27 @@ export async function login(email, password) {
 
 export const logout = async () => {
     try {
-        window.location.href = "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/logout";
-        
+        // Send a POST request to the logout endpoint
+        const response = await fetch(
+            "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/logout",
+            {
+                method: "POST",
+                credentials: "include", // Include cookies for session handling
+                headers: {
+                    "Content-Type": "application-json"
+                }
+            }
+        );
+
+        if (response.ok) {
+            console.log("Logout successful");
+
+            // Redirect to the frontend homepage
+            window.location.href = "https://digi-film-react.vercel.app";
+        } else {
+            console.error("Logout failed:", response.statusText);
+        }
     } catch (error) {
-        console.error('Logout failed:', error);
+        console.error("Network error during logout:", error);
     }
 };
