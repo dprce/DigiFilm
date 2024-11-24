@@ -60,6 +60,8 @@ namespace DigiFilmWebApi.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
+            Response.Headers.Add("Access-Control-Allow-Origin", "https://digi-film-react.vercel.app");
+            Response.Headers.Add("Access-Control-Allow-Credentials", "true");
             return SignOut(new AuthenticationProperties { 
                     RedirectUri = "https://digi-film-react.vercel.app" // Redirect to the frontend after logout
             },
