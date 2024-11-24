@@ -54,14 +54,14 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("post-login-redirect")]
         public IActionResult PostLoginRedirect()
         {
-            return Redirect("https://digi-film-react-luka-kolacevics-projects.vercel.app/home");
+            return Redirect("https://digi-film-react.vercel.app/home");
         }
         
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             return SignOut(new AuthenticationProperties { 
-                    RedirectUri = "https://digi-film-react-luka-kolacevics-projects.vercel.app" // Redirect to the frontend after logout
+                    RedirectUri = "https://digi-film-react.vercel.app" // Redirect to the frontend after logout
             },
                 OpenIdConnectDefaults.AuthenticationScheme, 
                 CookieAuthenticationDefaults.AuthenticationScheme);
