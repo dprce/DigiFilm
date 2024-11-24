@@ -33,18 +33,9 @@ export async function login(email, password) {
 
 export const logout = async () => {
     try {
-        const response = await fetch('https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/logout', { // Update this to match your backend endpoint
-            method: 'POST',
-            credentials: 'include', // Include cookies or any session data
-        });
-
-        if (response.ok) {
-            return true;
-        } else {
-            throw new Error('Failed to logout');
-        }
+        window.location.href = "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/logout";
+        
     } catch (error) {
         console.error('Logout failed:', error);
-        return false;
     }
 };

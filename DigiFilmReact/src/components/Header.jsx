@@ -13,12 +13,8 @@ const Header = () => {
 
         (async () => {
             try {
-                const response = await logout();
-                if (response) {
-                    navigate("/");  // Navigate to home or login page after successful logout
-                } else {
-                    console.error("Logout failed");
-                }
+                await logout();
+                
             } catch (error) {
                 console.error("Error: ", error);
             }
