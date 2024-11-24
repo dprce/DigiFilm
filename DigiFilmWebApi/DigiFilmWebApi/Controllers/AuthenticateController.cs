@@ -57,7 +57,7 @@ namespace DigiFilmWebApi.Controllers
             return Redirect("https://digi-film-react.vercel.app/home");
         }
         
-        [HttpGet("logout")]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             return SignOut(new AuthenticationProperties { 
