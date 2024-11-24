@@ -43,6 +43,7 @@ namespace DigiFilmWebApi.Controllers
         public IActionResult Login()
         {
             var redirectUri = Url.Action("PostLoginRedirect", "Authenticate", null, Request.Scheme);
+
             return Challenge(new AuthenticationProperties
             {
                 RedirectUri = redirectUri
