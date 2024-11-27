@@ -13,6 +13,7 @@ const Header = () => {
 
         (async () => {
             try {
+                navigate("/");
                 await logout();
                 
             } catch (error) {
