@@ -1,0 +1,32 @@
+.login {
+    background-image: url(/film.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-title {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 32px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.paper {
+    padding: 64px;
+    backdrop-filter: blur(10px);
+    max-width: 360px;
+}
+
+
+

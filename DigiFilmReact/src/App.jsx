@@ -10,15 +10,13 @@ import "./index.css";
 const App = () => {
   return (
     <Router>
-      <div>
 
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/home" element={<HomePageAdmin />} />
           {/* Dodatne rute idu ovdje kad se rade novi ekrani */}
         </Routes>
-      
-      </div>
+
     </Router>
   );
 };

@@ -3,6 +3,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/header.css';
 import {logout} from "../api/AuthApi.jsx";
+import {Typography} from "@mui/material";
+import {brown} from "@mui/material/colors";
 
 
 const Header = () => {

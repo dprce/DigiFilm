@@ -1,14 +1,12 @@
 // src/pages/LoginPage.jsx
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { loginRequest } from "../../authConfig";
-import { Container, Paper, Typography, TextField, Button, GlobalStyles } from "@mui/material";
-import { brown, red, grey } from "@mui/material/colors";
-import { login } from "../../api/AuthApi.jsx";
+import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {loginRequest} from "../../authConfig";
+import {Container, Paper, Typography, TextField, Button, GlobalStyles, Icon} from "@mui/material";
+import {login} from "../../api/AuthApi.jsx";
+import "./LoginPage.css";
+import "./separator.css";
 
-const color1 = brown["700"];
-const color2 = grey["50"];
-const color3 = grey["500"];
 
 const hexToRgba = (hex, alpha) => {
     let r = 0, g = 0, b = 0;
@@ -46,9 +44,9 @@ const LoginPage = () => {
         event.preventDefault();
 
         if (!username.trim() || !password.trim()) {
-            setError("Polja Korisnik i Lozinka moraju biti ispunjeni.");
+            setError("Username and password are required.");
         } else if (!isUsernameValid()) {
-            setError("Morate se prijaviti s FER računom.");
+            setError("You must use your fer account.");
         } else {
             setError("");
             // This can be an API call to authenticate using the username/password if needed
@@ -61,114 +59,100 @@ const LoginPage = () => {
         setUsernameError(!isUsernameValid());
     };
 
+    const microsoftIcon = (
+        <Icon sx={{
+            height: "28px",
+        }}>
+            <img alt="microsoft-icon" src="/microsoft.svg"/>
+        </Icon>
+    );
+
     return (
-        <>
-            <GlobalStyles
-                styles={{
-                    body: {
-                        backgroundImage: 'url(/film.jpg)',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                        height: '100vh',
-                        margin: 0,
-                        padding: 0,
-                        overflow: 'hidden',
-                    },
-                }}
-            />
-            <div className="app">
-                <Container maxWidth="sm"
-                           sx={{
-                               display: 'flex',
-                               justifyContent: 'center',
-                               alignItems: 'center',
-                               minHeight: '100vh',
-                               width: '90%',
-                               height: '100%',
-                           }}>
-                    <Paper elevation={3} style={{
-                        padding: '50px', borderRadius: '8px', backgroundColor: hexToRgba('#8d6e63', 0.4),
-                        backdropFilter: 'blur(10px)',
-                    }}>
-                        <form className="login" onSubmit={handleSubmit}>
-                            <Typography
-                                variant="h1"
-                                sx={{
-                                    color: color1,
-                                    fontSize: '2rem',
-                                }}
-                            >
-                                Welcome to DigiFilm
-                            </Typography>
+        <div className="login">
+            <Container maxWidth="sm">
+                <Paper elevation={3} className="paper" sx={{
+                    borderRadius: '8px', backgroundColor: hexToRgba('#8d6e63', 0.4),
+                }}>
+                    <div className="login-title">
+                        <Typography
+                            variant="h1"
+                            sx={{
+                                fontSize: '48px',
+                                color: '#5d4037',
+                            }}
+                        >
+                            Welcome to DigiFilm
+                        </Typography>
 
-                            <Typography
-                                variant="h2"
-                                sx={{
-                                    color: color2,
-                                    fontSize: '1.3rem',
-                                    paddingTop: '1rem',
-                                }}
-                            >
-                                Log In
-                            </Typography>
+                        <Typography
+                            variant="h2"
+                            className="subtitle"
+                            sx={{
+                                fontSize: '24px',
+                                color: '#f5f5f5',
+                            }}
+                        >
+                            Log in to your account
+                        </Typography>
+                    </div>
+                    <form className="login-form" onSubmit={handleSubmit}>
 
-                            {error && <p className="error">{error}</p>}
+                        {error && <p className="error">{error}</p>}
 
-                            <div>
-                                <TextField
-                                    variant="outlined"
-                                    type="text"
-                                    name="username"
-                                    placeholder="Username"
-                                    label="Username"
-                                    value={username}
-                                    onBlur={handleUsernameBlur}
-                                    sx={{
-                                        marginTop: '25px', marginBottom: '5px',
-                                        height: '55px',
-                                    }}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <TextField
-                                    variant="outlined"
-                                    type="password"
-                                    name="password"
-                                    placeholder="Password"
-                                    label="Password"
-                                    value={password}
-                                    sx={{
-                                        marginBottom: '15px',
-                                        height: '55px',
-                                    }}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
-                            <Button
-                                variant="contained"
-                                type="submit"
-                                sx={{
-                                    backgroundColor: color2,
-                                    color: color1,
-                                    '&:hover': {
-                                        backgroundColor: color3,
-                                    },
-                                }}
-                            >
-                                Log In
-                            </Button>
-                            <Button
-                                onClick={handleLogin}
-                            >
-                                <img src="/signin.png" alt="Sign In" />
-                            </Button>
-                        </form>
-                    </Paper>
-                </Container>
-            </div>
-        </>
+                        <TextField
+                            variant="outlined"
+                            type="text"
+                            name="username"
+                            placeholder="Username"
+                            label="Username"
+                            value={username}
+                            className="text-field"
+                            onBlur={handleUsernameBlur}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            label="Password"
+                            className="password-field"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <Button
+                            variant="contained"
+                            type="submit"
+                            sx={{
+                                backgroundColor: "#fafafa",
+                                color: "#5d4037",
+                                '&:hover': {
+                                    backgroundColor: "#9e9e9e",
+                                },
+                            }}
+                        >
+                            Log In
+                        </Button>
+                        <div className="separator">OR</div>
+                        <Button
+                            variant="contained"
+                            startIcon={microsoftIcon}
+                            sx={{
+                                backgroundColor: "#fafafa",
+                                color: "#5d4037",
+                                '&:hover': {
+                                    backgroundColor: "#9e9e9e",
+                                },
+                                textTransform: "none",
+                            }}
+                            onClick={handleLogin}
+                        >
+                            Sign in with Microsoft
+                        </Button>
+                    </form>
+                </Paper>
+            </Container>
+        </div>
     );
 };
 
