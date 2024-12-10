@@ -14,6 +14,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/home" element={<HomePageAdmin />} />
+          <Route path="/homePage" element={<HomePage />} />
           {/* Dodatne rute idu ovdje kad se rade novi ekrani */}
         </Routes>
 

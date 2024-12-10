@@ -30,7 +30,7 @@ const LoginPage = () => {
         return username.endsWith("@fer.hr") || username.endsWith("@fer.unizg.hr");
     };
 
-    const handleLogin = async () => {
+    {/*const handleLogin = async () => {
         try {
             // Directly redirect to the backend authentication URL to trigger the login flow
             window.location.href = "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login";
@@ -38,7 +38,7 @@ const LoginPage = () => {
             console.error("Error initiating login:", error);
             setError("Something went wrong during login.");
         }
-    };
+    };*/}
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -51,7 +51,7 @@ const LoginPage = () => {
             setError("");
             // This can be an API call to authenticate using the username/password if needed
             // But in this case, we trigger the login with backend
-            handleLogin();
+            navigate("/homePage");
         }
     };
 
@@ -59,13 +59,13 @@ const LoginPage = () => {
         setUsernameError(!isUsernameValid());
     };
 
-    const microsoftIcon = (
+    {/*const microsoftIcon = (
         <Icon sx={{
             height: "28px",
         }}>
             <img alt="microsoft-icon" src="/microsoft.svg"/>
         </Icon>
-    );
+    );*/}
 
     return (
         <div className="login">
@@ -134,7 +134,7 @@ const LoginPage = () => {
                             Log In
                         </Button>
                         <div className="separator">OR</div>
-                        <Button
+                        {/*<Button
                             variant="contained"
                             startIcon={microsoftIcon}
                             sx={{
@@ -148,7 +148,7 @@ const LoginPage = () => {
                             onClick={handleLogin}
                         >
                             Sign in with Microsoft
-                        </Button>
+                        </Button>*/}
                     </form>
                 </Paper>
             </Container>
