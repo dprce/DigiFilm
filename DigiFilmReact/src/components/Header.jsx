@@ -3,8 +3,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/header.css';
 import {logout} from "../api/AuthApi.jsx";
-import {Typography} from "@mui/material";
+import {Button, Typography} from "@mui/material";
 import {brown} from "@mui/material/colors";
+
 
 
 const Header = () => {
@@ -26,8 +27,29 @@ const Header = () => {
 
     return (
         <header>
-            <h1>DigiFilm</h1>
-            <button onClick={handleClick}>Logout</button>
+            <Typography
+                variant="h1"
+                sx={{
+                    fontSize: '44px',
+                    color: '#5d4037',
+                }}
+            >
+            DigiFilm
+            </Typography>
+            <Button
+                variant="contained"
+                type="submit"
+                sx={{
+                    backgroundColor: "#bcaaa4",
+                    color: "#5d4037",
+                    '&:hover': {
+                        backgroundColor: "#9e9e9e",
+                    },
+                }}
+                onClick={handleClick}
+            >
+           Logout
+            </Button>
         </header>
     );
 };

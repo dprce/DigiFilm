@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Header from "../../components/Header.jsx";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import Footer from "../../components/Footer.jsx";
+import "./HomePage.css";
 
 const HomePage = () => {
     const [data, setData] = useState('No result');
@@ -29,7 +30,7 @@ const HomePage = () => {
     },[]);
 
     return (
-        <>
+        <div className="homepage">
             <Header/>
             {
                 scanResult ? (
@@ -40,7 +41,7 @@ const HomePage = () => {
             }
             <div id="reader"></div>
             <Footer />
-        </>
+        </div>
     )
 }
 
