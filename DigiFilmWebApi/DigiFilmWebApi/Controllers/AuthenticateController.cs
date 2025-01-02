@@ -43,18 +43,49 @@ namespace DigiFilmWebApi.Controllers
         public IActionResult Login()
         {
             var redirectUri = Url.Action("PostLoginRedirect", "Authenticate", null, Request.Scheme);
-
-            return Challenge(new AuthenticationProperties
-            {
-                RedirectUri = redirectUri
-            }, OpenIdConnectDefaults.AuthenticationScheme);
+            return Challenge(new AuthenticationProperties { RedirectUri = redirectUri },
+                OpenIdConnectDefaults.AuthenticationScheme);
         }
-        
+
         [Authorize]
         [HttpGet("post-login-redirect")]
-        public IActionResult PostLoginRedirect()
+        public IActionResult PostLoginRedirect() => Redirect("http://localhost:5173/home");
+        
+        [Authorize]
+        [HttpGet("post-login")]
+        public async Task<IActionResult> PostLogin()
         {
-            return Redirect("https://digi-film-react.vercel.app/home");
+            // Extract user information from claims
+            var userEmail = User.FindFirst("preferred_username")?.Value;
+        
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized("Email claim is missing.");
+            }
+        
+            // Check if user exists in the database
+            var user = await _userRepositoryInterface.GetUserByEmailAsync(userEmail);
+        
+            if (user == null)
+            {
+                return Unauthorized("User not found in the system.");
+            }
+        
+            // Generate JWT and Refresh Token
+            var accessToken = GenerateJwtToken(user);
+            var refreshTokenPlain = GenerateRefreshToken();
+            var refreshTokenHashed = _passwordService.HashPassword(refreshTokenPlain);
+        
+            // Store refresh token in the database
+            await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, refreshTokenHashed);
+        
+            // Return tokens as response
+            return Ok(new
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshTokenPlain,
+                Message = "Login successful."
+            });
         }
         
         [HttpPost("logout")]
@@ -86,6 +117,7 @@ namespace DigiFilmWebApi.Controllers
             return Ok(claims);
         }
         
+        [Authorize]
         [HttpGet("all-roles")]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -121,93 +153,93 @@ namespace DigiFilmWebApi.Controllers
             }
         }
 
-        // [HttpPost("refresh-token")]
-        // public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)
-        // {
-        //     var principal = GetPrincipalFromExpiredToken(request.AccessToken);
-        //     var userId = principal.FindFirst(ClaimTypes.Name)?.Value;
-        //
-        //     var user = await _userRepositoryInterface.GetUserByIdAsync(int.Parse(userId));
-        //     if (user == null)
-        //     {
-        //         return Unauthorized();
-        //     }
-        //
-        //     var (storedHashedToken, expiryTime) = await _userRepositoryInterface.GetRefreshTokenWithExpiryAsync(user.Id);
-        //
-        //     if (DateTime.UtcNow > expiryTime || !_passwordService.VerifyPassword(request.RefreshToken, storedHashedToken))
-        //     {
-        //         return Unauthorized();
-        //     }
-        //
-        //     var newAccessToken = GenerateJwtToken(user);
-        //     var newRefreshTokenPlain = GenerateRefreshToken();
-        //     var newRefreshTokenHashed = _passwordService.HashPassword(newRefreshTokenPlain);
-        //
-        //     await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, newRefreshTokenHashed);
-        //
-        //     return Ok(new { AccessToken = newAccessToken, RefreshToken = newRefreshTokenPlain, RoleID = user.RoleId });
-        // }
-        //
-        // private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
-        // {
-        //     var tokenHandler = new JwtSecurityTokenHandler();
-        //     var key = Encoding.ASCII.GetBytes(_configuration["Token:Key"]);
-        //
-        //     var tokenValidationParameters = new TokenValidationParameters
-        //     {
-        //         ValidateIssuerSigningKey = true,
-        //         IssuerSigningKey = new SymmetricSecurityKey(key),
-        //         ValidateIssuer = false,
-        //         ValidateAudience = false,
-        //         ValidateLifetime = false,
-        //     };
-        //
-        //     var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-        //     var jwtSecurityToken = securityToken as JwtSecurityToken;
-        //
-        //     if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-        //     {
-        //         throw new SecurityTokenException("Invalid token");
-        //     }
-        //
-        //     return principal;
-        // }
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)
+        {
+            var principal = GetPrincipalFromExpiredToken(request.AccessToken);
+            var userId = principal.FindFirst(ClaimTypes.Name)?.Value;
+        
+            var user = await _userRepositoryInterface.GetUserByIdAsync(int.Parse(userId));
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+        
+            var (storedHashedToken, expiryTime) = await _userRepositoryInterface.GetRefreshTokenWithExpiryAsync(user.Id);
+        
+            if (DateTime.UtcNow > expiryTime || !_passwordService.VerifyPassword(request.RefreshToken, storedHashedToken))
+            {
+                return Unauthorized();
+            }
+        
+            var newAccessToken = GenerateJwtToken(user);
+            var newRefreshTokenPlain = GenerateRefreshToken();
+            var newRefreshTokenHashed = _passwordService.HashPassword(newRefreshTokenPlain);
+        
+            await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, newRefreshTokenHashed);
+        
+            return Ok(new { AccessToken = newAccessToken, RefreshToken = newRefreshTokenPlain, RoleID = user.RoleId });
+        }
+        
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Token:Key"]);
+        
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+            };
+        
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+        
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token");
+            }
+        
+            return principal;
+        }
 
-        // private string GenerateJwtToken(User user)
-        // {
-        //     var tokenHandler = new JwtSecurityTokenHandler();
-        //     var key = Encoding.ASCII.GetBytes(_configuration["Token:Key"]);
-        //
-        //     var claims = new List<Claim>
-        // {
-        //     new Claim(ClaimTypes.Name, user.Id.ToString()),
-        //     new Claim(ClaimTypes.Role, user.RoleId.ToString()),
-        //     new Claim("TenantId", user.TenantId.ToString())
-        // };
-        //
-        //     var tokenDescriptor = new SecurityTokenDescriptor
-        //     {
-        //         Subject = new ClaimsIdentity(claims),
-        //         Expires = DateTime.UtcNow.AddHours(1),
-        //         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-        //         Issuer = _configuration["Token:Issuer"],
-        //         Audience = _configuration["Token:Audience"]
-        //     };
-        //
-        //     var token = tokenHandler.CreateToken(tokenDescriptor);
-        //     return tokenHandler.WriteToken(token);
-        // }
+        private string GenerateJwtToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Token:Key"]);
+        
+            var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.RoleId.ToString()),
+            new Claim("TenantId", user.TenantId.ToString())
+        };
+        
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = _configuration["Token:Issuer"],
+                Audience = _configuration["Token:Audience"]
+            };
+        
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
 
-        // private string GenerateRefreshToken()
-        // {
-        //     var randomNumber = new byte[32];
-        //     using (var rng = RandomNumberGenerator.Create())
-        //     {
-        //         rng.GetBytes(randomNumber);
-        //         return Convert.ToBase64String(randomNumber);
-        //     }
-        // }
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
     }
 
 }

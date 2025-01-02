@@ -29,69 +29,57 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5174", "https://digi-film-react.vercel.app")
+            policy.WithOrigins("http://localhost:5173")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials();  // Allow credentials (cookies, etc.)
+                .AllowCredentials(); // Allow credentials (cookies, etc.)
         });
-
 });
 
 // Add Microsoft Identity platform (OpenID Connect) authentication
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
     .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-    .AddInMemoryTokenCaches();  // This helps store the token in-memory for later use
+    .AddInMemoryTokenCaches(); // Store token in-memory
 
 // Configure OpenID Connect Options
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
-    options.SaveTokens = true;  // Ensures that the tokens are saved to the authentication properties
+    options.SaveTokens = true; // Save tokens to properties
     options.Events.OnTokenValidated = async context =>
     {
-       
         var userPrincipal = context.Principal;
         var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
-        
-        Console.WriteLine("Claims in the token:");
-        foreach (var claim in userPrincipal.Claims)
-        {
-            Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-        }
 
         if (userEmail != null)
         {
-            // Get the user repository service to check if the user exists in your system
+            // Fetch the UserRepository service
             var userRepository = context.HttpContext.RequestServices.GetRequiredService<UserRepository>();
 
+            // Check if user exists in the database
             var user = await userRepository.GetUserByEmailAsync(userEmail);
 
             if (user == null)
             {
-                // User not found in your system, log them out and fail authentication
-                await context.HttpContext.SignOutAsync();
-                context.Response.Redirect("https://digi-film-react.vercel.app");
-
+                // User not found, redirect to registration or error page
+                context.Response.Redirect($"http://localhost:5173/");
+                context.HandleResponse(); // Stop further processing
+                return;
             }
             else
             {
-                // Add roles and additional claims to the identity
+                // Add claims (Role, TenantId) if the user is authorized
                 var claimsIdentity = userPrincipal.Identity as ClaimsIdentity;
-                claimsIdentity?.AddClaim(new Claim(ClaimTypes.Role, user.RoleId.ToString())); // Add Role
-                claimsIdentity?.AddClaim(new Claim("TenantId", user.TenantId.ToString())); // Add TenantId
-                
-                // Optionally, print the claims for debugging purposes
-                Console.WriteLine("User authenticated. Claims:");
-                foreach (var claim in claimsIdentity?.Claims ?? Enumerable.Empty<Claim>())
-                {
-                    Console.WriteLine($"Type: {claim.Type}, Value: {claim.Value}");
-                }
+                claimsIdentity?.AddClaim(new Claim(ClaimTypes.Role, user.RoleId.ToString()));
+                claimsIdentity?.AddClaim(new Claim("TenantId", user.TenantId.ToString()));
             }
         }
         else
         {
-            context.Response.Redirect("https://digi-film-react.vercel.app");
-
+            // No email claim, redirect to error page
+            context.Response.Redirect("http://localhost:5173/");
+            context.HandleResponse();
+            return;
         }
     };
 });
@@ -99,17 +87,16 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
 // Add Razor Pages and MVC
 builder.Services.AddRazorPages().AddMvcOptions(options =>
 {
-    // Ensure that all pages require authentication by default
     var policy = new AuthorizationPolicyBuilder()
-                  .RequireAuthenticatedUser()
-                  .Build();
+        .RequireAuthenticatedUser()
+        .Build();
     options.Filters.Add(new AuthorizeFilter(policy)); // Global authorization policy
-}).AddMicrosoftIdentityUI(); // For login and logout UI handling by Microsoft Identity Web
+}).AddMicrosoftIdentityUI(); // For Microsoft Identity UI handling
 
 // Dependency Injection for services
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UserRepositoryInterface, UserRepository>(); 
-builder.Services.AddScoped<UserRepository>(); 
+builder.Services.AddScoped<UserRepositoryInterface, UserRepository>();
+builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<RoleRepositoryInterface, RoleRepository>();
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<PasswordService>();
@@ -124,14 +111,11 @@ builder.Services.AddSwaggerGen();
 // Build the application
 var app = builder.Build();
 
-// CORS middleware must be added before Authentication & Authorization
-
+// Middleware Setup
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-// Authentication and Authorization middlewares
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
@@ -143,5 +127,4 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Docs"))
 app.MapRazorPages();
 app.MapControllers();
 
-// Start the application
 app.Run();

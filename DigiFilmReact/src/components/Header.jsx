@@ -1,34 +1,38 @@
-// Header.js
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../css/header.css';
-import {logout} from "../api/AuthApi.jsx";
-import {Typography} from "@mui/material";
-import {brown} from "@mui/material/colors";
-
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { logout } from "../api/AuthApi.jsx";
 
 const Header = () => {
     const navigate = useNavigate();
 
-    const handleClick = (event) => {
-        event.preventDefault();
-
-        (async () => {
-            try {
-                navigate("/");
-                await logout();
-                
-            } catch (error) {
-                console.error("Error: ", error);
-            }
-        })();
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate("/");
+        } catch (error) {
+            console.error("Error during logout:", error);
+        }
     };
 
     return (
-        <header>
-            <h1>DigiFilm</h1>
-            <button onClick={handleClick}>Logout</button>
-        </header>
+        <AppBar position="static" sx={{ backgroundColor: "#5d4037", color: "#fff" }}>
+            <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="h5" component="div" sx={{ fontWeight: 700 }}>
+                    DigiFilm
+                </Typography>
+                <Button
+                    color="inherit"
+                    onClick={handleLogout}
+                    sx={{
+                        textTransform: "none",
+                        fontSize: "16px",
+                    }}
+                >
+                    Logout
+                </Button>
+            </Toolbar>
+        </AppBar>
     );
 };
 
