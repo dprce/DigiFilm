@@ -3,10 +3,13 @@ import Header from "../../components/Header.jsx";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import Footer from "../../components/Footer.jsx";
 import "./HomePage.css";
+import {Button} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
     const [data, setData] = useState('No result');
     const [scanResult, setScanResult] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const scanner = new Html5QrcodeScanner('reader', {
@@ -34,12 +37,13 @@ const HomePage = () => {
             <Header/>
             {
                 scanResult ? (
-                    <div>Success: {scanResult}</div>
+                    navigate("/editData")
                 ) : (
                     <div id="reader"></div>
                 )
             }
             <div id="reader"></div>
+            <Button onClick={() => navigate("/editData")}>Box without barcode?</Button>
             <Footer />
         </div>
     )
