@@ -1,48 +1,27 @@
 import React, {useEffect, useState} from 'react';
 import Header from "../../components/Header.jsx";
-import { Html5QrcodeScanner } from "html5-qrcode";
 import Footer from "../../components/Footer.jsx";
+import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import "./HomePage.css";
 import {Button} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
-    const [data, setData] = useState('No result');
-    const [scanResult, setScanResult] = useState(null);
+    const [data, setData] = React.useState('No result');
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const scanner = new Html5QrcodeScanner('reader', {
-            qrbox: {
-                width: 250,
-                height: 250,
-            },
-            fps: 5,
-        });
-
-        scanner.render(success, error);
-
-        function success(result) {
-            scanner.clear();
-            setScanResult(result);
-        }
-
-        function error(err) {
-            console.warn(err);
-        }
-    },[]);
 
     return (
         <div className="homepage">
             <Header/>
-            {
-                scanResult ? (
-                    navigate("/editData")
-                ) : (
-                    <div id="reader"></div>
-                )
-            }
-            <div id="reader"></div>
+            <BarcodeScannerComponent
+                width="100%"
+                height={500}
+                onUpdate={(err, result) => {
+                    if(result) setData(result.text);
+                    else setData("Not Found");
+                }}
+            />
+            <h1>{data}</h1>
             <Button onClick={() => navigate("/editData")}>Box without barcode?</Button>
             <Footer />
         </div>
