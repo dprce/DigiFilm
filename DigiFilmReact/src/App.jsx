@@ -6,6 +6,7 @@ import HomePageAdmin from "./pages/homepage/HomePageAdmin.jsx";
 import PostLoginRedirect from "./api/PostLoginRedirect.jsx";
 import "./App.css";
 import "./index.css";
+import HomePage from "./pages/homepage/HomePage.jsx";
 
 const App = () => {
     return (

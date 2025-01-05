@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Card, Spacer} from "@nextui-org/react";
 import Header from "../../components/Header.jsx";
 import AddEmployee from "../../components/AddEmployee.jsx";
+import {jwtDecode} from "jwt-decode";
 
 const HomePage = () => {
     const navigate = useNavigate();
 
     const handlePostLogin = async () => {
         console.log("handlePostLogin triggered");
+        localStorage.removeItem("accessToken");
         try {
             const response = await fetch("https://localhost:7071/Authenticate/post-login", {
                 method: "GET",
@@ -26,6 +28,12 @@ const HomePage = () => {
                 console.error("Failed to fetch tokens:", errorData);
                 navigate("/");
             }
+            const token = localStorage.getItem("accessToken"); // Ensure 'accessToken' matches the query parameter key
+
+            console.log("Retrieved token from URL:", token);
+            const decodedToken = jwtDecode(token);
+            console.log("Decoded Token:", decodedToken);
+
         } catch (error) {
             console.error("Error during post-login:", error);
             navigate("/");

@@ -1,5 +1,6 @@
 ﻿using DigiFilmWebApi.BAL;
 using DigiFilmWebApi.Modeli;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DigiFilmWebApi.Controllers
@@ -18,6 +19,7 @@ namespace DigiFilmWebApi.Controllers
           _configuration = configuration;
         }
 
+        [Authorize]
         [HttpGet("all-roles")]
         public async Task<IActionResult> GetAllRoles()
         {
