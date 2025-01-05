@@ -1,16 +1,22 @@
 import React from 'react';
 import Header from '../../components/Header.jsx';
 import Footer from '../../components/Footer.jsx';
-import {Box, Button, MenuItem, TextField} from "@mui/material";
+import {Box, Button, TextField} from "@mui/material";
+import "./EditData.css";
 
 const EditData = () => {
     const [movie, setMovie] = React.useState({
-        title: '',
-        releaseYear: '',
+        originalniNaslov: '',
+        idEmisije: '',
+        radniNaslov: '',
+        deskriptori: '',
+        jezikOriginala: '',
+        ton: '',
+        emisija: '',
+        porijeklo: '',
+        godinaProizvodnje: '',
         duration: '',
-        genre: '',
-        director: '',
-        language: ''
+        brojMedija: '',
     });
 
     const handleChange = (e) => {
@@ -28,12 +34,17 @@ const EditData = () => {
             //await registerEmployee(movie);
             console.log("Movie data entered successfully.");
             setMovie({
-                title: '',
-                releaseYear: '',
+                originalniNaslov: '',
+                idEmisije: '',
+                radniNaslov: '',
+                deskriptori: '',
+                jezikOriginala: '',
+                ton: '',
+                emisija: '',
+                porijeklo: '',
+                godinaProizvodnje: '',
                 duration: '',
-                genre: '',
-                director: '',
-                language: ''
+                brojMedija: '',
             });
         } catch (error) {
             console.error("Error editing data:", error);
@@ -50,55 +61,100 @@ const EditData = () => {
 
                         <TextField
                             fullWidth
-                            label="Title"
-                            name="title"
-                            placeholder="Title"
-                            value={movie.title}
+                            label="Originalni naslov"
+                            name="originalniNaslov"
+                            placeholder="Originalni naslov"
+                            value={movie.originalniNaslov}
                             onChange={handleChange}
                             required
                         />
                         <TextField
                             fullWidth
-                            label="Release Year"
-                            name="releaseYear"
-                            placeholder="Release Year"
-                            value={movie.releaseYear}
+                            label="ID Emisije"
+                            name="idEmisije"
+                            placeholder="ID Emisije"
+                            value={movie.idEmisije}
                             onChange={handleChange}
                             required
                         />
                         <TextField
                             fullWidth
-                            label="Duration"
+                            label="Radni naslov"
+                            name="radniNaslov"
+                            placeholder="Radni naslov"
+                            value={movie.radniNaslov}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Deskriptori"
+                            name="deskriptori"
+                            placeholder="Deskriptori"
+                            value={movie.deskriptori}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Jezik originala"
+                            name="jezikOriginala"
+                            placeholder="Jezik originala"
+                            value={movie.jezikOriginala}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Ton"
+                            name="ton"
+                            placeholder="Ton"
+                            value={movie.ton}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Emisija"
+                            name="emisija"
+                            placeholder="Emisija"
+                            value={movie.emisija}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Porijeklo"
+                            name="porijeklo"
+                            placeholder="Porijeklo"
+                            value={movie.porijeklo}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Godina proizvodnje"
+                            name="godinaProizvodnje"
+                            placeholder="Godina proizvodnje"
+                            value={movie.godinaProizvodnje}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Trajanje"
                             name="duration"
-                            placeholder="Duration"
+                            placeholder="Trajanje"
                             value={movie.duration}
                             onChange={handleChange}
                             required
                         />
                         <TextField
                             fullWidth
-                            label="Genre"
-                            name="genre"
-                            placeholder="Genre"
-                            value={movie.genre}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Director"
-                            name="director"
-                            placeholder="Director"
-                            value={movie.director}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Language"
-                            name="language"
-                            placeholder="Language"
-                            value={movie.language}
+                            label="Broj medija"
+                            name="brojMedija"
+                            placeholder="Broj medija"
+                            value={movie.brojMedija}
                             onChange={handleChange}
                             required
                         />

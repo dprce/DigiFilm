@@ -1,0 +1,22 @@
+.homepage {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #efebe9;
+
+    > header {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 16px;
+        padding-bottom: 16px;
+        padding-right: 16px;
+        padding-left: 64px;
+    }
+    > footer {
+        display: flex;
+        justify-content: center;
+        background-color: #efebe9;
+
+    }
+
+}
