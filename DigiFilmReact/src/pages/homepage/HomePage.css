@@ -1,4 +1,4 @@
-.homepage {
+/*.homepage {
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -19,4 +19,19 @@
 
     }
 
+}*/
+.homepage {
+    background-color: #efebe9;
+    width: 100%;        /* Zauzima cijelu širinu */
+    height: 100vh;      /* Zauzima cijelu visinu prozora pretraživača */
+    display: flex;
+    flex-direction: column;
+}
+
+.list_buttons{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 32px;
+    margin-bottom: 32px;
 }

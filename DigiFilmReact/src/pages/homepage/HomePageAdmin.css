@@ -1,13 +1,7 @@
-.scanbarcode{
+.home{
     background-color: #efebe9;
     width: 100%;        /* Zauzima cijelu širinu */
     height: 100%;      /* Zauzima cijelu visinu prozora pretraživača */
     display: flex;
     flex-direction: column;
-}
-.box{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 72px;
 }

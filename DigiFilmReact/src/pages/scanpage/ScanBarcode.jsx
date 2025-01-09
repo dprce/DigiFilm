@@ -21,8 +21,23 @@ const ScanBarcode = () => {
                     else setData("Not Found");
                 }}
             />
-            <h1>{data}</h1>
-            <Button onClick={() => navigate("/editData")}>Box without barcode?</Button>
+            <div className="box">
+                <h1>{data}</h1>
+                <Button
+                    variant="contained"
+                    type="submit"
+                    sx={{
+                        backgroundColor: "#bcaaa4",
+                        color: "#5d4037",
+                        '&:hover': {
+                            backgroundColor: "#9e9e9e",
+                        },
+                        width:'512px',
+                    }}
+                    onClick={() => navigate("/editData")}>
+                    Box without barcode?
+                </Button>
+            </div>
             <Footer />
         </div>
     )

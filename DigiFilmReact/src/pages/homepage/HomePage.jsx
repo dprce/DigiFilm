@@ -11,9 +11,38 @@ const HomePage = () => {
     return (
         <div className="homepage">
             <Header/>
-            <Button onClick={() => navigate("/scanBarcode")}>Scan barcode</Button>
-            <Button onClick={() => navigate("/filmList")}>Film List</Button>
-            <Button onClick={() => navigate("/sessionList")}>Session List</Button>
+            <div className="list_buttons">
+            <Button  sx={{
+                backgroundColor: "#fafafa",
+                color: "#212121",
+                '&:hover': {
+                    backgroundColor: "#9e9e9e",
+                },
+            }}
+                     onClick={() => navigate("/scanBarcode")}>
+                Scan barcode
+            </Button>
+            <Button  sx={{
+                backgroundColor: "#fafafa",
+                color: "#212121",
+                '&:hover': {
+                    backgroundColor: "#9e9e9e",
+                },
+            }}
+                     onClick={() => navigate("/filmList")}>
+                Film List
+            </Button>
+            <Button  sx={{
+                backgroundColor: "#fafafa",
+                color: "#212121",
+                '&:hover': {
+                    backgroundColor: "#9e9e9e",
+                },
+            }}
+                     onClick={() => navigate("/sessionList")}>
+                Session List
+            </Button>
+            </div>
             <Footer />
         </div>
     )
