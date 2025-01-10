@@ -3,7 +3,7 @@ import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
 import "./FilmList.css";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
-import {Button, Box, Typography} from "@mui/material";
+import {Button, Box, Typography, TextField} from "@mui/material";
 import { jsPDF } from 'jspdf';
 import { user } from "@nextui-org/theme";
 
@@ -15,6 +15,8 @@ const FilmList = () => {
         { id: 4, title: "Zbirka Emila Laszowskog", year: 1963, language: "Hrvatski", duration: "00:20:15" },
         { id: 5, title: "Otvorenje hotela Vis", year: 1984, language: "Hrvatski", duration: "00:02:10"}
     ]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredMovies, setFilteredMovies] = useState(movies);
     const [selectedMovies, setSelectMovies] = useState([]);
     const [batches, setBatches] = useState([]);
     const [totalSelectedDuration, setTotalSelectedDuration] = useState(0);
@@ -50,6 +52,14 @@ const FilmList = () => {
             setWarning(false);
         }
     };
+
+    const handleSearch = () => {
+        const query = searchQuery.toLowerCase();
+        const result = movies.filter(movie =>
+            movie.title.toLowerCase().includes(query)
+        );
+        setFilteredMovies(result);
+    }
 
     const groupMoviesIntoBatches = () => {
         const moviesWithSeconds = selectedMovies.map(movie => ({
@@ -131,6 +141,20 @@ const FilmList = () => {
             <Box sx={{padding: "20px"}}>
                 <div>
                     <h2>Film List</h2>
+                    <Box display="flex" alignItems="center" gap={2} mb={2}>
+                        <TextField
+                            label="Search"
+                            variant="outlined"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <Button
+                            variant="contained"
+                            onClick={handleSearch}
+                        >
+                            Search
+                        </Button>
+                    </Box>
                     <Typography>
                         Total Selected Duration: {formatDuration(totalSelectedDuration)}
                     </Typography>
@@ -157,7 +181,7 @@ const FilmList = () => {
                         <TableColumn>DURATION</TableColumn>
                     </TableHeader>
                     <TableBody>
-                        {movies.map(movie => (
+                        {filteredMovies.map(movie => (
                             <TableRow key={movie.id}>
                             <TableCell>
                                     <input
