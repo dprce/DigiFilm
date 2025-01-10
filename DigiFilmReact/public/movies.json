@@ -1,0 +1,7 @@
+[
+  { "id": 1, "title": "VATROGASNA VJEŽBA", "year": 1999, "language": "Engleski", "duration": "00:01:19", "digitalized": "No", "barcode": "B-249044" },
+  { "id": 2, "title": "America's most wanted", "year": 2001, "language": "Engleski", "duration": "00:21:10", "digitalized": "No", "barcode": "B-243244" },
+  { "id": 3, "title": "33. Dani hrvatskog filma", "year": 2014, "language": "Hrvatski", "duration": "00:02:10", "digitalized": "No", "barcode": "B-239059" },
+  { "id": 4, "title": "Zbirka Emila Laszowskog", "year": 1963, "language": "Hrvatski", "duration": "00:20:15", "digitalized": "No", "barcode": "B-273265" },
+  { "id": 5, "title": "Otvorenje hotela Vis", "year": 1984, "language": "Hrvatski", "duration": "00:02:10", "digitalized": "No", "barcode": "B-241032" }
+]

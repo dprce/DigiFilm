@@ -1,26 +1,44 @@
-import React, {useState} from 'react';
+import {useState, useEffect} from 'react';
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
 import "./FilmList.css";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
-import {Button, Box, Typography, TextField} from "@mui/material";
+import {Button, Box, Typography, TextField, MenuItem, Select, Autocomplete} from "@mui/material";
 import { jsPDF } from 'jspdf';
 import { user } from "@nextui-org/theme";
 
 const FilmList = () => {
-    const [movies, setMovies] = useState([
-        { id: 1, title: "VATROGASNA VJEŽBA", year: 1999, language: "Engleski", duration: "00:01:19" },
-        { id: 2, title: "America's most wanted", year: 2001, language: "Engleski", duration: "00:21:10" },
-        { id: 3, title: "33. Dani hrvatskog filma", year: 2014, language: "Hrvatski", duration: "00:02:10" },
-        { id: 4, title: "Zbirka Emila Laszowskog", year: 1963, language: "Hrvatski", duration: "00:20:15" },
-        { id: 5, title: "Otvorenje hotela Vis", year: 1984, language: "Hrvatski", duration: "00:02:10"}
-    ]);
+    const [movies, setMovies] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredMovies, setFilteredMovies] = useState(movies);
-    const [selectedMovies, setSelectMovies] = useState([]);
+    const [selectedMovies, setSelectedMovies] = useState([]);
     const [batches, setBatches] = useState([]);
     const [totalSelectedDuration, setTotalSelectedDuration] = useState(0);
     const [warning, setWarning] = useState(false);
+    const [employees, setEmployees] = useState([]);
+    const [selectedEmployee, setSelectedEmployee] = useState();
+    const [comments, setComments] = useState("");
+
+    useEffect(() => {
+        const fetchMovies = async () => {
+            const response = await fetch('/movies.json');
+            const data = await response.json();
+            setMovies(data);
+            setFilteredMovies(data);
+        };
+
+        fetchMovies();
+    }, []);
+
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            const response = await fetch('/employees.json');
+            const data = await response.json();
+            setEmployees(data);
+        }
+
+        fetchEmployees();
+    }, []);
 
     const parseDuration = (duration) => {
         const [hours, minutes, seconds] = duration.split(":").map(Number);
@@ -39,26 +57,37 @@ const FilmList = () => {
         const movieDuration = parseDuration(movie.duration);
 
         if (selectedMovies.includes(movie)){
-            setSelectMovies(selectedMovies.filter(m => m.id !== id));
+            setSelectedMovies(selectedMovies.filter(m => m.id !== id));
             setTotalSelectedDuration(totalSelectedDuration - movieDuration);
-        } else{
-            setSelectMovies([...selectedMovies, movie]);
+            if (totalSelectedDuration - movieDuration < 45 * 60){
+                setWarning(false);
+            }
+        } else {
+            setSelectedMovies([...selectedMovies, movie]);
             setTotalSelectedDuration(totalSelectedDuration + movieDuration);
+            if (totalSelectedDuration + movieDuration > 45 * 60){
+                setWarning(true);
+            }
         }
 
-        if (totalSelectedDuration + movieDuration > 45 * 60){
+        /*if (totalSelectedDuration + movieDuration > 45 * 60){
             setWarning(true);
         } else {
             setWarning(false);
-        }
+        }*/
     };
 
-    const handleSearch = () => {
-        const query = searchQuery.toLowerCase();
-        const result = movies.filter(movie =>
-            movie.title.toLowerCase().includes(query)
-        );
-        setFilteredMovies(result);
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        if(query.trim() === ""){
+            setFilteredMovies(movies);
+        } else {
+            const lowerCaseQuery = searchQuery.toLowerCase();
+            const result = movies.filter((movie) =>
+                movie.title.toLowerCase().includes(lowerCaseQuery)
+            );
+            setFilteredMovies(result);
+        }
     }
 
     const groupMoviesIntoBatches = () => {
@@ -89,10 +118,15 @@ const FilmList = () => {
         setBatches(groupedBatches);
         setTotalSelectedDuration(0);
         setWarning(false);
-        setSelectMovies([]);
+        //setSelectedMovies([]);
     };
 
     const generatePDF = () => {
+        if (!selectedEmployee) {
+            alert("Please select an employee before generating the PDF.");
+            return;
+        }
+
         const doc = new jsPDF();
 
         doc.setFontSize(16);
@@ -101,7 +135,7 @@ const FilmList = () => {
         let yPosition = 60;
 
         doc.setFontSize(12);
-        doc.text(`Employee: ${user.name}`, 20, 30);
+        doc.text(`Employee: ${selectedEmployee}`, 20, 30);
         doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 40);
         doc.text(`Time: ${new Date().toLocaleTimeString()}`, 20, 50);
         yPosition = yPosition + 10;
@@ -113,7 +147,7 @@ const FilmList = () => {
 
             doc.setFontSize(12);
             batch.forEach((movie, index) => {
-                doc.text(`${index + 1}. ${movie.title} (${formatDuration(movie.durationInSeconds)})`, 20, yPosition);
+                doc.text(`${index + 1}. ${movie.title} (${formatDuration(movie.durationInSeconds)}) ${movie.barcode}`, 20, yPosition);
                 yPosition = yPosition + 10;
 
                 if (yPosition > 270) {
@@ -132,7 +166,21 @@ const FilmList = () => {
             }
         });
 
+        {comments && (
+            doc.text(`Comments: ${comments}`, 20, yPosition)
+        )}
+        yPosition = yPosition + 20;
+
+        if(yPosition > 270) {
+            doc.addPage();
+            yPosition = 20;
+        }
+
         doc.save(`Digitalization_${new Date().toISOString()}.pdf`);
+        for (let i = 0; i < selectedMovies.length; i++){
+            selectedMovies[i].digitalized = "On digitalization";
+        }
+        setSelectedMovies([]);
     }
 
     return (
@@ -146,31 +194,35 @@ const FilmList = () => {
                             label="Search"
                             variant="outlined"
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            /*onChange={(e) => setSearchQuery(e.target.value)}*/
+                            onChange={(e) => handleSearch(e.target.value)}
                         />
-                        <Button
+                        {/*<Button
                             variant="contained"
                             onClick={handleSearch}
                         >
                             Search
-                        </Button>
+                        </Button>*/}
                     </Box>
                     <Typography>
                         Total Selected Duration: {formatDuration(totalSelectedDuration)}
                     </Typography>
-                    {warning && (
-                        <Typography color="error">
-                            Warning: Total selected duration exceeds 45 minutes!
-                        </Typography>
-                    )}
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={groupMoviesIntoBatches}
-                        style={{marginLeft: '30%'}}
-                    >
-                        Optimize
-                    </Button>
+                    <div style={{ display: 'flex', paddingTop: '10px', paddingBottom: '10px' }}>
+                        {selectedMovies.length > 0 && (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={groupMoviesIntoBatches}
+                            >
+                                Optimize
+                            </Button>
+                        )}
+                        {warning && (
+                            <Typography color="error" style={{paddingTop: '5px', marginLeft: '20px'}}>
+                                Warning: Total selected duration exceeds 45 minutes!
+                            </Typography>
+                        )}
+                    </div>
                 </div>
                 <Table aria-label="film table">
                     <TableHeader>
@@ -179,6 +231,8 @@ const FilmList = () => {
                         <TableColumn>RELEASE YEAR</TableColumn>
                         <TableColumn>LANGUAGE</TableColumn>
                         <TableColumn>DURATION</TableColumn>
+                        <TableColumn>DIGITALIZED</TableColumn>
+                        <TableColumn>BARCODE NO.</TableColumn>
                     </TableHeader>
                     <TableBody>
                         {filteredMovies.map(movie => (
@@ -194,6 +248,8 @@ const FilmList = () => {
                                 <TableCell>{movie.year}</TableCell>
                                 <TableCell>{movie.language}</TableCell>
                                 <TableCell>{movie.duration}</TableCell>
+                                <TableCell>{movie.digitalized}</TableCell>
+                                <TableCell>{movie.barcode}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -201,6 +257,41 @@ const FilmList = () => {
 
                 {batches.length > 0 && (
                     <>
+                        <Box mb={2} style={{marginTop: "10px"}}>
+                            {/*<Select
+                                value={selectedEmployee}
+                                onChange={(e) => setSelectedEmployee(e.target.value)}
+                                placeholder="Select employee"
+                                style={{ width: "200px" }}
+                            >
+                                {employees.map((employee, index) => (
+                                    <MenuItem key={index} value={employee}>
+                                        {employee}
+                                    </MenuItem>
+                                ))}
+                            </Select>*/}
+                            <Autocomplete
+                                freeSolo
+                                options={employees}
+                                value={selectedEmployee}
+                                onChange={(e, newValue) => setSelectedEmployee(newValue)}
+                                style={{width: "25%"}}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Responsible Employee"
+                                        variant="outlined"
+                                    />
+                                )}
+                            />
+                        </Box>
+                        <TextField
+                            label="Comments"
+                            variant="outlined"
+                            value={comments}
+                            onChange={(e) => setComments(e.target.value)}
+                            style={{width: "50%"}}
+                        />
                         {batches.map((batch, batchIndex) => (
                             <div key={batchIndex} style={{ marginTop: "20px" }}>
                                 <h3>Batch {batchIndex + 1}</h3>
