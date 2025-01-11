@@ -240,6 +240,17 @@ namespace DigiFilmWebApi.Controllers
                 return Convert.ToBase64String(randomNumber);
             }
         }
+        
+        [HttpOptions("{*path}")]
+        public IActionResult Preflight()
+        {
+            Response.Headers.Add("Access-Control-Allow-Origin", "https://digi-film-react.vercel.app");
+            Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+            Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            Response.Headers.Add("Access-Control-Allow-Headers", "Authorization, Content-Type");
+            return Ok();
+        }
+
     }
 
 }
