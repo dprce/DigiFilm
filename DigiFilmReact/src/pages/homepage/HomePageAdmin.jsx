@@ -4,6 +4,8 @@ import { Card, Spacer} from "@nextui-org/react";
 import Header from "../../components/Header.jsx";
 import AddEmployee from "../../components/AddEmployee.jsx";
 import {jwtDecode} from "jwt-decode";
+import "./HomePageAdmin.css";
+import Footer from "../../components/Footer.jsx";
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -45,17 +47,10 @@ const HomePage = () => {
     }, []);
 
     return (
-        <div style={{ padding: "20px" }}>
-            <Header />
-            <Spacer y={2} />
-            <div style={{ textAlign: "center" }}>
-                <Spacer y={1} />
-                <div style={{ maxWidth: "600px", margin: "0 auto" }}>
-                    <Card css={{ padding: "20px" }}>
-                        <AddEmployee />
-                    </Card>
-                </div>
-            </div>
+        <div className="home">
+            <Header/>
+            <AddEmployee/>
+            <Footer/>
         </div>
     );
 };

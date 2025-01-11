@@ -137,7 +137,7 @@ const LoginPage = () => {
                             Log In
                         </Button>
                         <div className="separator">OR</div>
-                        <Button
+                        {<Button
                             variant="contained"
                             startIcon={microsoftIcon}
                             sx={{
@@ -151,7 +151,7 @@ const LoginPage = () => {
                             onClick={handleLogin}
                         >
                             Sign in with Microsoft
-                        </Button>
+                        </Button>}
                     </form>
                 </Paper>
             </Container>

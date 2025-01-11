@@ -2,6 +2,15 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { logout } from "../api/AuthApi.jsx";
+// Header.js
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../css/header.css';
+import {logout} from "../api/AuthApi.jsx";
+import {Button, Typography} from "@mui/material";
+import {brown} from "@mui/material/colors";
+
+
 
 const Header = () => {
     const navigate = useNavigate();
@@ -16,23 +25,31 @@ const Header = () => {
     };
 
     return (
-        <AppBar position="static" sx={{ backgroundColor: "#5d4037", color: "#fff" }}>
-            <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography variant="h5" component="div" sx={{ fontWeight: 700 }}>
-                    DigiFilm
-                </Typography>
-                <Button
-                    color="inherit"
-                    onClick={handleLogout}
-                    sx={{
-                        textTransform: "none",
-                        fontSize: "16px",
-                    }}
-                >
-                    Logout
-                </Button>
-            </Toolbar>
-        </AppBar>
+        <header>
+            <Typography
+                variant="h1"
+                sx={{
+                    fontSize: '44px',
+                    color: '#5d4037',
+                }}
+            >
+            DigiFilm
+            </Typography>
+            <Button
+                variant="contained"
+                type="submit"
+                sx={{
+                    backgroundColor: "#bcaaa4",
+                    color: "#5d4037",
+                    '&:hover': {
+                        backgroundColor: "#9e9e9e",
+                    },
+                }}
+                onClick={handleClick}
+            >
+           Logout
+            </Button>
+        </header>
     );
 };
 
