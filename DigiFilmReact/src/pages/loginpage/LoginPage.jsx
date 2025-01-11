@@ -24,7 +24,7 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-            window.location.href = "https://localhost:7071/Authenticate/login";
+            window.location.href = "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login";
         } catch (error) {
             console.error("Error initiating login:", error);
             setError("Something went wrong during login.");

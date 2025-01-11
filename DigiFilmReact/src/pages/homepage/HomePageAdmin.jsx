@@ -13,7 +13,7 @@ const HomePage = () => {
         console.log("handlePostLogin triggered");
         localStorage.removeItem("accessToken");
         try {
-            const response = await fetch("https://localhost:7071/Authenticate/post-login", {
+            const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/post-login", {
                 method: "GET",
                 credentials: "include",
             });

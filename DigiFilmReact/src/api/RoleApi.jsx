@@ -1,6 +1,6 @@
 export async function fetchRoles() {
     try {
-        const response = await fetch(`https://localhost:7071/Role/all-roles`, {
+        const response = await fetch(`https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Role/all-roles`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ export async function fetchRoles() {
 
 export async function registerEmployee(employeeData) {
     try {
-        const response = await fetch(`https://localhost:7071/Authenticate/register`, {
+        const response = await fetch(`https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

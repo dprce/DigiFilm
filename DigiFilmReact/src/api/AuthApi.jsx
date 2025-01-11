@@ -3,7 +3,7 @@ export async function login(email, password) {
 
     try {
         const response = await fetch(
-            `https://localhost:7071/Authenticate/login`,
+            `https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login`,
             {
                 method: "POST",
                 headers: {
@@ -40,7 +40,7 @@ export async function login(email, password) {
 
 export const logout = async () => {
     try {
-        window.location.href = "https://localhost:7071/Authenticate/logout";
+        window.location.href = "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/logout";
         
     } catch (error) {
         console.error("Network error during logout:", error);
