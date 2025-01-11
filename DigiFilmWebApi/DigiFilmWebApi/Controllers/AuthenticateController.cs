@@ -49,7 +49,7 @@ namespace DigiFilmWebApi.Controllers
 
         [Authorize]
         [HttpGet("post-login-redirect")]
-        public IActionResult PostLoginRedirect() => Redirect("http://localhost:5173/home");
+        public IActionResult PostLoginRedirect() => Redirect("https://digi-film-react.vercel.app/home");
         
         [Authorize]
         [HttpGet("post-login")]

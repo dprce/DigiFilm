@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
+            policy.WithOrigins("https://digi-film-react.vercel.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials(); // Allow credentials (cookies, etc.)
@@ -62,7 +62,7 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             if (user == null)
             {
                 // User not found, redirect to registration or error page
-                context.Response.Redirect($"http://localhost:5173/");
+                context.Response.Redirect($"https://digi-film-react.vercel.app/");
                 context.HandleResponse(); // Stop further processing
                 return;
             }
@@ -77,7 +77,7 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
         else
         {
             // No email claim, redirect to error page
-            context.Response.Redirect("http://localhost:5173/");
+            context.Response.Redirect("https://digi-film-react.vercel.app/");
             context.HandleResponse();
             return;
         }
