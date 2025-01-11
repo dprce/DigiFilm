@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { fetchRoles, registerEmployee } from "../api/RoleApi.jsx";
 import { Container, Paper, Typography, TextField, Button, MenuItem, Grid, Box } from "@mui/material";
 import "./AddEmployee.css";
-import {Box, Button, MenuItem, TextField} from "@mui/material";
 
 const AddEmployee = () => {
     const [roles, setRoles] = useState([]);
@@ -59,62 +58,6 @@ const AddEmployee = () => {
         }
     };
 
-    /*return (
-        <div className="add-employee">
-            <div className="add-employee__form">
-                <form className="HomeAdmin" onSubmit={handleSubmit}>
-                    <fieldset>
-                        <legend>Add Employee</legend>
-                        <p><label><input type="text" name="firstName" placeholder="Name" value={employee.name}
-                                         onChange={handleChange} required/></label></p>
-                        <p><label><input type="text" name="lastName" placeholder="Surname" value={employee.surname}
-                                         onChange={handleChange} required/></label></p>
-                        <p><label><input type="email" name="email" placeholder="Mail" value={employee.email}
-                                         onChange={handleChange} required/></label></p>
-                        <p><label><input type="text" name="initialPassword" placeholder="Initial Password"
-                                         value={employee.password} onChange={handleChange} required/></label></p>
-                        <p><label><input type="tel" name="phoneNumber" placeholder="Phone Number" value={employee.phone}
-                                         onChange={handleChange} required/></label></p>
-                        <p>
-                            <label>Role</label>
-                            <select
-                                name="roleId"
-                                value={employee.roleId || ""}
-                                onChange={handleChange}
-                                required
-                                variant="outlined"
-                            >
-                                <MenuItem value="" disabled>
-                                    Select Role
-                                </MenuItem>
-                                {roles.map((role) => (
-                                    <MenuItem key={role.id} value={role.id}>
-                                        {role.roleName}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Box sx={{ display: "flex", justifyContent: "center" }}>
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    sx={{ padding: "10px 20px", borderRadius: "20px" }}
-                                >
-                                    Add Employee
-                                </Button>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                </form>
-            </div>
-        </div>
-
-
-
-    );*/
-    //sa mui material, da bude responzivno
     return (
        < Box className="add-employee">
 
@@ -127,7 +70,7 @@ const AddEmployee = () => {
                            label="Name"
                            name="firstName"
                            placeholder="Name"
-                           value={employee.name}
+                           value={employee.firstName}
                            onChange={handleChange}
                            required
                     />
@@ -136,7 +79,7 @@ const AddEmployee = () => {
                        label="Surname"
                        name="lastName"
                        placeholder="Surname"
-                       value={employee.surname}
+                       value={employee.lastName}
                        onChange={handleChange}
                        required
                    />
@@ -156,7 +99,7 @@ const AddEmployee = () => {
                        name="initialPassword"
                        placeholder="Initial Password"
                        type="password"
-                       value={employee.password}
+                       value={employee.initialPassword}
                        onChange={handleChange}
                        required
                    />
@@ -166,7 +109,7 @@ const AddEmployee = () => {
                        name="phoneNumber"
                        placeholder="Phone Number"
                        type="tel"
-                       value={employee.phone}
+                       value={employee.phoneNumber}
                        onChange={handleChange}
                        required
                    />

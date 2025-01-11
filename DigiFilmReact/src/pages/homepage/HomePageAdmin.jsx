@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Spacer} from "@nextui-org/react";
 import Header from "../../components/Header.jsx";
 import AddEmployee from "../../components/AddEmployee.jsx";
 import {jwtDecode} from "jwt-decode";

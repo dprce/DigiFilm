@@ -3,11 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { logout } from "../api/AuthApi.jsx";
 // Header.js
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import '../css/header.css';
-import {logout} from "../api/AuthApi.jsx";
-import {Button, Typography} from "@mui/material";
 import {brown} from "@mui/material/colors";
 
 
@@ -45,7 +41,7 @@ const Header = () => {
                         backgroundColor: "#9e9e9e",
                     },
                 }}
-                onClick={handleClick}
+                onClick={handleLogout}
             >
            Logout
             </Button>
