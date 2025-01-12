@@ -105,6 +105,10 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<RoleRepositoryInterface, RoleRepository>();
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<PasswordService>();
+builder.Services.AddScoped<FilmService>();
+
+// If you have a FilmRepository or FilmRepositoryInterface, register it as well
+builder.Services.AddScoped<FilmRepositoryInterface, FilmRepository>();
 
 // Dapper - SQL Database Connection
 builder.Services.AddScoped<IDbConnection>(sp =>
