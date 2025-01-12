@@ -7,7 +7,7 @@ import { Button, Box } from "@mui/material";
 import { jsPDF } from 'jspdf';
 import {user} from "@nextui-org/theme";
 
-const SessionList = () => {
+const SessionList = (/*{userRole}*/) => {
     const [batches, setBatches] = useState([]);
     const [selectedBatches, setSelectedBatches] = useState([]);
     const [doneBatches, setDoneBatches] = useState([]);
@@ -97,7 +97,9 @@ const SessionList = () => {
                 <h2>Session list</h2>
                 <Table aria-label="session table">
                     <TableHeader>
+                        {/*{userRole !== "readOnly" && (*/}
                         <TableColumn>SELECT</TableColumn>
+                        {/*  })} */}
                         <TableColumn>BATCH ID</TableColumn>
                         <TableColumn>MOVIES</TableColumn>
                         <TableColumn>TOTAL DURATION</TableColumn>
@@ -107,15 +109,17 @@ const SessionList = () => {
                         {batches.map(batch => (
                             <TableRow key={batch.id}>
                                 <TableCell>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedBatches.includes(batch.id)}
-                                        onChange={() => handleSelectBatch(batch.id)}
-                                    />
+                                    {/*{userRole !== "readOnly" && (*/}
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedBatches.includes(batch.id)}
+                                            onChange={() => handleSelectBatch(batch.id)}
+                                        />
+                                    {/*  })} */}
                                 </TableCell>
                                 <TableCell>{batch.id}</TableCell>
                                 <TableCell>
-                                    <ul style={{ listStyleType: 'none' }}>
+                                    <ul style={{listStyleType: 'none'}}>
                                         {batch.movies.map((movie, index) => (
                                             <li key={index}>{movie}</li>
                                         ))}
@@ -139,7 +143,7 @@ const SessionList = () => {
                     </Button>
                 )}
 
-                {doneBatches.length > 0 && (
+                {doneBatches.length > 0 && /*userRole !== readOnly && */(
                     <>
                         <h2>Returned batches</h2>
                         <Table aria-label="done sessions">

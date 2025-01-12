@@ -47,8 +47,7 @@ const HomePage = (/*{userRole}*/) => {
                          onClick={() => navigate("/sessionList")}>
                     Session List
                 </Button>
-                {/*
-                {userRole === "admin" && (
+                {/*{userRole === "admin" && (*/}
                     <Button  sx={{
                         backgroundColor: "#fafafa",
                         color: "#212121",
@@ -56,11 +55,10 @@ const HomePage = (/*{userRole}*/) => {
                             backgroundColor: "#9e9e9e",
                         },
                     }}
-                             onClick={() => navigate("/filmList")}>
+                             onClick={() => navigate("/addEmployee")}>
                         Add employee
                     </Button>
-                )}
-                */}
+                {/*}  )}  */}
             </div>
             <Footer />
         </div>

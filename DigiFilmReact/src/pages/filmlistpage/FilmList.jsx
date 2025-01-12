@@ -6,7 +6,7 @@ import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from 
 import {Button, Box, Typography, TextField, Autocomplete} from "@mui/material";
 import { jsPDF } from 'jspdf';
 
-const FilmList = () => {
+const FilmList = (/*{userRole}*/) => {
     const [movies, setMovies] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredMovies, setFilteredMovies] = useState(movies);
@@ -244,7 +244,9 @@ const FilmList = () => {
                 </div>
                 <Table aria-label="film table">
                     <TableHeader>
-                        <TableColumn>SELECT</TableColumn>
+                        {/*{userRole !== "readOnly" && (*/}
+                            <TableColumn>SELECT</TableColumn>
+                        {/*  })} */}
                         <TableColumn>TITLE</TableColumn>
                         <TableColumn>RELEASE YEAR</TableColumn>
                         <TableColumn>LANGUAGE</TableColumn>
@@ -256,12 +258,14 @@ const FilmList = () => {
                         {filteredMovies.map(movie => (
                             <TableRow key={movie.id}>
                             <TableCell>
+                                {/*{userRole !== "readOnly" && (*/}
                                     <input
                                         type="checkbox"
                                         checked={selectedMovies.includes(movie)}
                                         onChange={() => handleSelect(movie.id)}
                                     />
-                                </TableCell>
+                                {/*  })} */}
+                            </TableCell>
                                 <TableCell>{movie.title}</TableCell>
                                 <TableCell>{movie.year}</TableCell>
                                 <TableCell>{movie.language}</TableCell>
