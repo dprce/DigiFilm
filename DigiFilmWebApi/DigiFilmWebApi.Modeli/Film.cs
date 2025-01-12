@@ -15,5 +15,5 @@ public class Film
     public TimeSpan MarkOut { get; set; }
     public TimeSpan Duration { get; set; }
     public int BrojMedija { get; set; }
-    public int BarCode { get; set; }
+    public string BarCode { get; set; }
 }
