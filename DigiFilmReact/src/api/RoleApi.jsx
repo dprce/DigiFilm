@@ -48,3 +48,27 @@ export async function registerEmployee(employeeData) {
     }
 }
 
+export async function fetchFilms() {
+    try {
+        const response = await fetch(`https://localhost:7071/Film/get-all-films`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include', // Include cookies or credentials
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.films; // Assuming 'films' is the key in the API response containing the film list
+        } else {
+            console.error('Failed to fetch films. Status:', response.status);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error fetching films:', error);
+        return [];
+    }
+}
+
+

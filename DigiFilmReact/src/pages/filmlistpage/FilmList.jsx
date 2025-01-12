@@ -1,16 +1,38 @@
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
-import "./FilmList.css";
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
-import {Button, Box, Typography, TextField, MenuItem, Select, Autocomplete} from "@mui/material";
+import { Box, Typography, TextField, Autocomplete, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { jsPDF } from 'jspdf';
-import { user } from "@nextui-org/theme";
+import "./FilmList.css";
+
+// Fetch films from backend
+export async function fetchFilms() {
+    try {
+        const response = await fetch(`https://localhost:7071/Film/get-all-films`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.films;
+        } else {
+            console.error('Failed to fetch films. Status:', response.status);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error fetching films:', error);
+        return [];
+    }
+}
 
 const FilmList = () => {
     const [movies, setMovies] = useState([]);
+    const [filteredMovies, setFilteredMovies] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
-    const [filteredMovies, setFilteredMovies] = useState(movies);
     const [selectedMovies, setSelectedMovies] = useState([]);
     const [batches, setBatches] = useState([]);
     const [totalSelectedDuration, setTotalSelectedDuration] = useState(0);
@@ -21,10 +43,18 @@ const FilmList = () => {
 
     useEffect(() => {
         const fetchMovies = async () => {
-            const response = await fetch('/movies.json');
-            const data = await response.json();
-            setMovies(data);
-            setFilteredMovies(data);
+            const data = await fetchFilms();
+            const mappedMovies = data.map(film => ({
+                id: film.idEmisije,
+                title: film.originalniNaslov,
+                language: film.jezikOriginala,
+                country: film.porijeklo_ZemljaProizvodnje,
+                year: film.godinaProizvodnje,
+                duration: film.duration,
+                status: film.status,
+            }));
+            setMovies(mappedMovies);
+            setFilteredMovies(mappedMovies);
         };
 
         fetchMovies();
@@ -35,14 +65,14 @@ const FilmList = () => {
             const response = await fetch('/employees.json');
             const data = await response.json();
             setEmployees(data);
-        }
+        };
 
         fetchEmployees();
     }, []);
 
     const parseDuration = (duration) => {
         const [hours, minutes, seconds] = duration.split(":").map(Number);
-        return hours * 3600 + minutes * 60 + seconds; //trajanje ukupno u sekundama
+        return hours * 3600 + minutes * 60 + seconds;
     };
 
     const formatDuration = (seconds) => {
@@ -52,63 +82,68 @@ const FilmList = () => {
         return [hours, minutes, secs].map(v => String(v).padStart(2, '0')).join(":");
     };
 
-    const handleSelect = (id) =>{
-        const movie = movies.find(m => m.id === id);
+    const handleSelect = (id) => {
+        const movie = movies.find((m) => m.id === id);
+
+        // Allow selection only for non-digitalized films
+        if (movie.status != "Not Digitalized") {
+            return; // Skip selection for digitalized films
+        }
+
         const movieDuration = parseDuration(movie.duration);
 
-        if (selectedMovies.includes(movie)){
-            setSelectedMovies(selectedMovies.filter(m => m.id !== id));
+        if (selectedMovies.includes(movie)) {
+            setSelectedMovies(selectedMovies.filter((m) => m.id !== id));
             setTotalSelectedDuration(totalSelectedDuration - movieDuration);
-            if (totalSelectedDuration - movieDuration < 45 * 60){
+            if (totalSelectedDuration - movieDuration < 45 * 60) {
                 setWarning(false);
             }
         } else {
             setSelectedMovies([...selectedMovies, movie]);
             setTotalSelectedDuration(totalSelectedDuration + movieDuration);
-            if (totalSelectedDuration + movieDuration > 45 * 60){
+            if (totalSelectedDuration + movieDuration > 45 * 60) {
                 setWarning(true);
             }
         }
-
-        /*if (totalSelectedDuration + movieDuration > 45 * 60){
-            setWarning(true);
-        } else {
-            setWarning(false);
-        }*/
     };
 
     const handleSearch = (query) => {
         setSearchQuery(query);
-        if(query.trim() === ""){
+        if (query.trim() === "") {
             setFilteredMovies(movies);
         } else {
-            const lowerCaseQuery = searchQuery.toLowerCase();
-            const result = movies.filter((movie) =>
-                movie.title.toLowerCase().includes(lowerCaseQuery)
+            const lowerCaseQuery = query.toLowerCase();
+            const result = movies.filter(movie =>
+                movie.title.toLowerCase().includes(lowerCaseQuery) ||
+                movie.language.toLowerCase().includes(lowerCaseQuery) ||
+                movie.country.toLowerCase().includes(lowerCaseQuery) ||
+                movie.year.toString().includes(lowerCaseQuery) ||
+                movie.status.toLowerCase().includes(lowerCaseQuery)
             );
             setFilteredMovies(result);
         }
-    }
+    };
 
     const groupMoviesIntoBatches = () => {
+        const maxBatchDuration = 45 * 60; // 2700 seconds
         const moviesWithSeconds = selectedMovies.map(movie => ({
             ...movie,
             durationInSeconds: parseDuration(movie.duration),
         }));
-        const maxBatchDuration = 45 * 60;
+
         const groupedBatches = [];
 
+        // Greedy algorithm for bin-packing
         while (moviesWithSeconds.length > 0) {
             let currentBatch = [];
             let remainingTime = maxBatchDuration;
 
-            moviesWithSeconds.sort((a, b) => b.durationInSeconds - a.durationInSeconds);
-
-            for (let i = moviesWithSeconds.length - 1; i >= 0; i--) {
+            for (let i = 0; i < moviesWithSeconds.length; i++) {
                 if (moviesWithSeconds[i].durationInSeconds <= remainingTime) {
                     currentBatch.push(moviesWithSeconds[i]);
                     remainingTime -= moviesWithSeconds[i].durationInSeconds;
                     moviesWithSeconds.splice(i, 1);
+                    i--; // Adjust index after removal
                 }
             }
 
@@ -118,9 +153,8 @@ const FilmList = () => {
         setBatches(groupedBatches);
         setTotalSelectedDuration(0);
         setWarning(false);
-        //setSelectedMovies([]);
     };
-
+    
     const generatePDF = () => {
         if (!selectedEmployee) {
             alert("Please select an employee before generating the PDF.");
@@ -128,196 +162,141 @@ const FilmList = () => {
         }
 
         const doc = new jsPDF();
-
         doc.setFontSize(16);
         doc.text("Report: archive material digitalization", 20, 20);
-
-        let yPosition = 60;
 
         doc.setFontSize(12);
         doc.text(`Employee: ${selectedEmployee}`, 20, 30);
         doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 40);
         doc.text(`Time: ${new Date().toLocaleTimeString()}`, 20, 50);
-        yPosition = yPosition + 10;
 
-        batches.forEach((batch, batchIndex) => {
-            doc.setFontSize(14);
-            doc.text(`Batch ${batchIndex + 1}:`, 20, yPosition);
-            yPosition = yPosition + 10;
+        let yPosition = 70;
+        selectedMovies.forEach((movie, index) => {
+            doc.text(`${index + 1}. ${movie.title} (${movie.language}, ${movie.country}, ${movie.year})`, 20, yPosition);
+            yPosition += 10;
 
-            doc.setFontSize(12);
-            batch.forEach((movie, index) => {
-                doc.text(`${index + 1}. ${movie.title} (${formatDuration(movie.durationInSeconds)}) ${movie.barcode}`, 20, yPosition);
-                yPosition = yPosition + 10;
-
-                if (yPosition > 270) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-            });
-
-            const totalBatchDuration = batch.reduce((sum, movie) => sum + movie.durationInSeconds, 0);
-            doc.text(`Total batch duration: ${formatDuration(totalBatchDuration)}`, 20, yPosition);
-            yPosition = yPosition + 20;
-
-            if(yPosition > 270) {
+            if (yPosition > 270) {
                 doc.addPage();
                 yPosition = 20;
             }
         });
 
-        {comments && (
-            doc.text(`Comments: ${comments}`, 20, yPosition)
-        )}
-        yPosition = yPosition + 20;
-
-        if(yPosition > 270) {
-            doc.addPage();
-            yPosition = 20;
+        if (comments) {
+            doc.text(`Comments: ${comments}`, 20, yPosition);
         }
 
         doc.save(`Digitalization_${new Date().toISOString()}.pdf`);
-        for (let i = 0; i < selectedMovies.length; i++){
-            selectedMovies[i].digitalized = "On digitalization";
-        }
-        setSelectedMovies([]);
-    }
+    };
 
     return (
         <div className="filmlist">
-            <Header/>
-            <Box sx={{padding: "20px"}}>
-                <div>
-                    <h2>Film List</h2>
-                    <Box display="flex" alignItems="center" gap={2} mb={2}>
-                        <TextField
-                            label="Search"
-                            variant="outlined"
-                            value={searchQuery}
-                            /*onChange={(e) => setSearchQuery(e.target.value)}*/
-                            onChange={(e) => handleSearch(e.target.value)}
-                        />
-                        {/*<Button
-                            variant="contained"
-                            onClick={handleSearch}
-                        >
-                            Search
-                        </Button>*/}
-                    </Box>
-                    <Typography>
-                        Total Selected Duration: {formatDuration(totalSelectedDuration)}
-                    </Typography>
-                    <div style={{ display: 'flex', paddingTop: '10px', paddingBottom: '10px' }}>
-                        {selectedMovies.length > 0 && (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={groupMoviesIntoBatches}
-                            >
-                                Optimize
-                            </Button>
-                        )}
-                        {warning && (
-                            <Typography color="error" style={{paddingTop: '5px', marginLeft: '20px'}}>
-                                Warning: Total selected duration exceeds 45 minutes!
-                            </Typography>
-                        )}
-                    </div>
-                </div>
-                <Table aria-label="film table">
-                    <TableHeader>
-                        <TableColumn>SELECT</TableColumn>
-                        <TableColumn>TITLE</TableColumn>
-                        <TableColumn>RELEASE YEAR</TableColumn>
-                        <TableColumn>LANGUAGE</TableColumn>
-                        <TableColumn>DURATION</TableColumn>
-                        <TableColumn>DIGITALIZED</TableColumn>
-                        <TableColumn>BARCODE NO.</TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredMovies.map(movie => (
-                            <TableRow key={movie.id}>
-                            <TableCell>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedMovies.includes(movie)}
-                                        onChange={() => handleSelect(movie.id)}
-                                    />
-                                </TableCell>
-                                <TableCell>{movie.title}</TableCell>
-                                <TableCell>{movie.year}</TableCell>
-                                <TableCell>{movie.language}</TableCell>
-                                <TableCell>{movie.duration}</TableCell>
-                                <TableCell>{movie.digitalized}</TableCell>
-                                <TableCell>{movie.barcode}</TableCell>
+            <Header />
+            <Box sx={{ padding: "20px" }}>
+                <Typography variant="h4" gutterBottom>
+                    Film List
+                </Typography>
+                <Box display="flex" alignItems="center" gap={2} mb={2}>
+                    <TextField
+                        label="Search"
+                        variant="outlined"
+                        value={searchQuery}
+                        onChange={(e) => handleSearch(e.target.value)}
+                        fullWidth
+                    />
+                </Box>
+                <Typography variant="h6">
+                    Total Selected Duration: {formatDuration(totalSelectedDuration)}
+                </Typography>
+                <Box display="flex" gap={2} mt={2} mb={4}>
+                    {selectedMovies.length > 0 && (
+                        <Button variant="contained" color="primary" onClick={groupMoviesIntoBatches}>
+                            Optimize
+                        </Button>
+                    )}
+                    {warning && (
+                        <Typography color="error">
+                            Warning: Total selected duration exceeds 45 minutes!
+                        </Typography>
+                    )}
+                </Box>
+                <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Select</TableCell>
+                                <TableCell>Original Title</TableCell>
+                                <TableCell>Language</TableCell>
+                                <TableCell>Country</TableCell>
+                                <TableCell>Year</TableCell>
+                                <TableCell>Duration</TableCell>
+                                <TableCell>Status</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-
+                        </TableHead>
+                        <TableBody>
+                            {filteredMovies.map((movie) => (
+                                <TableRow key={movie.id} hover>
+                                    <TableCell>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedMovies.includes(movie)}
+                                            onChange={() => handleSelect(movie.id)}
+                                            disabled={movie.status != "Not Digitalized"} // Disable for digitalized films
+                                        />
+                                    </TableCell>
+                                    <TableCell>{movie.title}</TableCell>
+                                    <TableCell>{movie.language}</TableCell>
+                                    <TableCell>{movie.country}</TableCell>
+                                    <TableCell>{movie.year}</TableCell>
+                                    <TableCell>{movie.duration}</TableCell>
+                                    <TableCell>{movie.status}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
                 {batches.length > 0 && (
-                    <>
-                        <Box mb={2} style={{marginTop: "10px"}}>
-                            {/*<Select
-                                value={selectedEmployee}
-                                onChange={(e) => setSelectedEmployee(e.target.value)}
-                                placeholder="Select employee"
-                                style={{ width: "200px" }}
-                            >
-                                {employees.map((employee, index) => (
-                                    <MenuItem key={index} value={employee}>
-                                        {employee}
-                                    </MenuItem>
-                                ))}
-                            </Select>*/}
-                            <Autocomplete
-                                freeSolo
-                                options={employees}
-                                value={selectedEmployee}
-                                onChange={(e, newValue) => setSelectedEmployee(newValue)}
-                                style={{width: "25%"}}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Responsible Employee"
-                                        variant="outlined"
-                                    />
-                                )}
-                            />
-                        </Box>
-                        <TextField
-                            label="Comments"
-                            variant="outlined"
-                            value={comments}
-                            onChange={(e) => setComments(e.target.value)}
-                            style={{width: "50%"}}
-                        />
+                    <Box mt={4}>
                         {batches.map((batch, batchIndex) => (
-                            <div key={batchIndex} style={{ marginTop: "20px" }}>
-                                <h3>Batch {batchIndex + 1}</h3>
+                            <div key={batchIndex}>
+                                <Typography variant="h6">Batch {batchIndex + 1}</Typography>
                                 <ul>
-                                    {batch.map(movie => (
-                                        <li key={movie.id}>
-                                            {movie.title} ({formatDuration(movie.durationInSeconds)})
-                                        </li>
+                                    {batch.map((movie) => (
+                                        <li key={movie.id}>{movie.title} ({formatDuration(movie.durationInSeconds)})</li>
                                     ))}
                                 </ul>
-                                <p>
-                                    Total Duration:{" "}
-                                    {formatDuration(
-                                        batch.reduce((sum, movie) => sum + movie.durationInSeconds, 0)
-                                    )}
-                                </p>
                             </div>
                         ))}
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            onClick={generatePDF}
-                        >
-                            Confirm
-                        </Button>
-                    </>
+                    </Box>
+                )}
+                <Autocomplete
+                    freeSolo
+                    options={employees}
+                    value={selectedEmployee}
+                    onChange={(e, newValue) => setSelectedEmployee(newValue)}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Responsible Employee" variant="outlined" fullWidth />
+                    )}
+                    sx={{ mt: 4 }}
+                />
+                <TextField
+                    label="Comments"
+                    variant="outlined"
+                    value={comments}
+                    onChange={(e) => setComments(e.target.value)}
+                    fullWidth
+                    multiline
+                    rows={4}
+                    sx={{ mt: 2 }}
+                />
+                {selectedMovies.length > 0 && (
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        sx={{ mt: 4 }}
+                        onClick={generatePDF}
+                    >
+                        Generate PDF
+                    </Button>
                 )}
             </Box>
             <Footer />

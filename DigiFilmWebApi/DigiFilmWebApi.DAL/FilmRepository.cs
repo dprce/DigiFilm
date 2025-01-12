@@ -55,7 +55,67 @@ namespace DigiFilmWebApi.DAL
 
             return await conn.ExecuteScalarAsync<int>(query, parameters);
         }
-
         
+        public async Task<IEnumerable<Film>> GetAllFilmsAsync()
+        {
+            using IDbConnection conn = CentralConnection;
+
+            var query = "SELECT * FROM [ScannedFilms]";
+
+            var result = await conn.QueryAsync<Film>(query);
+
+            return result;
+        }
+        
+        public async Task<int> InsertBatchAsync(string createdBy, int userId, string status = "U tijeku digitalizacije ")
+        {
+            using IDbConnection conn = CentralConnection;
+
+            var query = @"
+            INSERT INTO Batch (CreatedBy, UserID, Status, CreatedAt)
+            VALUES (@CreatedBy, @UserID, @Status, GETDATE());
+            SELECT CAST(SCOPE_IDENTITY() as int);";
+
+            var parameters = new
+            {
+                CreatedBy = createdBy,
+                UserID = userId,
+                Status = status
+            };
+
+            return await conn.ExecuteScalarAsync<int>(query, parameters);
+        }
+        
+        public async Task InsertBatchFilmsAsync(int batchId, IEnumerable<int> filmIds)
+        {
+            using IDbConnection conn = CentralConnection;
+
+            var query = @"
+            INSERT INTO BatchFilms (BatchID, FilmID)
+            VALUES (@BatchID, @FilmID);";
+
+            var tasks = filmIds.Select(filmId =>
+                conn.ExecuteAsync(query, new { BatchID = batchId, FilmID = filmId }));
+
+            await Task.WhenAll(tasks);
+        }
+        
+        public async Task InsertDigitalizationLogAsync(int batchId, string action, string performedBy)
+        {
+            using IDbConnection conn = CentralConnection;
+
+            var query = @"
+            INSERT INTO DigitalizationLogs (BatchID, Action, PerformedBy, Timestamp)
+            VALUES (@BatchID, @Action, @PerformedBy, GETDATE());";
+
+            var parameters = new
+            {
+                BatchID = batchId,
+                Action = action,
+                PerformedBy = performedBy
+            };
+
+            await conn.ExecuteAsync(query, parameters);
+        }
     }
 }
