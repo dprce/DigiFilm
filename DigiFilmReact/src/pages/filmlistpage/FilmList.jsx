@@ -3,9 +3,8 @@ import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
 import "./FilmList.css";
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
-import {Button, Box, Typography, TextField, MenuItem, Select, Autocomplete} from "@mui/material";
+import {Button, Box, Typography, TextField, Autocomplete} from "@mui/material";
 import { jsPDF } from 'jspdf';
-import { user } from "@nextui-org/theme";
 
 const FilmList = () => {
     const [movies, setMovies] = useState([]);
@@ -82,9 +81,9 @@ const FilmList = () => {
         if(query.trim() === ""){
             setFilteredMovies(movies);
         } else {
-            const lowerCaseQuery = searchQuery.toLowerCase();
+            const lowerCaseQuery = query.toLowerCase();
             const result = movies.filter((movie) =>
-                movie.title.toLowerCase().includes(lowerCaseQuery)
+                movie.title.toLowerCase().includes(lowerCaseQuery) || movie.barcode.toLowerCase().includes(lowerCaseQuery)
             );
             setFilteredMovies(result);
         }
@@ -103,7 +102,7 @@ const FilmList = () => {
             let remainingTime = maxBatchDuration;
 
             moviesWithSeconds.sort((a, b) => b.durationInSeconds - a.durationInSeconds);
-
+            /*
             for (let i = moviesWithSeconds.length - 1; i >= 0; i--) {
                 if (moviesWithSeconds[i].durationInSeconds <= remainingTime) {
                     currentBatch.push(moviesWithSeconds[i]);
@@ -111,6 +110,17 @@ const FilmList = () => {
                     moviesWithSeconds.splice(i, 1);
                 }
             }
+            */
+
+            for (let i = 0; i < moviesWithSeconds.length; i++) {
+                if (moviesWithSeconds[i].durationInSeconds <= remainingTime) {
+                    currentBatch.push(moviesWithSeconds[i]);
+                    remainingTime -= moviesWithSeconds[i].durationInSeconds;
+                    moviesWithSeconds.splice(i, 1);
+                    i--;
+                }
+            }
+
 
             groupedBatches.push(currentBatch);
         }
@@ -175,6 +185,14 @@ const FilmList = () => {
             doc.addPage();
             yPosition = 20;
         }
+
+        const pageCount = doc.internal.getNumberOfPages();
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+        doc.setPage(pageCount);
+
+        doc.text("Signature: ", pageWidth - 90, pageHeight - 25);
+        doc.line(pageWidth - 70, pageHeight - 25, pageWidth - 10, pageHeight - 25);
 
         doc.save(`Digitalization_${new Date().toISOString()}.pdf`);
         for (let i = 0; i < selectedMovies.length; i++){
