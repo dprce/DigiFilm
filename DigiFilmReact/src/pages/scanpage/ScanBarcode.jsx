@@ -17,7 +17,11 @@ const ScanBarcode = () => {
                 width="100%"
                 height={500}
                 onUpdate={(err, result) => {
-                    if(result) setData(result.text); //TU NAVIGIRATI NA EDITDATA AKO USPJEŠNO SKENIRANO
+                    //if(result) setData(result.text); //TU NAVIGIRATI NA EDITDATA AKO USPJEŠNO SKENIRANO
+                    if(result) {
+                        setData(result.text);
+                        navigate("/editData");
+                    }
                     else setData("Not Found");
                 }}
             />

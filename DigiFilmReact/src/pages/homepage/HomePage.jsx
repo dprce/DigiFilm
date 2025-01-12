@@ -5,43 +5,62 @@ import "./HomePage.css";
 import { useNavigate } from "react-router-dom";
 import {Button} from "@mui/material";
 
-const HomePage = () => {
+const HomePage = (/*{userRole}*/) => {
     const navigate = useNavigate();
 
     return (
         <div className="homepage">
             <Header/>
+            <div style={{display: "flex", justifyContent: "center"}}>
+                <h1 style={{fontSize: '70px', color: '#5d4037',}}>Welcome to DigiFilm!</h1>
+            </div>
             <div className="list_buttons">
-            <Button  sx={{
-                backgroundColor: "#fafafa",
-                color: "#212121",
-                '&:hover': {
-                    backgroundColor: "#9e9e9e",
-                },
-            }}
-                     onClick={() => navigate("/scanBarcode")}>
-                Scan barcode
-            </Button>
-            <Button  sx={{
-                backgroundColor: "#fafafa",
-                color: "#212121",
-                '&:hover': {
-                    backgroundColor: "#9e9e9e",
-                },
-            }}
-                     onClick={() => navigate("/filmList")}>
-                Film List
-            </Button>
-            <Button  sx={{
-                backgroundColor: "#fafafa",
-                color: "#212121",
-                '&:hover': {
-                    backgroundColor: "#9e9e9e",
-                },
-            }}
-                     onClick={() => navigate("/sessionList")}>
-                Session List
-            </Button>
+                {/*{userRole !== "readOnly" && (*/}
+                    <Button sx={{
+                        backgroundColor: "#fafafa",
+                        color: "#212121",
+                        '&:hover': {
+                            backgroundColor: "#9e9e9e",
+                        },
+                    }}
+                            onClick={() => navigate("/scanBarcode")}>
+                        Scan barcode
+                    </Button>
+                {/*}  )}  */}
+                <Button  sx={{
+                    backgroundColor: "#fafafa",
+                    color: "#212121",
+                    '&:hover': {
+                        backgroundColor: "#9e9e9e",
+                    },
+                }}
+                         onClick={() => navigate("/filmList")}>
+                    Film List
+                </Button>
+                <Button  sx={{
+                    backgroundColor: "#fafafa",
+                    color: "#212121",
+                    '&:hover': {
+                        backgroundColor: "#9e9e9e",
+                    },
+                }}
+                         onClick={() => navigate("/sessionList")}>
+                    Session List
+                </Button>
+                {/*
+                {userRole === "admin" && (
+                    <Button  sx={{
+                        backgroundColor: "#fafafa",
+                        color: "#212121",
+                        '&:hover': {
+                            backgroundColor: "#9e9e9e",
+                        },
+                    }}
+                             onClick={() => navigate("/filmList")}>
+                        Add employee
+                    </Button>
+                )}
+                */}
             </div>
             <Footer />
         </div>

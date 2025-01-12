@@ -1,0 +1,6 @@
+[
+  { "id": 1, "movies": ["Movie 1", "Movie 2"], "totalDuration": "00:45:00", "employee": "Alice Johnson" },
+  { "id": 2, "movies": ["Movie 3", "Movie 4"], "totalDuration": "00:35:15", "employee": "Bob Smith"},
+  { "id": 3, "movies": ["Movie 5", "Movie 6", "Movie 7"], "totalDuration": "00:40:20", "employee": "Charlie Lee"},
+  { "id": 4, "movies": ["Movie 8", "Movie 9", "Movie 10"], "totalDuration": "00:40:20", "employee": "Charlie Lee"}
+]

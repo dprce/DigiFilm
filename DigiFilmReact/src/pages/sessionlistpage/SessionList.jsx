@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
 import "./SessionList.css";
@@ -8,12 +8,19 @@ import { jsPDF } from 'jspdf';
 import {user} from "@nextui-org/theme";
 
 const SessionList = () => {
-    const [batches, setBatches] = useState([
-        { id: 1, movies: ["Movie 1", "Movie 2"], totalDuration: "00:45:00" },
-        { id: 2, movies: ["Movie 3", "Movie 4"], totalDuration: "00:35:15" },
-        { id: 3, movies: ["Movie 5", "Movie 6", "Movie 7"], totalDuration: "00:40:20" },
-    ]);
+    const [batches, setBatches] = useState([]);
     const [selectedBatches, setSelectedBatches] = useState([]);
+    const [doneBatches, setDoneBatches] = useState([]);
+
+    useEffect(() => {
+        const fetchBatches = async () => {
+            const response = await fetch('/batches.json');
+            const data = await response.json();
+            setBatches(data);
+        }
+
+        fetchBatches();
+    }, []);
 
     const handleSelectBatch = (id) => {
         if(selectedBatches.includes(id)){
@@ -41,9 +48,15 @@ const SessionList = () => {
             const batch = batches.find(b => b.id === batchId);
             doc.text(`${index +1}. Batch ${batchId}`, 20, yPosition);
             yPosition = yPosition + 10;
-            doc.text(`  Movies: ${batch.movies.join(", ")}`, 20, yPosition);
+            doc.text(`  Movies:`, 20, yPosition);
             yPosition = yPosition + 10;
+            for(let i = 0; i < batch.movies.length; i++) {
+                doc.text(`      ${batch.movies[i]}`, 20, yPosition);
+                yPosition = yPosition + 10;
+            }
             doc.text(`  Total duration: ${batch.totalDuration}`, 20, yPosition);
+            yPosition = yPosition + 10;
+            doc.text(`  Responsible employee: ${batch.employee}`, 20, yPosition);
             yPosition = yPosition + 10;
 
             if (yPosition > 270) {
@@ -52,10 +65,29 @@ const SessionList = () => {
             }
         });
 
+        const pageCount = doc.internal.getNumberOfPages();
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+        doc.setPage(pageCount);
+
+        doc.text("Signature: ", pageWidth - 90, pageHeight - 25);
+        doc.line(pageWidth - 70, pageHeight - 25, pageWidth - 10, pageHeight - 25);
+
         doc.save(`CompletionReport_${new Date().toISOString()}.pdf`);
 
         setBatches(batches.filter(batch => !selectedBatches.includes(batch.id)));
         setSelectedBatches([]);
+
+        const now = new Date();
+        setDoneBatches(prevDoneBatches => [
+            ...prevDoneBatches,
+            ...batches
+                .filter(batch => selectedBatches.includes(batch.id))
+                .map(batch => ({
+                    ...batch,
+                    returnedAt: now,
+                })),
+        ]);
     }
 
     return (
@@ -69,6 +101,7 @@ const SessionList = () => {
                         <TableColumn>BATCH ID</TableColumn>
                         <TableColumn>MOVIES</TableColumn>
                         <TableColumn>TOTAL DURATION</TableColumn>
+                        <TableColumn>RESPONSIBLE EMPLOYEE</TableColumn>
                     </TableHeader>
                     <TableBody>
                         {batches.map(batch => (
@@ -81,8 +114,15 @@ const SessionList = () => {
                                     />
                                 </TableCell>
                                 <TableCell>{batch.id}</TableCell>
-                                <TableCell>{batch.movies.join(", ")}</TableCell>
+                                <TableCell>
+                                    <ul style={{ listStyleType: 'none' }}>
+                                        {batch.movies.map((movie, index) => (
+                                            <li key={index}>{movie}</li>
+                                        ))}
+                                    </ul>
+                                </TableCell>
                                 <TableCell>{batch.totalDuration}</TableCell>
+                                <TableCell>{batch.employee}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -98,9 +138,41 @@ const SessionList = () => {
                         Confirm
                     </Button>
                 )}
+
+                {doneBatches.length > 0 && (
+                    <>
+                        <h2>Returned batches</h2>
+                        <Table aria-label="done sessions">
+                            <TableHeader>
+                                <TableColumn>BATCH ID</TableColumn>
+                                <TableColumn>MOVIES</TableColumn>
+                                <TableColumn>TOTAL DURATION</TableColumn>
+                                <TableColumn>RESPONSIBLE EMPLOYEE</TableColumn>
+                                <TableColumn>DATE AND TIME</TableColumn>
+                            </TableHeader>
+                            <TableBody>
+                                {doneBatches.map(batch => (
+                                    <TableRow key={batch.id}>
+                                        <TableCell>{batch.id}</TableCell>
+                                        <TableCell>
+                                            <ul style={{listStyleType: 'none'}}>
+                                                {batch.movies.map((movie, index) => (
+                                                    <li key={index}>{movie}</li>
+                                                ))}
+                                            </ul>
+                                        </TableCell>
+                                        <TableCell>{batch.totalDuration}</TableCell>
+                                        <TableCell>{batch.employee}</TableCell>
+                                        <TableCell>{batch.returnedAt.toLocaleDateString("de-DE")}, {batch.returnedAt.toLocaleTimeString("de-DE")}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </>
+                )}
             </Box>
 
-            <Footer />
+            <Footer/>
         </div>
     )
 }
