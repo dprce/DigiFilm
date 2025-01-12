@@ -49,36 +49,44 @@ namespace DigiFilmWebApi.Controllers
 
         [Authorize]
         [HttpGet("post-login-redirect")]
-        public IActionResult PostLoginRedirect() => Redirect("http://localhost:5173/home");
+        public IActionResult PostLoginRedirect() => Redirect("https://localhost:5173/home");
         
-        [Authorize]
         [HttpGet("post-login")]
         public async Task<IActionResult> PostLogin()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Return JSON response for unauthorized access
+                return Unauthorized(new
+                {
+                    Error = "User is not authenticated."
+                });
+            }
+
             // Extract user information from claims
             var userEmail = User.FindFirst("preferred_username")?.Value;
-        
+
             if (string.IsNullOrEmpty(userEmail))
             {
                 return Unauthorized("Email claim is missing.");
             }
-        
+
             // Check if user exists in the database
             var user = await _userRepositoryInterface.GetUserByEmailAsync(userEmail);
-        
+
             if (user == null)
             {
                 return Unauthorized("User not found in the system.");
             }
-        
+
             // Generate JWT and Refresh Token
             var accessToken = GenerateJwtToken(user);
             var refreshTokenPlain = GenerateRefreshToken();
             var refreshTokenHashed = _passwordService.HashPassword(refreshTokenPlain);
-        
+
             // Store refresh token in the database
             await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, refreshTokenHashed);
-        
+
             // Return tokens as response
             return Ok(new
             {
@@ -129,12 +137,21 @@ namespace DigiFilmWebApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterNewEmployeeRequest request)
         {
+            Console.WriteLine("Checking claims in Register endpoint:");
+
+            foreach (var claim in User.Claims)
+            {
+                Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+            }
 
             var tenantIdClaim = User.FindFirst("TenantId");
             if (tenantIdClaim == null)
             {
+                Console.WriteLine("TenantId claim is missing.");
                 return Unauthorized("Tenant ne postoji.");
             }
+
+            Console.WriteLine($"TenantId found: {tenantIdClaim.Value}");
 
             int tenantId = int.Parse(tenantIdClaim.Value);
 
@@ -152,6 +169,7 @@ namespace DigiFilmWebApi.Controllers
                 return StatusCode(500, new { message = "Dogodila se greška pri registraciji zaposlenika.", details = ex.Message });
             }
         }
+
 
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)

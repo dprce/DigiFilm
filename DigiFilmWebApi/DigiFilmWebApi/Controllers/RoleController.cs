@@ -19,10 +19,18 @@ namespace DigiFilmWebApi.Controllers
           _configuration = configuration;
         }
 
-        [Authorize]
         [HttpGet("all-roles")]
         public async Task<IActionResult> GetAllRoles()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Return JSON response for unauthorized access
+                return Unauthorized(new
+                {
+                    Error = "User is not authenticated."
+                });
+            }
+            
             var roles = await _roleService.GetAllRolesAsync();
 
             return Ok(new {roles = roles, message = "Role uspješno dohvaćene." });
