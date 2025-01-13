@@ -12,5 +12,9 @@ namespace DigiFilmWebApi.DAL
         Task<int> InsertBatchAsync(string createdBy, int userId, string status = "U tijeku digitalizacije ");
         Task InsertBatchFilmsAsync(int batchId, IEnumerable<int> filmIds);
         Task InsertDigitalizationLogAsync(int batchId, string action, string performedBy);
+        Task<IEnumerable<BatchListDAO>> GetAllBatchesAsync();
+        Task UpdateBatchStatusAsync(int batchId, string status);
+        Task UpdateMoviesStatusInBatchAsync(int batchId, string status);
+        Task LogBatchCompletionAsync(int batchId, string performedBy);
     }
 }
