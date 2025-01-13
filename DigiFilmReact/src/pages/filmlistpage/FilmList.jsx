@@ -4,7 +4,7 @@ import Footer from "../../components/Footer.jsx";
 import { Box, Typography, TextField, Autocomplete, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { jsPDF } from 'jspdf';
 import "./FilmList.css";
-
+import { fetchUsers } from '../../api/RoleApi.jsx';
 // Fetch films from backend
 export async function fetchFilms() {
     try {
@@ -37,9 +37,10 @@ const FilmList = () => {
     const [batches, setBatches] = useState([]);
     const [totalSelectedDuration, setTotalSelectedDuration] = useState(0);
     const [warning, setWarning] = useState(false);
-    const [employees, setEmployees] = useState([]);
+    //const [employees, setEmployees] = useState([]);
     const [selectedEmployee, setSelectedEmployee] = useState();
     const [comments, setComments] = useState("");
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -61,13 +62,16 @@ const FilmList = () => {
     }, []);
 
     useEffect(() => {
-        const fetchEmployees = async () => {
-            const response = await fetch('/employees.json');
-            const data = await response.json();
-            setEmployees(data);
+        const loadUsers = async () => {
+            const data = await fetchUsers(); // Fetch users from the API
+            const mappedUsers = data.map(user => ({
+                label: `${user.firstName} ${user.lastName}`, // Concatenate first and last name
+                id: user.id, // Use unique identifier for user
+            }));
+            setUsers(mappedUsers); // Set users in state
         };
 
-        fetchEmployees();
+        loadUsers();
     }, []);
 
     const parseDuration = (duration) => {
@@ -154,7 +158,7 @@ const FilmList = () => {
         setTotalSelectedDuration(0);
         setWarning(false);
     };
-    
+
     const generatePDF = () => {
         if (!selectedEmployee) {
             alert("Please select an employee before generating the PDF.");
@@ -163,7 +167,7 @@ const FilmList = () => {
 
         const doc = new jsPDF();
         doc.setFontSize(16);
-        doc.text("Report: archive material digitalization", 20, 20);
+        doc.text("Report: Archive material digitalization", 20, 20);
 
         doc.setFontSize(12);
         doc.text(`Employee: ${selectedEmployee}`, 20, 30);
@@ -240,7 +244,7 @@ const FilmList = () => {
                                             type="checkbox"
                                             checked={selectedMovies.includes(movie)}
                                             onChange={() => handleSelect(movie.id)}
-                                            disabled={movie.status != "Not Digitalized"} // Disable for digitalized films
+                                            disabled={movie.status === "Digitalized"}
                                         />
                                     </TableCell>
                                     <TableCell>{movie.title}</TableCell>
@@ -269,15 +273,21 @@ const FilmList = () => {
                     </Box>
                 )}
                 <Autocomplete
-                    freeSolo
-                    options={employees}
-                    value={selectedEmployee}
-                    onChange={(e, newValue) => setSelectedEmployee(newValue)}
+                    options={users} // List of users
+                    value={selectedEmployee} // Currently selected employee
+                    getOptionLabel={(option) => option.label} // Display concatenated first and last name
+                    onChange={(e, newValue) => setSelectedEmployee(newValue)} // Update selected employee
+                    renderOption={(props, option) => (
+                        <li {...props} key={option.id}> {/* Use unique `id` as the key */}
+                            {option.label}
+                        </li>
+                    )}
                     renderInput={(params) => (
                         <TextField {...params} label="Responsible Employee" variant="outlined" fullWidth />
                     )}
                     sx={{ mt: 4 }}
                 />
+
                 <TextField
                     label="Comments"
                     variant="outlined"
@@ -303,5 +313,7 @@ const FilmList = () => {
         </div>
     );
 };
+
+
 
 export default FilmList;
