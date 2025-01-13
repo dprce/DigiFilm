@@ -6,5 +6,5 @@ public class BatchListDAO
     public string Movies { get; set; }           
     public string TotalDuration { get; set; }    
     public string Status { get; set; }  
-    public string PerformedBy { get; set; }
+    public string CreatedBy { get; set; }
 }
