@@ -126,5 +126,47 @@ namespace DigiFilmWebApi.Controllers
                 return StatusCode(500, new { Error = "An error occurred while logging batch action.", Details = ex.Message });
             }
         }
+        
+        [HttpGet("get-all-batches")]
+        public async Task<IActionResult> GetAllBatches()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Return JSON response for unauthorized access
+                //return Unauthorized(new
+                //{
+                   // Error = "User is not authenticated."
+                //});
+            }
+            Console.WriteLine(User.Identity.Name);
+            var batches = await _filmService.GetAllBatchesAsync();
+
+            return Ok(new { batches = batches, message = "All batches successfully retrieved." });
+        }
+        
+        [HttpPost("complete-batch")]
+        public async Task<IActionResult> CompleteBatch([FromBody] List<LogBatchActionRequest> batchRequests)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                //return Unauthorized(new { Error = "User is not authenticated." });
+            }
+
+            try
+            {
+                foreach (var batchRequest in batchRequests)
+                {
+                    // Complete the batch
+                    await _filmService.CompleteBatchAsync(batchRequest.BatchId, batchRequest.PerformedBy);
+                }
+
+                return Ok(new { message = "Batches and movies successfully updated." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while completing the batches.", details = ex.Message });
+            }
+        }
+
     }
 }
