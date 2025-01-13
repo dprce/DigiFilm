@@ -113,4 +113,11 @@ public class UserRepository : DALBaseClass, UserRepositoryInterface
             });
         }
     }
+
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        using IDbConnection conn = CentralConnection;
+        var result = await conn.QueryAsync<User>("SELECT * FROM [User]");
+        return result.ToList();
+    }
 }
