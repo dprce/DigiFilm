@@ -71,4 +71,48 @@ export async function fetchFilms() {
     }
 }
 
+export async function fetchBatches() {
+    try {
+        const response = await fetch(`https://localhost:7071/Film/get-all-batches`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include', // Include cookies or credentials
+        });
 
+        if (response.ok) {
+            const data = await response.json();
+            return data.batches; // Assuming 'films' is the key in the API response containing the film list
+        } else {
+            console.error('Failed to fetch films. Status:', response.status);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error fetching films:', error);
+        return [];
+    }
+}
+
+export async function fetchUsers() {
+    try {
+        const response = await fetch(`https://localhost:7071/User/all-users`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include', // Include cookies or credentials
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.users; // Assuming 'films' is the key in the API response containing the film list
+        } else {
+            console.error('Failed to fetch films. Status:', response.status);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error fetching films:', error);
+        return [];
+    }
+}
