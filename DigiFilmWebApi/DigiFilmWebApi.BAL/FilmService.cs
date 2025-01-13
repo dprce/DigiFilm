@@ -52,5 +52,23 @@ namespace DigiFilmWebApi.BAL
         {
             await _filmRepository.InsertDigitalizationLogAsync(batchId, action, performedBy);
         }
+        
+        public async Task<IEnumerable<BatchListDAO>> GetAllBatchesAsync()
+        {
+            return await _filmRepository.GetAllBatchesAsync();
+        }
+        
+        public async Task CompleteBatchAsync(int batchId, string performedBy)
+        {
+            // Update batch status to "Digitized"
+            await _filmRepository.UpdateBatchStatusAsync(batchId, "Digitalized");
+
+            // Update all movies in the batch to "Digitized"
+            await _filmRepository.UpdateMoviesStatusInBatchAsync(batchId, "Digitalized");
+
+            // Log the completion in the digitization logs
+            await _filmRepository.LogBatchCompletionAsync(batchId, performedBy);
+        }
+
     }
 }
