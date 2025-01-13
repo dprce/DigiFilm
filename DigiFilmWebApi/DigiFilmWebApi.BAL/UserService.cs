@@ -71,4 +71,11 @@ public class UserService
 
         return roles;
     }
+    
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        var users = await _userRepositoryInterface.GetAllUsersAsync();
+
+        return users;
+    }
 }
