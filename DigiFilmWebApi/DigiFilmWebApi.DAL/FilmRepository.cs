@@ -11,7 +11,6 @@ namespace DigiFilmWebApi.DAL
     {
         public FilmRepository(IConfiguration config) : base(config)
         {
-
         }
 
         public async Task<Film> GetFilmByBarcodeAsync(string barcode)
@@ -21,7 +20,7 @@ namespace DigiFilmWebApi.DAL
                 new { Barcode = barcode });
             return result.FirstOrDefault();
         }
-        
+
         public async Task<int> InsertScannedFilmAsync(Film film)
         {
             using IDbConnection conn = CentralConnection;
@@ -55,7 +54,7 @@ namespace DigiFilmWebApi.DAL
 
             return await conn.ExecuteScalarAsync<int>(query, parameters);
         }
-        
+
         public async Task<IEnumerable<Film>> GetAllFilmsAsync()
         {
             using IDbConnection conn = CentralConnection;
@@ -66,8 +65,9 @@ namespace DigiFilmWebApi.DAL
 
             return result;
         }
-        
-        public async Task<int> InsertBatchAsync(string createdBy, int userId, string status = "U tijeku digitalizacije ")
+
+        public async Task<int> InsertBatchAsync(string createdBy, int userId,
+            string status = "In progress")
         {
             using IDbConnection conn = CentralConnection;
 
@@ -85,7 +85,7 @@ namespace DigiFilmWebApi.DAL
 
             return await conn.ExecuteScalarAsync<int>(query, parameters);
         }
-        
+
         public async Task InsertBatchFilmsAsync(int batchId, IEnumerable<int> filmIds)
         {
             using IDbConnection conn = CentralConnection;
@@ -99,7 +99,7 @@ namespace DigiFilmWebApi.DAL
 
             await Task.WhenAll(tasks);
         }
-        
+
         public async Task InsertDigitalizationLogAsync(int batchId, string action, string performedBy)
         {
             using IDbConnection conn = CentralConnection;
@@ -117,5 +117,62 @@ namespace DigiFilmWebApi.DAL
 
             await conn.ExecuteAsync(query, parameters);
         }
+
+        public async Task<IEnumerable<BatchListDAO>> GetAllBatchesAsync()
+        {
+            using (IDbConnection conn = CentralConnection)
+            {
+                var procedureName = "GetAllBatches"; // Stored procedure name
+                return await conn.QueryAsync<BatchListDAO>(procedureName, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public async Task UpdateBatchStatusAsync(int batchId, string status)
+        {
+            using IDbConnection conn = CentralConnection;
+
+            var query = "UPDATE Batch SET Status = @Status WHERE BatchID = @BatchID";
+
+            var parameters = new { BatchID = batchId, Status = status };
+
+            await conn.ExecuteAsync(query, parameters);
+        }
+
+        public async Task UpdateMoviesStatusInBatchAsync(int batchId, string status)
+        {
+            using IDbConnection conn = CentralConnection;
+
+            var query = @"
+        UPDATE ScannedFilms
+        SET Status = @Status
+        WHERE Id IN (
+            SELECT FilmID
+            FROM BatchFilms
+            WHERE BatchID = @BatchID
+        )";
+
+            var parameters = new { BatchID = batchId, Status = status };
+
+            await conn.ExecuteAsync(query, parameters);
+        }
+        
+        public async Task LogBatchCompletionAsync(int batchId, string performedBy)
+        {
+            using IDbConnection conn = CentralConnection;
+
+            var query = @"
+        INSERT INTO DigitalizationLogs (BatchID, Action, PerformedBy, Timestamp)
+        VALUES (@BatchID, @Action, @PerformedBy, GETDATE())";
+
+            var parameters = new
+            {
+                BatchID = batchId,
+                Action = "Finished",
+                PerformedBy = performedBy
+            };
+
+            await conn.ExecuteAsync(query, parameters);
+        }
+
     }
 }
