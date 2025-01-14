@@ -173,6 +173,5 @@ namespace DigiFilmWebApi.DAL
 
             await conn.ExecuteAsync(query, parameters);
         }
-
     }
 }

@@ -2,6 +2,7 @@ namespace DigiFilmWebApi.Modeli;
 
 public class Film
 {
+    public int Id { get; set; }
     public string IDEmisije { get; set; }
     public string OriginalniNaslov { get; set; }
     public string RadniNaslov { get; set; }

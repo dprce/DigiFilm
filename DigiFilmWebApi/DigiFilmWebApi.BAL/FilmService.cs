@@ -42,6 +42,8 @@ namespace DigiFilmWebApi.BAL
                 {
                     await _filmRepository.InsertBatchFilmsAsync(batchId, new List<int> { filmId });
                 }
+                
+                await _filmRepository.UpdateMoviesStatusInBatchAsync(batchId, "In Progress");
 
                 // Step 3: Log the batch creation
                 await _filmRepository.InsertDigitalizationLogAsync(batchId, "Created", createdBy);

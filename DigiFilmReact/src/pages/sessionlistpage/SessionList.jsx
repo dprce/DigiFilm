@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
-import { Box, Typography, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Autocomplete } from "@mui/material";
+import { Box, Typography, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Autocomplete, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { jsPDF } from 'jspdf';
 import "./SessionList.css";
 import { fetchBatches } from '../../api/RoleApi.jsx'; // Adjust as needed
 import { fetchUsers } from '../../api/RoleApi.jsx';
 import { sendReturnedBatches } from '../../api/RoleApi.jsx'; // <--- Import your helper function
 import Navbar from '../../components/Navbar.jsx';
-
 
 const SessionList = () => {
   const [batches, setBatches] = useState([]);
@@ -18,6 +17,9 @@ const SessionList = () => {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false); // Spinner state
+  const [dialogOpen, setDialogOpen] = useState(false); // Dialog state
+  const [dialogMessage, setDialogMessage] = useState(""); // Dialog message
 
   useEffect(() => {
     const fetchBatchData = async () => {
@@ -68,152 +70,198 @@ const SessionList = () => {
     } else {
       const lowerCaseQuery = query.toLowerCase();
       const result = batches.filter(batch =>
-        batch.movies.join(", ").toLowerCase().includes(lowerCaseQuery) ||
-        batch.id.toString().includes(lowerCaseQuery) ||
-        batch.totalDuration.toLowerCase().includes(lowerCaseQuery) ||
-        (batch.status && batch.status.toLowerCase().includes(lowerCaseQuery))
+          batch.movies.join(", ").toLowerCase().includes(lowerCaseQuery) ||
+          batch.id.toString().includes(lowerCaseQuery) ||
+          batch.totalDuration.toLowerCase().includes(lowerCaseQuery) ||
+          (batch.status && batch.status.toLowerCase().includes(lowerCaseQuery))
       );
       setFilteredBatches(result);
     }
   };
 
   const generatePDF = async () => {
-    if(!selectedEmployee){
-        alert("Please select your name from the dropdown menu.");
-        return;
+    if (!selectedEmployee) {
+      alert("Please select your name from the dropdown menu.");
+      return;
     }
-    // 1) Send selected batches to your backend
+
     try {
+      setLoading(true); // Show spinner
+
+      // 1) Send selected batches to your backend
       await sendReturnedBatches(selectedBatches, batches, selectedEmployee?.label);
       console.log("Selected batches successfully sent to backend");
+
+      // 2) Generate the PDF
+      const doc = new jsPDF();
+
+      doc.setFontSize(16);
+      doc.text("Report: Returned archive material", 20, 20);
+
+      let yPosition = 60;
+
+      doc.setFontSize(12);
+      doc.text(`Employee: ${selectedEmployee?.label}`, 20, 30);
+      doc.text(`Return date: ${new Date().toLocaleDateString()}`, 20, 40);
+      doc.text(`Return time: ${new Date().toLocaleTimeString()}`, 20, 50);
+      yPosition += 10;
+
+      selectedBatches.forEach((batchId, index) => {
+        const batch = batches.find(b => b.id === batchId);
+
+        doc.text(`${index + 1}. Batch ${batchId}`, 20, yPosition);
+        yPosition += 10;
+
+        doc.text(`  Sent to digitalization by: ${batch.createdBy}`, 20, yPosition);
+        yPosition += 10;
+
+        doc.text(`  Films in batch: ${batch.movies}`, 20, yPosition);
+        yPosition += 10;
+
+        doc.text(`  Total duration of batch: ${batch.totalDuration}`, 20, yPosition);
+        yPosition += 10;
+
+        // Handle page overflow
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = 20;
+        }
+      });
+
+      doc.save(`Digitalization_${new Date().toISOString()}.pdf`);
+
+      // Optional: Clear selected batches if desired
+      setSelectedBatches([]);
+
+      // Show success message
+      setDialogMessage("Batches successfully returned and PDF generated.");
+      setDialogOpen(true);
     } catch (error) {
       console.error("Error sending data to backend:", error);
-      // handle error gracefully if needed
+      setDialogMessage("An error occurred while processing the request.");
+      setDialogOpen(true);
+    } finally {
+      setLoading(false); // Hide spinner
     }
+  };
 
-    // 2) Generate the PDF
-    const doc = new jsPDF();
-
-    doc.setFontSize(16);
-    doc.text("Report: Returned archive material", 20, 20);
-
-    let yPosition = 60;
-
-    doc.setFontSize(12);
-    doc.text(`Employee: ${selectedEmployee?.label}`, 20, 30);
-    doc.text(`Return date: ${new Date().toLocaleDateString()}`, 20, 40);
-    doc.text(`Return time: ${new Date().toLocaleTimeString()}`, 20, 50);
-    yPosition += 10;
-
-    selectedBatches.forEach((batchId, index) => {
-      const batch = batches.find(b => b.id === batchId);
-
-      doc.text(`${index + 1}. Batch ${batchId}`, 20, yPosition);
-      yPosition += 10;
-
-      doc.text(`  Sent to digitalization by: ${batch.createdBy}`, 20, yPosition);
-      yPosition += 10;
-
-      doc.text(`  Films in batch: ${batch.movies}`, 20, yPosition);
-      yPosition += 10;
-
-      doc.text(`  Total duration of batch: ${batch.totalDuration}`, 20, yPosition);
-      yPosition += 10;
-
-      // Handle page overflow
-      if (yPosition > 270) {
-        doc.addPage();
-        yPosition = 20;
-      }
-    });
-
-    doc.save(`Digitalization_${new Date().toISOString()}.pdf`);
-
-    // Optional: Clear selected batches if desired
-    setSelectedBatches([]);
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    window.location.reload(); // Reload page
   };
 
   return (
-    <div className="sessionlist">
-      <Navbar /> {/* Add the Navbar here */}
-      <Header />
-      <Box sx={{ padding: "20px" }}>
-        <Typography variant="h4" gutterBottom>
-          Batch List
-        </Typography>
-        <Box display="flex" alignItems="center" gap={2} mb={2}>
-          <TextField
-            label="Search"
-            variant="outlined"
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-            fullWidth
-          />
-        </Box>
-        <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Select</TableCell>
-                <TableCell>Batch Number</TableCell>
-                <TableCell>Movies</TableCell>
-                <TableCell>Total Duration</TableCell>
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredBatches.map((batch) => (
-                <TableRow key={batch.id} hover>
-                  <TableCell>
-                    <input
-                      type="checkbox"
-                      checked={selectedBatches.includes(batch.id)}
-                      onChange={() => handleSelectBatch(batch.id)}
-                      disabled={batch.status === "Digitalized"}
-                    />
-                  </TableCell>
-                  <TableCell>{batch.id}</TableCell>
-                  <TableCell>{batch.movies}</TableCell>
-                  <TableCell>{batch.totalDuration}</TableCell>
-                  <TableCell>{batch.status}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Autocomplete
-          options={users}
-          value={selectedEmployee}
-          getOptionLabel={(option) => option.label}
-          onChange={(e, newValue) => setSelectedEmployee(newValue)}
-          renderOption={(props, option) => (
-            <li {...props} key={option.id}>
-              {option.label}
-            </li>
-          )}
-          renderInput={(params) => (
+      <div className="sessionlist">
+        <Navbar /> {/* Add the Navbar here */}
+        <Header />
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="h4" gutterBottom>
+            Batch List
+          </Typography>
+          <Box display="flex" alignItems="center" gap={2} mb={2}>
             <TextField
-              {...params}
-              label="Responsible Employee"
-              variant="outlined"
-              fullWidth
+                label="Search"
+                variant="outlined"
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                fullWidth
             />
+          </Box>
+          <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Select</TableCell>
+                  <TableCell>Batch Number</TableCell>
+                  <TableCell>Movies</TableCell>
+                  <TableCell>Total Duration</TableCell>
+                  <TableCell>Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredBatches.map((batch) => (
+                    <TableRow key={batch.id} hover>
+                      <TableCell>
+                        <input
+                            type="checkbox"
+                            checked={selectedBatches.includes(batch.id)}
+                            onChange={() => handleSelectBatch(batch.id)}
+                            disabled={batch.status === "Digitalized"}
+                        />
+                      </TableCell>
+                      <TableCell>{batch.id}</TableCell>
+                      <TableCell>{batch.movies}</TableCell>
+                      <TableCell>{batch.totalDuration}</TableCell>
+                      <TableCell>{batch.status}</TableCell>
+                    </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Autocomplete
+              options={users}
+              value={selectedEmployee}
+              getOptionLabel={(option) => option.label}
+              onChange={(e, newValue) => setSelectedEmployee(newValue)}
+              renderOption={(props, option) => (
+                  <li {...props} key={option.id}>
+                    {option.label}
+                  </li>
+              )}
+              renderInput={(params) => (
+                  <TextField
+                      {...params}
+                      label="Responsible Employee"
+                      variant="outlined"
+                      fullWidth
+                  />
+              )}
+              sx={{ mt: 4 }}
+          />
+          {selectedBatches.length > 0 && (
+              <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={generatePDF}
+                  style={{ marginTop: "20px" }}
+              >
+                Generate PDF
+              </Button>
           )}
-          sx={{ mt: 4 }}
-        />
-        {selectedBatches.length > 0 && (
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={generatePDF}
-            style={{ marginTop: "20px" }}
-          >
-            Generate PDF
-          </Button>
+        </Box>
+        {loading && (
+            <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  backgroundColor: "rgba(0, 0, 0, 0.3)",
+                  zIndex: 1000,
+                }}
+            >
+              <CircularProgress size={80} />
+            </Box>
         )}
-      </Box>
-      <Footer />
-    </div>
+
+        <Dialog open={dialogOpen} onClose={handleDialogClose}>
+          <DialogTitle>Confirmation</DialogTitle>
+          <DialogContent>
+            <DialogContentText>{dialogMessage}</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Footer />
+      </div>
   );
 };
 

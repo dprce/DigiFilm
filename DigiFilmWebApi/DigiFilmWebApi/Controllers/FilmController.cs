@@ -169,6 +169,5 @@ namespace DigiFilmWebApi.Controllers
                 return StatusCode(500, new { error = "An error occurred while completing the batches.", details = ex.Message });
             }
         }
-
     }
 }

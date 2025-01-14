@@ -33,14 +33,14 @@ const Navbar = () => {
                     </Button>
                     <Button
                         color="inherit"
-                        onClick={() => navigate('/filmList')}
+                        onClick={() => navigate('/sessionList')}
                         sx={{ color: '#5d4037' }}
                     >
                         Session list
                     </Button>
                     <Button
                         color="inherit"
-                        onClick={() => navigate('/sessionList')}
+                        onClick={() => navigate('/filmList')}
                         sx={{ color: '#5d4037' }}
                     >
                         Film list
