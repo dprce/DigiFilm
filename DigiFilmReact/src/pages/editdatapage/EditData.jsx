@@ -106,18 +106,123 @@ const EditData = () => {
                     <fieldset className="edit-data__fieldset">
                         <legend>Edit data</legend>
 
-                        {Object.keys(movie).map((key) => (
-                            <TextField
-                                key={key}
-                                fullWidth
-                                label={key.replace(/([A-Z])/g, ' $1').trim()}
-                                name={key}
-                                placeholder={key.replace(/([A-Z])/g, ' $1').trim()}
-                                value={movie[key]}
-                                onChange={handleChange}
-                                required
-                            />
-                        ))}
+                        <TextField
+                            fullWidth
+                            label="Originalni Naslov"
+                            name="OriginalniNaslov"
+                            placeholder="Originalni Naslov"
+                            value={movie.OriginalniNaslov}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="ID Emisije"
+                            name="IDEmisije"
+                            placeholder="ID Emisije"
+                            value={movie.IDEmisije}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Radni Naslov"
+                            name="RadniNaslov"
+                            placeholder="Radni Naslov"
+                            value={movie.RadniNaslov}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Jezik Originala"
+                            name="JezikOriginala"
+                            placeholder="Jezik Originala"
+                            value={movie.JezikOriginala}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Ton"
+                            name="Ton"
+                            placeholder="Ton"
+                            value={movie.Ton}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Emisija"
+                            name="Emisija"
+                            placeholder="Emisija"
+                            value={movie.Emisija}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Porijeklo Zemlja Proizvodnje"
+                            name="Porijeklo_ZemljaProizvodnje"
+                            placeholder="Porijeklo Zemlja Proizvodnje"
+                            value={movie.Porijeklo_ZemljaProizvodnje}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Godina Proizvodnje"
+                            name="GodinaProizvodnje"
+                            placeholder="Godina Proizvodnje"
+                            value={movie.GodinaProizvodnje}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Trajanje"
+                            name="Duration"
+                            placeholder="Trajanje"
+                            value={movie.Duration}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Broj Medija"
+                            name="BrojMedija"
+                            placeholder="Broj Medija"
+                            value={movie.BrojMedija}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Mark In"
+                            name="MarkIn"
+                            placeholder="HH:MM:SS"
+                            value={movie.MarkIn}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Mark Out"
+                            name="MarkOut"
+                            placeholder="HH:MM:SS"
+                            value={movie.MarkOut}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            fullWidth
+                            label="Bar Code"
+                            name="BarCode"
+                            placeholder="Bar Code"
+                            value={movie.BarCode}
+                            onChange={handleChange}
+                            
+                        />
 
                         <Button
                             variant="contained"
