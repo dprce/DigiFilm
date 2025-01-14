@@ -8,14 +8,7 @@ const Navbar = () => {
     return (
         <AppBar position="static" sx={{ backgroundColor: '#bcaaa4' }}>
             <Toolbar>
-                <Typography
-                    variant="h6"
-                    component="div"
-                    sx={{ flexGrow: 1, cursor: 'pointer' }}
-                    onClick={() => navigate('/')}
-                >
-                    DigiFilm Archive
-                </Typography>
+                
                 <Box sx={{ display: 'flex', gap: 2 }}>
                     <Button
                         color="inherit"
