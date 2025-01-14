@@ -2,7 +2,7 @@ namespace DigiFilmWebApi.Modeli;
 
 public class Film
 {
-    public int FilmID { get; set; }
+    public int Id { get; set; }
     public string IDEmisije { get; set; }
     public string OriginalniNaslov { get; set; }
     public string RadniNaslov { get; set; }
@@ -15,5 +15,7 @@ public class Film
     public TimeSpan MarkOut { get; set; }
     public TimeSpan Duration { get; set; }
     public int BrojMedija { get; set; }
-    public int BarCode { get; set; }
+    public string BarCode { get; set; }
+    
+    public string? Status { get; set; }
 }

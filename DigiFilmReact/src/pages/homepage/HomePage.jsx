@@ -4,12 +4,14 @@ import Footer from "../../components/Footer.jsx";
 import "./HomePage.css";
 import { useNavigate } from "react-router-dom";
 import {Button} from "@mui/material";
+import Navbar from '../../components/Navbar.jsx';
 
 const HomePage = () => {
     const navigate = useNavigate();
 
     return (
         <div className="homepage">
+            <Navbar /> {/* Add the Navbar here */}
             <Header/>
             <div className="list_buttons">
             <Button  sx={{

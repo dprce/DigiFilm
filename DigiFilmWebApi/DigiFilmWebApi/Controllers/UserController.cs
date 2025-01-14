@@ -1,4 +1,4 @@
-﻿using DigiFilmWebApi.BAL;
+using DigiFilmWebApi.BAL;
 using DigiFilmWebApi.Modeli;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,20 +7,20 @@ namespace DigiFilmWebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class RoleController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly RoleService _roleService;
+        private readonly UserService _userService;
         private readonly IConfiguration _configuration;
         //private readonly UserRepositoryInterface _userRepositoryInterface;
         //private readonly PasswordService _passwordService;
-        public RoleController(RoleService roleService, IConfiguration configuration)
+        public UserController(UserService userService, IConfiguration configuration)
         {
-          _roleService = roleService;
-          _configuration = configuration;
+            _userService = userService;
+            _configuration = configuration;
         }
 
-        [HttpGet("all-roles")]
-        public async Task<IActionResult> GetAllRoles()
+        [HttpGet("all-users")]
+        public async Task<IActionResult> GetAllUsers()
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -31,9 +31,9 @@ namespace DigiFilmWebApi.Controllers
                 });
             }
             
-            var roles = await _roleService.GetAllRolesAsync();
+            var users = await _userService.GetAllUsersAsync();
 
-            return Ok(new {roles = roles, message = "Role uspješno dohvaćene." });
+            return Ok(new {users = users, message = "Korisnici uspješno dohvaćeni." });
         }
     }
 }

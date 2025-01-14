@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "../src/pages/loginpage/LoginPage.jsx";
 import HomePageAdmin from "../src/pages/homepage/HomePageAdmin.jsx";
-import EditData from "../src/pages/editDataPage/EditData.jsx";
+import EditData from "../src/pages/editdatapage/EditData.jsx";
 import ScanBarcode from "./pages/scanpage/ScanBarcode.jsx";
 import FilmList from "./pages/filmlistpage/FilmList.jsx";
 import SessionList from "./pages/sessionlistpage/SessionList.jsx";

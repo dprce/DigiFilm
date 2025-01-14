@@ -10,10 +10,12 @@ using System.Security.Claims;
 using DigiFilmWebApi.BAL;
 using DigiFilmWebApi.DAL;
 using DigiFilmWebApi.Modeli;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Define specific origins for CORS
+string MyAllowSpecificOrigins = "MyAllowSpecificOrigins";
 
 // Define initial scopes for downstream API
 IEnumerable<string>? initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ');
@@ -84,14 +86,18 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
     };
 });
 
-// Add Razor Pages and MVC
-builder.Services.AddRazorPages().AddMvcOptions(options =>
+builder.Services.ConfigureApplicationCookie(options =>
 {
-    var policy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-    options.Filters.Add(new AuthorizeFilter(policy)); // Global authorization policy
-}).AddMicrosoftIdentityUI(); // For Microsoft Identity UI handling
+    options.Cookie.SameSite = SameSiteMode.None; // Required for cross-origin cookies
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Disable Secure for development (HTTP allowed)
+});
+
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.Secure = CookieSecurePolicy.SameAsRequest;
+});
 
 // Dependency Injection for services
 builder.Services.AddScoped<UserService>();
@@ -100,6 +106,10 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<RoleRepositoryInterface, RoleRepository>();
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<PasswordService>();
+builder.Services.AddScoped<FilmService>();
+
+// If you have a FilmRepository or FilmRepositoryInterface, register it as well
+builder.Services.AddScoped<FilmRepositoryInterface, FilmRepository>();
 
 // Dapper - SQL Database Connection
 builder.Services.AddScoped<IDbConnection>(sp =>
@@ -113,18 +123,18 @@ var app = builder.Build();
 
 // Middleware Setup
 app.UseHttpsRedirection();
-app.UseStaticFiles();
 
+// Ensure CORS is applied before authentication and routing
+app.UseCors(MyAllowSpecificOrigins);
+app.UseCookiePolicy();
+
+app.UseStaticFiles();
 app.UseRouting();
-app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Docs"));
-
-// Map Razor Pages and Controllers
-app.MapRazorPages();
 app.MapControllers();
 
 app.Run();
