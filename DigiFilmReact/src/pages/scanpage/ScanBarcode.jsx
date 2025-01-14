@@ -36,7 +36,8 @@ const ScanBarcode = () => {
                         '&:hover': {
                             backgroundColor: "#9e9e9e",
                         },
-                        width:'512px',
+                        padding:"16px"
+
                     }}
                     onClick={() => navigate("/editData")}>
                     Box without barcode?

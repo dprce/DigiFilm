@@ -2,8 +2,13 @@ import {useState, useEffect} from 'react';
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
 import "./FilmList.css";
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
-import {Button, Box, Typography, TextField, Autocomplete} from "@mui/material";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import {Button, Box, Typography, TextField, Autocomplete, Paper, TableContainer} from "@mui/material";
 import { jsPDF } from 'jspdf';
 
 const FilmList = (/*{userRole}*/) => {
@@ -204,7 +209,7 @@ const FilmList = (/*{userRole}*/) => {
     return (
         <div className="filmlist">
             <Header/>
-            <Box sx={{padding: "20px"}}>
+            <Box sx={{padding: "20px"}} className="filmlist_box">
                 <div>
                     <h2>Film List</h2>
                     <Box display="flex" alignItems="center" gap={2} mb={2}>
@@ -229,8 +234,15 @@ const FilmList = (/*{userRole}*/) => {
                         {selectedMovies.length > 0 && (
                             <Button
                                 variant="contained"
-                                color="primary"
                                 onClick={groupMoviesIntoBatches}
+                                sx={{
+                                    backgroundColor: "#bcaaa4",
+                                    color: "#5d4037",
+                                    '&:hover': {
+                                        backgroundColor: "#9e9e9e",
+                                    },
+                                    padding:'16px',
+                                }}
                             >
                                 Optimize
                             </Button>
@@ -242,40 +254,54 @@ const FilmList = (/*{userRole}*/) => {
                         )}
                     </div>
                 </div>
-                <Table aria-label="film table">
-                    <TableHeader>
-                        {/*{userRole !== "readOnly" && (*/}
-                            <TableColumn>SELECT</TableColumn>
-                        {/*  })} */}
-                        <TableColumn>TITLE</TableColumn>
-                        <TableColumn>RELEASE YEAR</TableColumn>
-                        <TableColumn>LANGUAGE</TableColumn>
-                        <TableColumn>DURATION</TableColumn>
-                        <TableColumn>DIGITALIZED</TableColumn>
-                        <TableColumn>BARCODE NO.</TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredMovies.map(movie => (
-                            <TableRow key={movie.id}>
-                            <TableCell>
+
+                <TableContainer
+                    component={Paper}
+                    sx={{
+                    backgroundColor: '#efebe9',
+                    color: 'white',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    width: '80%',
+                }}>
+                    <Table aria-label="film table" >
+                        <TableHead>
+                            <TableRow>
                                 {/*{userRole !== "readOnly" && (*/}
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedMovies.includes(movie)}
-                                        onChange={() => handleSelect(movie.id)}
-                                    />
+                                    <TableCell>SELECT</TableCell>
                                 {/*  })} */}
-                            </TableCell>
-                                <TableCell>{movie.title}</TableCell>
-                                <TableCell>{movie.year}</TableCell>
-                                <TableCell>{movie.language}</TableCell>
-                                <TableCell>{movie.duration}</TableCell>
-                                <TableCell>{movie.digitalized}</TableCell>
-                                <TableCell>{movie.barcode}</TableCell>
+                                <TableCell>TITLE</TableCell>
+                                <TableCell>RELEASE YEAR</TableCell>
+                                <TableCell>LANGUAGE</TableCell>
+                                <TableCell>DURATION</TableCell>
+                                <TableCell>DIGITALIZED</TableCell>
+                                <TableCell>BARCODE NO.</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHead>
+                        <TableBody>
+                            {filteredMovies.map(movie => (
+                                <TableRow key={movie.id}>
+                                    <TableCell>
+                                        {/*{userRole !== "readOnly" && (*/}
+                                            <Checkbox
+                                                //type="checkbox"
+                                                checked={selectedMovies.includes(movie)}
+                                                onChange={() => handleSelect(movie.id)}
+                                            />
+                                        {/*  })} */}
+                                    </TableCell>
+                                    <TableCell>{movie.title}</TableCell>
+                                    <TableCell>{movie.year}</TableCell>
+                                    <TableCell>{movie.language}</TableCell>
+                                    <TableCell>{movie.duration}</TableCell>
+                                    <TableCell>{movie.digitalized}</TableCell>
+                                    <TableCell>{movie.barcode}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
 
                 {batches.length > 0 && (
                     <>
@@ -334,8 +360,15 @@ const FilmList = (/*{userRole}*/) => {
                         ))}
                         <Button
                             variant="contained"
-                            color="secondary"
                             onClick={generatePDF}
+                            sx={{
+                                backgroundColor: "#bcaaa4",
+                                color: "#5d4037",
+                                '&:hover': {
+                                    backgroundColor: "#9e9e9e",
+                                },
+                                padding:'16px',
+                            }}
                         >
                             Confirm
                         </Button>

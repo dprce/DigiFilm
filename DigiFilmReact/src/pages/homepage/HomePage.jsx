@@ -12,7 +12,7 @@ const HomePage = (/*{userRole}*/) => {
         <div className="homepage">
             <Header/>
             <div style={{display: "flex", justifyContent: "center"}}>
-                <h1 style={{fontSize: '70px', color: '#5d4037',}}>Welcome to DigiFilm!</h1>
+                <h1 style={{fontSize: '48px', color: '#5d4037',margin:'32px',}}>Welcome to DigiFilm!</h1>
             </div>
             <div className="list_buttons">
                 {/*{userRole !== "readOnly" && (*/}

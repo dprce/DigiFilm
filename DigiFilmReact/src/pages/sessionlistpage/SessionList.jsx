@@ -2,10 +2,16 @@ import { useState, useEffect } from 'react';
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
 import "./SessionList.css";
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/table";
-import { Button, Box } from "@mui/material";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import {Button, Box, TableContainer, Paper} from "@mui/material";
 import { jsPDF } from 'jspdf';
 import {user} from "@nextui-org/theme";
+
 
 const SessionList = (/*{userRole}*/) => {
     const [batches, setBatches] = useState([]);
@@ -94,69 +100,42 @@ const SessionList = (/*{userRole}*/) => {
         <div className="sessionlist">
             <Header/>
             <Box sx={{ padding: "20px" }}>
-                <h2>Session list</h2>
-                <Table aria-label="session table">
-                    <TableHeader>
-                        {/*{userRole !== "readOnly" && (*/}
-                        <TableColumn>SELECT</TableColumn>
-                        {/*  })} */}
-                        <TableColumn>BATCH ID</TableColumn>
-                        <TableColumn>MOVIES</TableColumn>
-                        <TableColumn>TOTAL DURATION</TableColumn>
-                        <TableColumn>RESPONSIBLE EMPLOYEE</TableColumn>
-                    </TableHeader>
-                    <TableBody>
-                        {batches.map(batch => (
-                            <TableRow key={batch.id}>
-                                <TableCell>
+                <div className="table2">
+                    <h2>Session list</h2>
+                    <TableContainer
+                        component={Paper}
+                        sx={{
+                        backgroundColor: '#efebe9',
+                        color: 'white',
+                        margin: '24px',
+                        padding: '16px',
+                        borderRadius: '8px',
+                            width: '80%',
+                    }}>
+                        <Table aria-label="session table" >
+                            <TableHead>
+                                <TableRow>
                                     {/*{userRole !== "readOnly" && (*/}
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedBatches.includes(batch.id)}
-                                            onChange={() => handleSelectBatch(batch.id)}
-                                        />
+                                    <TableCell>SELECT</TableCell>
                                     {/*  })} */}
-                                </TableCell>
-                                <TableCell>{batch.id}</TableCell>
-                                <TableCell>
-                                    <ul style={{listStyleType: 'none'}}>
-                                        {batch.movies.map((movie, index) => (
-                                            <li key={index}>{movie}</li>
-                                        ))}
-                                    </ul>
-                                </TableCell>
-                                <TableCell>{batch.totalDuration}</TableCell>
-                                <TableCell>{batch.employee}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-
-                {selectedBatches.length > 0 && (
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={generatePDF}
-                        style={{ marginTop: "20px" }}
-                    >
-                        Confirm
-                    </Button>
-                )}
-
-                {doneBatches.length > 0 && /*userRole !== readOnly && */(
-                    <>
-                        <h2>Returned batches</h2>
-                        <Table aria-label="done sessions">
-                            <TableHeader>
-                                <TableColumn>BATCH ID</TableColumn>
-                                <TableColumn>MOVIES</TableColumn>
-                                <TableColumn>TOTAL DURATION</TableColumn>
-                                <TableColumn>RESPONSIBLE EMPLOYEE</TableColumn>
-                                <TableColumn>DATE AND TIME</TableColumn>
-                            </TableHeader>
+                                    <TableCell>BATCH ID</TableCell>
+                                    <TableCell>MOVIES</TableCell>
+                                    <TableCell>TOTAL DURATION</TableCell>
+                                    <TableCell>RESPONSIBLE EMPLOYEE</TableCell>
+                                </TableRow>
+                            </TableHead>
                             <TableBody>
-                                {doneBatches.map(batch => (
+                                {batches.map(batch => (
                                     <TableRow key={batch.id}>
+                                        <TableCell>
+                                            {/*{userRole !== "readOnly" && (*/}
+                                                <Checkbox
+                                                    //type="checkbox"
+                                                    checked={selectedBatches.includes(batch.id)}
+                                                    onChange={() => handleSelectBatch(batch.id)}
+                                                />
+                                            {/*  })} */}
+                                        </TableCell>
                                         <TableCell>{batch.id}</TableCell>
                                         <TableCell>
                                             <ul style={{listStyleType: 'none'}}>
@@ -167,13 +146,78 @@ const SessionList = (/*{userRole}*/) => {
                                         </TableCell>
                                         <TableCell>{batch.totalDuration}</TableCell>
                                         <TableCell>{batch.employee}</TableCell>
-                                        <TableCell>{batch.returnedAt.toLocaleDateString("de-DE")}, {batch.returnedAt.toLocaleTimeString("de-DE")}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
-                    </>
-                )}
+                    </TableContainer>
+
+                    {selectedBatches.length > 0 && (
+                        <Button
+                            variant="contained"
+                            //color="secondary"
+                            onClick={generatePDF}
+                            style={{ marginTop: "20px" }}
+                            sx={{
+                                backgroundColor: "#bcaaa4",
+                                color: "#5d4037",
+                                '&:hover': {
+                                    backgroundColor: "#9e9e9e",
+                                },
+                                padding:'16px',
+                            }}
+                        >
+                            Confirm
+                        </Button>
+                    )}
+                </div>
+
+                <div className="table2">
+                    {doneBatches.length > 0 && /*userRole !== readOnly && */(
+                        <>
+                            <h2>Returned batches</h2>
+                            <TableContainer
+                                component={Paper}
+                                sx={{
+                                    backgroundColor: '#efebe9',
+                                    color: 'white',
+                                    margin: '24px',
+                                    padding: '16px',
+                                    borderRadius: '8px',
+                                    width: '80%',
+                                }}>
+                                <Table aria-label="done sessions">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>BATCH ID</TableCell>
+                                            <TableCell>MOVIES</TableCell>
+                                            <TableCell>TOTAL DURATION</TableCell>
+                                            <TableCell>RESPONSIBLE EMPLOYEE</TableCell>
+                                            <TableCell>DATE AND TIME</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {doneBatches.map(batch => (
+                                            <TableRow key={batch.id}>
+                                                <TableCell>{batch.id}</TableCell>
+                                                <TableCell>
+                                                    <ul style={{listStyleType: 'none'}}>
+                                                        {batch.movies.map((movie, index) => (
+                                                            <li key={index}>{movie}</li>
+                                                        ))}
+                                                    </ul>
+                                                </TableCell>
+                                                <TableCell>{batch.totalDuration}</TableCell>
+                                                <TableCell>{batch.employee}</TableCell>
+                                                <TableCell>{batch.returnedAt.toLocaleDateString("de-DE")}, {batch.returnedAt.toLocaleTimeString("de-DE")}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </>
+                    )}
+                </div>
             </Box>
 
             <Footer/>
