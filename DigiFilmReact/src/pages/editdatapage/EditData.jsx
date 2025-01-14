@@ -27,19 +27,19 @@ const EditData = () => {
         const filmData = location.state?.film;
         if (filmData) {
             setMovie({
-                OriginalniNaslov: filmData.OriginalniNaslov || '',
-                IDEmisije: filmData.IDEmisije || '',
-                RadniNaslov: filmData.RadniNaslov || '',
-                JezikOriginala: filmData.JezikOriginala || '',
-                Ton: filmData.Ton || '',
-                Emisija: filmData.Emisija || '',
-                Porijeklo_ZemljaProizvodnje: filmData.Porijeklo_ZemljaProizvodnje || '',
-                GodinaProizvodnje: filmData.GodinaProizvodnje || '',
-                Duration: filmData.Duration || '',
-                BrojMedija: filmData.BrojMedija || '',
-                MarkIn: filmData.MarkIn || '',
-                MarkOut: filmData.MarkOut || '',
-                BarCode: filmData.BarCode || ''
+                OriginalniNaslov: filmData.originalniNaslov || '',
+                IDEmisije: filmData.idEmisije || '',
+                RadniNaslov: filmData.radniNaslov || '',
+                JezikOriginala: filmData.jezikOriginala || '',
+                Ton: filmData.ton || '',
+                Emisija: filmData.emisija || '',
+                Porijeklo_ZemljaProizvodnje: filmData.porijeklo_ZemljaProizvodnje || '',
+                GodinaProizvodnje: filmData.godinaProizvodnje || '',
+                Duration: filmData.duration || '',
+                BrojMedija: filmData.brojMedija || '',
+                MarkIn: filmData.markIn || '',
+                MarkOut: filmData.markOut || '',
+                BarCode: filmData.barCode || ''
             });
         }
     }, [location.state]);
