@@ -170,7 +170,7 @@ const FilmList = () => {
         doc.text("Report: Archive material digitalization", 20, 20);
 
         doc.setFontSize(12);
-        doc.text(`Employee: ${selectedEmployee}`, 20, 30);
+        doc.text(`Employee: ${selectedEmployee.label}`, 20, 30);
         doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 40);
         doc.text(`Time: ${new Date().toLocaleTimeString()}`, 20, 50);
 

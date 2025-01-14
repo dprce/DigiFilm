@@ -6,41 +6,40 @@ import { useLocation } from "react-router-dom";
 import "./EditData.css";
 
 const EditData = () => {
-    const location = useLocation(); // Access passed data from the previous navigation
+    const location = useLocation();
     const [movie, setMovie] = React.useState({
-        originalniNaslov: '',
-        idEmisije: '',
-        radniNaslov: '',
-        deskriptori: '',
-        jezikOriginala: '',
-        ton: '',
-        emisija: '',
-        porijeklo: '',
-        godinaProizvodnje: '',
-        duration: '',
-        brojMedija: '',
-        markIn: '', // Početak filma
-        markOut: '', // Kraj filma
+        OriginalniNaslov: '',
+        IDEmisije: '',
+        RadniNaslov: '',
+        JezikOriginala: '',
+        Ton: '',
+        Emisija: '',
+        Porijeklo_ZemljaProizvodnje: '',
+        GodinaProizvodnje: '',
+        Duration: '',
+        BrojMedija: '',
+        MarkIn: '',
+        MarkOut: '',
+        BarCode: ''
     });
 
-    // Fetch the film data and populate the form when the component mounts
     useEffect(() => {
-        const filmData = location.state?.film; // Access passed film data
+        const filmData = location.state?.film;
         if (filmData) {
             setMovie({
-                originalniNaslov: filmData.originalniNaslov || '',
-                idEmisije: filmData.idEmisije || '',
-                radniNaslov: filmData.radniNaslov || '',
-                deskriptori: filmData.deskriptori || '',
-                jezikOriginala: filmData.jezikOriginala || '',
-                ton: filmData.ton || '',
-                emisija: filmData.emisija || '',
-                porijeklo: filmData.porijeklo || '',
-                godinaProizvodnje: filmData.godinaProizvodnje || '',
-                duration: filmData.duration || '',
-                brojMedija: filmData.brojMedija || '',
-                markIn: filmData.markIn || '', // Početak filma
-                markOut: filmData.markOut || '', // Kraj filma
+                OriginalniNaslov: filmData.OriginalniNaslov || '',
+                IDEmisije: filmData.IDEmisije || '',
+                RadniNaslov: filmData.RadniNaslov || '',
+                JezikOriginala: filmData.JezikOriginala || '',
+                Ton: filmData.Ton || '',
+                Emisija: filmData.Emisija || '',
+                Porijeklo_ZemljaProizvodnje: filmData.Porijeklo_ZemljaProizvodnje || '',
+                GodinaProizvodnje: filmData.GodinaProizvodnje || '',
+                Duration: filmData.Duration || '',
+                BrojMedija: filmData.BrojMedija || '',
+                MarkIn: filmData.MarkIn || '',
+                MarkOut: filmData.MarkOut || '',
+                BarCode: filmData.BarCode || ''
             });
         }
     }, [location.state]);
@@ -56,27 +55,46 @@ const EditData = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log("Submitting movie:", movie);
+
         try {
-            // API call to update the movie data
-            // Example: await updateMovie(movie);
-            console.log("Movie data updated successfully.");
+            const response = await fetch("https://localhost:7071/Film/submit-scanned-film", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(movie),
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error submitting movie:", errorData);
+                alert(`Error: ${errorData.message}`);
+                return;
+            }
+
+            const responseData = await response.json();
+            console.log("Movie data updated successfully:", responseData.message);
+            alert("Movie data submitted successfully!");
+
             setMovie({
-                originalniNaslov: '',
-                idEmisije: '',
-                radniNaslov: '',
-                deskriptori: '',
-                jezikOriginala: '',
-                ton: '',
-                emisija: '',
-                porijeklo: '',
-                godinaProizvodnje: '',
-                duration: '',
-                brojMedija: '',
-                markIn: '',
-                markOut: '',
+                OriginalniNaslov: '',
+                IDEmisije: '',
+                RadniNaslov: '',
+                JezikOriginala: '',
+                Ton: '',
+                Emisija: '',
+                Porijeklo_ZemljaProizvodnje: '',
+                GodinaProizvodnje: '',
+                Duration: '',
+                BrojMedija: '',
+                MarkIn: '',
+                MarkOut: '',
+                BarCode: ''
             });
         } catch (error) {
-            console.error("Error editing data:", error);
+            console.error("Error during API call:", error);
+            alert("An error occurred while submitting the movie data.");
         }
     };
 
@@ -88,125 +106,18 @@ const EditData = () => {
                     <fieldset className="edit-data__fieldset">
                         <legend>Edit data</legend>
 
-                        <TextField
-                            fullWidth
-                            label="Originalni naslov"
-                            name="originalniNaslov"
-                            placeholder="Originalni naslov"
-                            value={movie.originalniNaslov}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="ID Emisije"
-                            name="idEmisije"
-                            placeholder="ID Emisije"
-                            value={movie.idEmisije}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Radni naslov"
-                            name="radniNaslov"
-                            placeholder="Radni naslov"
-                            value={movie.radniNaslov}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Deskriptori"
-                            name="deskriptori"
-                            placeholder="Deskriptori"
-                            value={movie.deskriptori}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Jezik originala"
-                            name="jezikOriginala"
-                            placeholder="Jezik originala"
-                            value={movie.jezikOriginala}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Ton"
-                            name="ton"
-                            placeholder="Ton"
-                            value={movie.ton}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Emisija"
-                            name="emisija"
-                            placeholder="Emisija"
-                            value={movie.emisija}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Porijeklo"
-                            name="porijeklo"
-                            placeholder="Porijeklo"
-                            value={movie.porijeklo}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Godina proizvodnje"
-                            name="godinaProizvodnje"
-                            placeholder="Godina proizvodnje"
-                            value={movie.godinaProizvodnje}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Trajanje"
-                            name="duration"
-                            placeholder="Trajanje"
-                            value={movie.duration}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Broj medija"
-                            name="brojMedija"
-                            placeholder="Broj medija"
-                            value={movie.brojMedija}
-                            onChange={handleChange}
-                            required
-                        />
-
-                        {/* New fields for Početak i Kraj filma */}
-                        <TextField
-                            fullWidth
-                            label="Početak filma (Mark In)"
-                            name="markIn"
-                            placeholder="HH:MM:SS"
-                            value={movie.markIn}
-                            onChange={handleChange}
-                            required
-                        />
-                        <TextField
-                            fullWidth
-                            label="Kraj filma (Mark Out)"
-                            name="markOut"
-                            placeholder="HH:MM:SS"
-                            value={movie.markOut}
-                            onChange={handleChange}
-                            required
-                        />
+                        {Object.keys(movie).map((key) => (
+                            <TextField
+                                key={key}
+                                fullWidth
+                                label={key.replace(/([A-Z])/g, ' $1').trim()}
+                                name={key}
+                                placeholder={key.replace(/([A-Z])/g, ' $1').trim()}
+                                value={movie[key]}
+                                onChange={handleChange}
+                                required
+                            />
+                        ))}
 
                         <Button
                             variant="contained"

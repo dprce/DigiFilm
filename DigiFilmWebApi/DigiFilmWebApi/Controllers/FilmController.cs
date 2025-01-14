@@ -39,6 +39,8 @@ namespace DigiFilmWebApi.Controllers
         [HttpPost("submit-scanned-film")]
         public async Task<IActionResult> SubmitScannedFilm([FromBody] Film film)
         {
+            Console.WriteLine($"Received Film: {System.Text.Json.JsonSerializer.Serialize(film)}");
+
             if (!User.Identity.IsAuthenticated)
             {
                 // Return JSON response for unauthorized access

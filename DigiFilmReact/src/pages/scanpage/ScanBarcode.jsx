@@ -10,7 +10,6 @@ const ScanBarcode = () => {
     const [data, setData] = React.useState('No result');
     const navigate = useNavigate();
 
-    // Function to fetch film by barcode
     const fetchFilmByBarcode = async (barcode) => {
         try {
             const response = await fetch(`https://localhost:7071/Film/get-film/${barcode}`, {
@@ -27,7 +26,7 @@ const ScanBarcode = () => {
                 alert("Film not found or an error occurred.");
                 return;
             }
-            console.log("Tu sam");
+
             const filmData = await response.json();
             // Navigate to the editData page with film data in state
             navigate("/editData", { state: { film: filmData.film } });
@@ -45,8 +44,8 @@ const ScanBarcode = () => {
                 height={500}
                 onUpdate={(err, result) => {
                     if (result) {
-                        setData(result.text); // Set scanned barcode
-                        fetchFilmByBarcode(result.text); // Fetch film and navigate if successful
+                        setData(result.text);
+                        fetchFilmByBarcode(result.text);
                     } else {
                         setData("Not Found");
                     }
