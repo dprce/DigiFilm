@@ -5,7 +5,6 @@ import Footer from '../../components/Footer.jsx';
 import { Box, Button, TextField } from "@mui/material";
 import { useLocation } from "react-router-dom";
 
-
 import "./EditData.css";
 
 const EditData = () => {
