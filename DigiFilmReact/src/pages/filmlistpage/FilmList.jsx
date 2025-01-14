@@ -321,7 +321,6 @@ const FilmList = () => {
                         <Typography variant="h4" gutterBottom>
                             Film List
                         </Typography>
-                </Box>
                         <TableContainer component={Paper}>
                             <Table>
                                 <TableHead>
