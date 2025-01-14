@@ -5,6 +5,7 @@ import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import "./ScanBarcode.css";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Navbar from '../../components/Navbar.jsx';
 
 const ScanBarcode = () => {
     const [data, setData] = React.useState('No result');
@@ -38,6 +39,7 @@ const ScanBarcode = () => {
 
     return (
         <div className="scanbarcode">
+            <Navbar /> {/* Add the Navbar here */}
             <Header />
             <BarcodeScannerComponent
                 width="100%"

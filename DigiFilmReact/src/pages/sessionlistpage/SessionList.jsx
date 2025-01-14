@@ -7,6 +7,8 @@ import "./SessionList.css";
 import { fetchBatches } from '../../api/RoleApi.jsx'; // Adjust as needed
 import { fetchUsers } from '../../api/RoleApi.jsx';
 import { sendReturnedBatches } from '../../api/RoleApi.jsx'; // <--- Import your helper function
+import Navbar from '../../components/Navbar.jsx';
+
 
 const SessionList = () => {
   const [batches, setBatches] = useState([]);
@@ -133,6 +135,7 @@ const SessionList = () => {
 
   return (
     <div className="sessionlist">
+      <Navbar /> {/* Add the Navbar here */}
       <Header />
       <Box sx={{ padding: "20px" }}>
         <Typography variant="h4" gutterBottom>

@@ -5,6 +5,8 @@ import { Box, Typography, TextField, Autocomplete, Button, Table, TableBody, Tab
 import { jsPDF } from 'jspdf';
 import "./FilmList.css";
 import { fetchUsers } from '../../api/RoleApi.jsx';
+import Navbar from '../../components/Navbar.jsx';
+
 // Fetch films from backend
 export async function fetchFilms() {
     try {
@@ -194,6 +196,7 @@ const FilmList = () => {
 
     return (
         <div className="filmlist">
+            <Navbar /> {/* Add the Navbar here */}
             <Header />
             <Box sx={{ padding: "20px" }}>
                 <Typography variant="h4" gutterBottom>
