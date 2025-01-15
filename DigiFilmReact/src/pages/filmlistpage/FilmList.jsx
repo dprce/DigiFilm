@@ -34,7 +34,7 @@ import Navbar from "../../components/Navbar.jsx";
 // Fetch films from backend
 export async function fetchFilms() {
     try {
-        const response = await fetch(`https://localhost:7071/Film/get-all-films`, {
+        const response = await fetch(`https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/get-all-films`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export async function fetchFilms() {
 // Fetch users from backend
 export async function fetchUsers() {
     try {
-        const response = await fetch(`https://localhost:7071/User/all-users`, {
+        const response = await fetch(`https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/User/all-users`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -147,7 +147,7 @@ const FilmList = () => {
 
         try {
             setLoading(true); // Show spinner
-            const response = await fetch("https://localhost:7071/Film/confirm-batches", {
+            const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/confirm-batches", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

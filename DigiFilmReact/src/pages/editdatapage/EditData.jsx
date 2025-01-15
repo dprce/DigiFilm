@@ -59,7 +59,7 @@ const EditData = () => {
         console.log("Submitting movie:", movie);
 
         try {
-            const response = await fetch("https://localhost:7071/Film/submit-scanned-film", {
+            const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/submit-scanned-film", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
