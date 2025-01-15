@@ -89,7 +89,7 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.SameSite = SameSiteMode.None; // Required for cross-origin cookies
-    options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Disable Secure for development (HTTP allowed)
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Disable Secure for development (HTTP allowed)
 });
 
 
