@@ -22,14 +22,7 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("get-film/{barcode}")]
         public async Task<IActionResult> GetFilmByBarcodeNumber(string barcode)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                // Return JSON response for unauthorized access
-                return Unauthorized(new
-                {
-                    Error = "User is not authenticated."
-                });
-            }
+            
 
             var film = await _filmService.GetFilmByBarcodeNumberAsync(barcode);
 
@@ -41,14 +34,14 @@ namespace DigiFilmWebApi.Controllers
         {
             Console.WriteLine($"Received Film: {System.Text.Json.JsonSerializer.Serialize(film)}");
 
-            if (!User.Identity.IsAuthenticated)
-            {
+            //if (!User.Identity.IsAuthenticated)
+            //{
                 // Return JSON response for unauthorized access
-                return Unauthorized(new
-                {
-                    Error = "User is not authenticated."
-                });
-            }
+                //return Unauthorized(new
+                //{
+                   // Error = "User is not authenticated."
+                //});
+            //}
             
             if (film == null)
             {
@@ -63,14 +56,14 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("get-all-films")]
         public async Task<IActionResult> GetAllFilms()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                // Return JSON response for unauthorized access
-                return Unauthorized(new
-                {
-                    Error = "User is not authenticated."
-                });
-            }
+            //if (!User.Identity.IsAuthenticated)
+            //{
+            // Return JSON response for unauthorized access
+            //return Unauthorized(new
+            //{
+            // Error = "User is not authenticated."
+            //});
+            //}
 
             var films = await _filmService.GetAllFilmsAsync();
 
@@ -80,10 +73,14 @@ namespace DigiFilmWebApi.Controllers
         [HttpPost("confirm-batches")]
         public async Task<IActionResult> ConfirmBatches([FromBody] ConfirmBatchesRequest request)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Unauthorized(new { Error = "User is not authenticated." });
-            }
+            //if (!User.Identity.IsAuthenticated)
+            //{
+            // Return JSON response for unauthorized access
+            //return Unauthorized(new
+            //{
+            // Error = "User is not authenticated."
+            //});
+            //}
 
             if (request == null || request.Batches == null || !request.Batches.Any())
             {
@@ -107,10 +104,14 @@ namespace DigiFilmWebApi.Controllers
         [HttpPost("log-batch-action")]
         public async Task<IActionResult> LogBatchAction([FromBody] LogBatchActionRequest request)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Unauthorized(new { Error = "User is not authenticated." });
-            }
+            //if (!User.Identity.IsAuthenticated)
+            //{
+            // Return JSON response for unauthorized access
+            //return Unauthorized(new
+            //{
+            // Error = "User is not authenticated."
+            //});
+            //}
 
             if (request == null || string.IsNullOrEmpty(request.Action) || string.IsNullOrEmpty(request.PerformedBy))
             {
@@ -132,14 +133,14 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("get-all-batches")]
         public async Task<IActionResult> GetAllBatches()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                // Return JSON response for unauthorized access
-                //return Unauthorized(new
-                //{
-                   // Error = "User is not authenticated."
-                //});
-            }
+            //if (!User.Identity.IsAuthenticated)
+            //{
+            // Return JSON response for unauthorized access
+            //return Unauthorized(new
+            //{
+            // Error = "User is not authenticated."
+            //});
+            //}
             Console.WriteLine(User.Identity.Name);
             var batches = await _filmService.GetAllBatchesAsync();
 
@@ -149,10 +150,14 @@ namespace DigiFilmWebApi.Controllers
         [HttpPost("complete-batch")]
         public async Task<IActionResult> CompleteBatch([FromBody] List<LogBatchActionRequest> batchRequests)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                //return Unauthorized(new { Error = "User is not authenticated." });
-            }
+            //if (!User.Identity.IsAuthenticated)
+            //{
+            // Return JSON response for unauthorized access
+            //return Unauthorized(new
+            //{
+            // Error = "User is not authenticated."
+            //});
+            //}
 
             try
             {

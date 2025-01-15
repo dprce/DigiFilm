@@ -55,14 +55,14 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("post-login")]
         public async Task<IActionResult> PostLogin()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                // Return JSON response for unauthorized access
-                return Unauthorized(new
-                {
-                    Error = "User is not authenticated."
-                });
-            }
+            //if (!User.Identity.IsAuthenticated)
+            //{
+            // Return JSON response for unauthorized access
+            //return Unauthorized(new
+            //{
+            // Error = "User is not authenticated."
+            //});
+            //}
 
             // Extract user information from claims
             var userEmail = User.FindFirst("preferred_username")?.Value;

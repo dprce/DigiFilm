@@ -22,14 +22,14 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("all-users")]
         public async Task<IActionResult> GetAllUsers()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
+            //if (!User.Identity.IsAuthenticated)
+            //{
                 // Return JSON response for unauthorized access
-                return Unauthorized(new
-                {
-                    Error = "User is not authenticated."
-                });
-            }
+                //return Unauthorized(new
+                //{
+                    //Error = "User is not authenticated."
+                //});
+            //}
             
             var users = await _userService.GetAllUsersAsync();
 
