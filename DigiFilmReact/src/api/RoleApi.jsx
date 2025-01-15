@@ -50,7 +50,7 @@ export async function registerEmployee(employeeData) {
 
 export async function fetchFilms() {
     try {
-        const response = await fetch(`https://localhost:7071/Film/get-all-films`, {
+        const response = await fetch(`hhttps://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/get-all-films`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export async function fetchFilms() {
 
 export async function fetchBatches() {
     try {
-        const response = await fetch(`https://localhost:7071/Film/get-all-batches`, {
+        const response = await fetch(`https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/get-all-batches`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ export async function fetchBatches() {
 
 export async function fetchUsers() {
     try {
-        const response = await fetch(`https://localhost:7071/User/all-users`, {
+        const response = await fetch(`https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/User/all-users`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ export const sendReturnedBatches = async (selectedBatches, allBatches, performed
     });
   
     try {
-      const response = await fetch("https://localhost:7071/Film/complete-batch", {
+      const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/complete-batch", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

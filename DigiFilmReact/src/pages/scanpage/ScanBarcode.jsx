@@ -13,7 +13,7 @@ const ScanBarcode = () => {
 
     const fetchFilmByBarcode = async (barcode) => {
         try {
-            const response = await fetch(`https://localhost:7071/Film/get-film/${barcode}`, {
+            const response = await fetch(`https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/get-film/${barcode}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
