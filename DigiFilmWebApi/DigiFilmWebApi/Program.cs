@@ -14,8 +14,6 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Define specific origins for CORS
-string MyAllowSpecificOrigins = "MyAllowSpecificOrigins";
 
 // Define initial scopes for downstream API
 IEnumerable<string>? initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ');
@@ -96,7 +94,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.MinimumSameSitePolicy = SameSiteMode.None;
-    options.Secure = CookieSecurePolicy.SameAsRequest;
+    options.Secure = CookieSecurePolicy.Always;
 });
 
 // Dependency Injection for services
