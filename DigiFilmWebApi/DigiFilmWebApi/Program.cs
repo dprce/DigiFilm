@@ -125,7 +125,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 // Ensure CORS is applied before authentication and routing
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors("AllowFrontend");
 app.UseCookiePolicy();
 
 app.UseStaticFiles();
