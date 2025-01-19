@@ -1,13 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
-import { Box, Typography, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Autocomplete, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Autocomplete,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  ToggleButton, ToggleButtonGroup
+} from "@mui/material";
 import { jsPDF } from 'jspdf';
 import "./SessionList.css";
 import { fetchBatches } from '../../api/RoleApi.jsx'; // Adjust as needed
 import { fetchUsers } from '../../api/RoleApi.jsx';
 import { sendReturnedBatches } from '../../api/RoleApi.jsx'; // <--- Import your helper function
 import Navbar from '../../components/Navbar.jsx';
+import {fetchCurrentUser} from "../../components/Navbar.jsx";
+import {jwtDecode} from "jwt-decode";
+
+const token = await fetchCurrentUser();
+let role = null;
+
+console.log("Token: " + token);
+
+if (token) {
+  const decodedToken = jwtDecode(token);
+  role = decodedToken.role;
+  console.log(role);
+}
 
 const SessionList = () => {
   const [batches, setBatches] = useState([]);
@@ -20,6 +53,8 @@ const SessionList = () => {
   const [loading, setLoading] = useState(false); // Spinner state
   const [dialogOpen, setDialogOpen] = useState(false); // Dialog state
   const [dialogMessage, setDialogMessage] = useState(""); // Dialog message
+  const [doneBatches, setDoneBatches] = useState([]);
+  const [statusFilter, setStatusFilter] = useState("All");
 
   useEffect(() => {
     const fetchBatchData = async () => {
@@ -73,11 +108,36 @@ const SessionList = () => {
           batch.movies.toLowerCase().includes(lowerCaseQuery) ||
           batch.id.toString().includes(lowerCaseQuery) ||
           batch.totalDuration.toLowerCase().includes(lowerCaseQuery) ||
-          (batch.status && batch.status.toLowerCase().includes(lowerCaseQuery))
+
+          ((role ==="3" || role ==="4") && batch.createdBy.toLowerCase().includes(lowerCaseQuery))
       );
       setFilteredBatches(result);
     }
   };
+
+  const handleStatusFilter = (newFilter) => {
+    if (newFilter){
+      setStatusFilter(newFilter);
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      let result = batches;
+
+      if(lowerCaseQuery !== ""){
+        result = batches.filter((batch) =>
+            batch.title.toLowerCase().includes(lowerCaseQuery)
+        );
+      }
+
+      if(newFilter !== "All"){
+        result = result.filter(
+            (batch) =>
+                (newFilter === "Digitalized" && batch.status === "Digitalized") ||
+                (newFilter === "Not digitalized" && batch.status === "Not Digitalized")
+        )
+      }
+
+      setFilteredBatches(result);
+    }
+  }
 
   const generatePDF = async () => {
     if (!selectedEmployee) {
@@ -170,32 +230,53 @@ const SessionList = () => {
                 Batches found: {filteredBatches.length}
             </Typography>
           </Box>
+          <ToggleButtonGroup
+              value={statusFilter}
+              exclusive
+              onChange={(e, newFilter) => handleStatusFilter(newFilter)}
+              sx={{ marginBottom: "16px" }}
+          >
+            <ToggleButton value="All">All</ToggleButton>
+            <ToggleButton value="Digitalized">Digitalized</ToggleButton>
+            <ToggleButton value="Not digitalized">Not digitalized</ToggleButton>
+          </ToggleButtonGroup>
           <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Select</TableCell>
+                  {role !== "2" &&
+                      <TableCell>Select</TableCell>
+                  }
                   <TableCell>Batch Number</TableCell>
                   <TableCell>Movies</TableCell>
                   <TableCell>Total Duration</TableCell>
                   <TableCell>Status</TableCell>
+                  {(role ==="3" || role === "4") &&
+                      <TableCell>Responsible Employee</TableCell>
+                  }
+
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filteredBatches.map((batch) => (
                     <TableRow key={batch.id} hover>
-                      <TableCell>
-                        <input
-                            type="checkbox"
-                            checked={selectedBatches.includes(batch.id)}
-                            onChange={() => handleSelectBatch(batch.id)}
-                            disabled={batch.status === "Digitalized"}
-                        />
-                      </TableCell>
+                      {role !== "2" &&
+                          <TableCell>
+                            <input
+                                type="checkbox"
+                                checked={selectedBatches.includes(batch.id)}
+                                onChange={() => handleSelectBatch(batch.id)}
+                                disabled={batch.status === "Digitalized"}
+                            />
+                          </TableCell>
+                      }
                       <TableCell>{batch.id}</TableCell>
                       <TableCell>{batch.movies}</TableCell>
                       <TableCell>{batch.totalDuration}</TableCell>
                       <TableCell>{batch.status}</TableCell>
+                      {(role ==="3" || role ==="4") &&
+                          <TableCell>{batch.createdBy}</TableCell>
+                      }
                     </TableRow>
                 ))}
               </TableBody>
@@ -262,7 +343,6 @@ const SessionList = () => {
             </Button>
           </DialogActions>
         </Dialog>
-
         <Footer />
       </div>
   );

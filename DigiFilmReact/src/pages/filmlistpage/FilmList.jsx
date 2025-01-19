@@ -34,6 +34,20 @@ import Footer from "../../components/Footer.jsx";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Navbar from "../../components/Navbar.jsx";
 import "./FilmList.css";
+import {useNavigate} from "react-router-dom";
+import {jwtDecode} from "jwt-decode";
+import {fetchCurrentUser} from "../../components/Navbar.jsx";
+
+const token = await fetchCurrentUser();
+let role = null;
+
+console.log("Token: " + token);
+
+if (token) {
+    const decodedToken = jwtDecode(token);
+    role = decodedToken.role;
+    console.log(role);
+}
 
 // Fetch films from backend
 export async function fetchFilms() {
@@ -97,6 +111,7 @@ const FilmList = () => {
     const [loading, setLoading] = useState(false); // Spinner state
     const [dialogOpen, setDialogOpen] = useState(false); // Dialog state
     const [dialogMessage, setDialogMessage] = useState(""); // Dialog message
+    const navigate = useNavigate();
 
     const theme = createTheme({
         typography: {
@@ -246,6 +261,10 @@ const FilmList = () => {
             setFilteredMovies(result);
         }
     }
+
+    const handleEdit = (movie) => {
+        navigate("/editData", {state: {film: movie}});
+    };
 
     const groupMoviesIntoBatches = () => {
         const maxBatchDuration = 45 * 60; // 2700 seconds
@@ -420,32 +439,50 @@ const FilmList = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                    <TableCell>Select</TableCell>
+                                        {role !== "2" &&
+                                            <TableCell>Select</TableCell>
+                                        }
                                         <TableCell>Title</TableCell>
                                         <TableCell>Language</TableCell>
                                         <TableCell>Country</TableCell>
                                         <TableCell>Year</TableCell>
                                         <TableCell>Duration</TableCell>
                                         <TableCell>Status</TableCell>
+                                        {(role === "3" || role === "4") &&
+                                            <TableCell>Edit</TableCell>
+                                        }
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {filteredMovies.map((movie) => (
                                         <TableRow key={movie.id}>
-                                            <TableCell>
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedMovies.includes(movie)}
-                                                    onChange={() => handleSelect(movie.id)}
-                                                    disabled={movie.status !== "Not Digitalized"}
-                                                />
-                                            </TableCell>
+                                            {role !== "2" &&
+                                                <TableCell>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedMovies.includes(movie)}
+                                                        onChange={() => handleSelect(movie.id)}
+                                                        disabled={movie.status !== "Not Digitalized"}
+                                                    />
+                                                </TableCell>
+                                            }
                                             <TableCell>{movie.title}</TableCell>
                                             <TableCell>{movie.language}</TableCell>
                                             <TableCell>{movie.country}</TableCell>
                                             <TableCell>{movie.year}</TableCell>
                                             <TableCell>{movie.duration}</TableCell>
                                             <TableCell>{movie.status}</TableCell>
+                                            {(role === "3" || role === "4") &&
+                                                <TableCell>
+                                                    <Button
+                                                        variant="contained"
+                                                        color="primary"
+                                                        onClick={() => handleEdit(movie)}
+                                                    >
+                                                        Edit
+                                                    </Button>
+                                                </TableCell>
+                                            }
                                         </TableRow>
                                     ))}
                                 </TableBody>

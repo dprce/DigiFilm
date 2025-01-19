@@ -29,14 +29,14 @@ const EditData = () => {
         const filmData = location.state?.film;
         if (filmData) {
             setMovie({
-                OriginalniNaslov: filmData.originalniNaslov || '',
+                OriginalniNaslov: filmData.originalniNaslov || filmData.title || '',
                 IDEmisije: filmData.idEmisije || '',
                 RadniNaslov: filmData.radniNaslov || '',
-                JezikOriginala: filmData.jezikOriginala || '',
+                JezikOriginala: filmData.jezikOriginala || filmData.language || '',
                 Ton: filmData.ton || '',
                 Emisija: filmData.emisija || '',
-                Porijeklo_ZemljaProizvodnje: filmData.porijeklo_ZemljaProizvodnje || '',
-                GodinaProizvodnje: filmData.godinaProizvodnje || '',
+                Porijeklo_ZemljaProizvodnje: filmData.porijeklo_ZemljaProizvodnje || filmData.country || '',
+                GodinaProizvodnje: filmData.godinaProizvodnje || filmData.year || '',
                 Duration: filmData.duration || '',
                 BrojMedija: filmData.brojMedija || '',
                 MarkIn: filmData.markIn || '',

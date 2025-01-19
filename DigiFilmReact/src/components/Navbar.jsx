@@ -79,7 +79,7 @@ const Navbar = () => {
                         onClick={() => navigate('/sessionList')}
                         sx={{ color: '#5d4037' }}
                     >
-                        Session list
+                        Batch list
                     </Button>
                     {(role === "4") && <Button
                         color="inherit"
