@@ -3,29 +3,36 @@ import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-export async function fetchCurrentUser() {
+export const fetchCurrentUser = async () => {
+    const token = localStorage.getItem("authToken"); // Or wherever you're storing it
+    if (!token) {
+        console.error("Token is missing.");
+        return;
+    }
+
+    console.log("Token:", token);
+
     try {
-        const response = await fetch(`https://localhost:7071/Authenticate/post-login`, {
-            method: "GET",
+        const response = await fetch('https://localhost:7071/Authenticate/post-login', {
+            method: 'GET',
             headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
+                'Authorization': `Bearer ${token}`
+            }
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log("access token: " + data.accessToken);
-            return data.accessToken;
-        } else {
-            console.error("Failed to fetch current user data. Status:", response.status);
-            return [];
+        if (response.status === 401) {
+            console.error("Unauthorized access. Token may be invalid or expired.");
+            return;
         }
+
+        const userData = await response.json();
+        console.log("User Data:", userData);
+        return userData;
     } catch (error) {
-        console.error("Error fetching current user data:", error);
-        return [];
+        console.error("Error fetching user data:", error);
+        return null;
     }
-}
+};
 
 const token = await fetchCurrentUser();
 let role = null;
