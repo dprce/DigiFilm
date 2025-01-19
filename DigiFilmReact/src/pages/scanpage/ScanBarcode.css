@@ -1,7 +1,7 @@
 .scanbarcode{
     background-color: #efebe9;
     width: 100%;        /* Zauzima cijelu širinu */
-    height: 100%;      /* Zauzima cijelu visinu prozora pretraživača */
+    height: 100vh;      /* Zauzima cijelu visinu prozora pretraživača */
     display: flex;
     flex-direction: column;
 }

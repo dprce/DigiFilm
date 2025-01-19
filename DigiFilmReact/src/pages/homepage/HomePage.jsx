@@ -11,41 +11,12 @@ const HomePage = () => {
 
     return (
         <div className="homepage">
-            <Navbar /> {/* Add the Navbar here */}
+            <Navbar/> {/* Add the Navbar here */}
             <Header/>
-            <div className="list_buttons">
-            <Button  sx={{
-                backgroundColor: "#fafafa",
-                color: "#212121",
-                '&:hover': {
-                    backgroundColor: "#9e9e9e",
-                },
-            }}
-                     onClick={() => navigate("/scanBarcode")}>
-                Scan barcode
-            </Button>
-            <Button  sx={{
-                backgroundColor: "#fafafa",
-                color: "#212121",
-                '&:hover': {
-                    backgroundColor: "#9e9e9e",
-                },
-            }}
-                     onClick={() => navigate("/filmList")}>
-                Film List
-            </Button>
-            <Button  sx={{
-                backgroundColor: "#fafafa",
-                color: "#212121",
-                '&:hover': {
-                    backgroundColor: "#9e9e9e",
-                },
-            }}
-                     onClick={() => navigate("/sessionList")}>
-                Session List
-            </Button>
+            <div style={{display: "flex", justifyContent: "center", height: "100vh", alignItems: "center"}}>
+                <h1 style={{fontSize: '100px', color: '#5d4037', margin: '32px', textAlign: "center"}}>Welcome to DigiFilm!</h1>
             </div>
-            <Footer />
+            <Footer/>
         </div>
     )
 }

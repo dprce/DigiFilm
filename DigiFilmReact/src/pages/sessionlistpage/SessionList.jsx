@@ -70,7 +70,7 @@ const SessionList = () => {
     } else {
       const lowerCaseQuery = query.toLowerCase();
       const result = batches.filter(batch =>
-          batch.movies.join(", ").toLowerCase().includes(lowerCaseQuery) ||
+          batch.movies.toLowerCase().includes(lowerCaseQuery) ||
           batch.id.toString().includes(lowerCaseQuery) ||
           batch.totalDuration.toLowerCase().includes(lowerCaseQuery) ||
           (batch.status && batch.status.toLowerCase().includes(lowerCaseQuery))
@@ -155,17 +155,20 @@ const SessionList = () => {
         <Navbar /> {/* Add the Navbar here */}
         <Header />
         <Box sx={{ padding: "20px" }}>
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
             Batch List
           </Typography>
           <Box display="flex" alignItems="center" gap={2} mb={2}>
             <TextField
-                label="Search"
+                label="Search batches"
                 variant="outlined"
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                fullWidth
+                sx={{ width: "80%" }}
             />
+            <Typography sx={{ marginLeft: "5%" }}>
+                Batches found: {filteredBatches.length}
+            </Typography>
           </Box>
           <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
             <Table>

@@ -23,6 +23,9 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Autocomplete,
+    ToggleButtonGroup,
+    ToggleButton
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { jsPDF } from "jspdf";
@@ -30,6 +33,7 @@ import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Navbar from "../../components/Navbar.jsx";
+import "./FilmList.css";
 
 // Fetch films from backend
 export async function fetchFilms() {
@@ -81,7 +85,9 @@ export async function fetchUsers() {
 
 const FilmList = () => {
     const [movies, setMovies] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
     const [filteredMovies, setFilteredMovies] = useState([]);
+    const [statusFilter, setStatusFilter] = useState("All");
     const [selectedMovies, setSelectedMovies] = useState([]);
     const [batches, setBatches] = useState([]);
     const [disableGeneratePdf, setDisableGeneratePdf] = useState(false);
@@ -194,6 +200,52 @@ const FilmList = () => {
             setTotalSelectedDuration(totalSelectedDuration + movieDuration);
         }
     };
+
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        const lowerCaseQuery = query.toLowerCase();
+        let result = movies;
+
+        if(lowerCaseQuery !== ""){
+            result = movies.filter((movie) =>
+                movie.title.toLowerCase().includes(lowerCaseQuery)
+            );
+        }
+
+        if(statusFilter !== "All"){
+            result = result.filter(
+                (movie) =>
+                    (statusFilter === "Digitalized" && movie.status === "Digitalized") ||
+                    (statusFilter === "Not digitalized" && movie.status === "Not Digitalized")
+            )
+        }
+
+        setFilteredMovies(result);
+    }
+
+    const handleStatusFilter = (newFilter) => {
+        if (newFilter){
+            setStatusFilter(newFilter);
+            const lowerCaseQuery = searchQuery.toLowerCase();
+            let result = movies;
+
+            if(lowerCaseQuery !== ""){
+                result = movies.filter((movie) =>
+                    movie.title.toLowerCase().includes(lowerCaseQuery)
+                );
+            }
+
+            if(newFilter !== "All"){
+                result = result.filter(
+                    (movie) =>
+                        (newFilter === "Digitalized" && movie.status === "Digitalized") ||
+                        (newFilter === "Not digitalized" && movie.status === "Not Digitalized")
+                )
+            }
+
+            setFilteredMovies(result);
+        }
+    }
 
     const groupMoviesIntoBatches = () => {
         const maxBatchDuration = 45 * 60; // 2700 seconds
@@ -315,17 +367,60 @@ const FilmList = () => {
             <div className="filmlist">
                 <Navbar />
                 <Header />
-                <Box sx={{ padding: "20px", maxWidth: "1200px", margin: "auto", display: "flex", gap: 3 }}>
+                <Box sx={{ padding: "20px", maxWidth: "1200px", /*margin: "auto",*/ display: "flex", gap: 3 }}>
                     {/* Film List */}
                     <Box flex={2}>
                         <Typography variant="h4" gutterBottom>
                             Film List
                         </Typography>
+                        <Box display="flex" alignItems="center" gap={2} mb={2}>
+                            <TextField
+                                label="Search movies"
+                                variant="outlined"
+                                value={searchQuery}
+                                onChange={(e) => handleSearch(e.target.value)}
+                                sx={{ width: "80%" }}
+                            />
+                            <Typography>
+                                Movies found: {filteredMovies.length}
+                            </Typography>
+                        </Box>
+                        {/*<Box display="flex" alignItems="center" gap={2} mb={2}>
+                            <input
+                                type="checkbox"
+                                onChange={() => handleStatusFilter("all")}
+                            />
+                            <Typography>
+                                All
+                            </Typography>
+                            <input
+                                type="checkbox"
+                            />
+                            <Typography>
+                                Digitalized
+                            </Typography>
+                            <input
+                                type="checkbox"
+                            />
+                            <Typography>
+                                Not digitalized
+                            </Typography>
+                        </Box>*/}
+                        <ToggleButtonGroup
+                            value={statusFilter}
+                            exclusive
+                            onChange={(e, newFilter) => handleStatusFilter(newFilter)}
+                            sx={{ marginBottom: "16px" }}
+                        >
+                            <ToggleButton value="All">All</ToggleButton>
+                            <ToggleButton value="Digitalized">Digitalized</ToggleButton>
+                            <ToggleButton value="Not digitalized">Not digitalized</ToggleButton>
+                        </ToggleButtonGroup>
                         <TableContainer component={Paper}>
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Select</TableCell>
+                                    <TableCell>Select</TableCell>
                                         <TableCell>Title</TableCell>
                                         <TableCell>Language</TableCell>
                                         <TableCell>Country</TableCell>
@@ -372,7 +467,7 @@ const FilmList = () => {
                                 <Typography variant="h4">{formatDuration(totalSelectedDuration)}</Typography>
                             </CardContent>
                         </Card>
-                        <TextField
+                        {/*<TextField
                             select
                             label="Responsible User"
                             value={selectedUser}
@@ -385,7 +480,30 @@ const FilmList = () => {
                                     {user.label}
                                 </MenuItem>
                             ))}
-                        </TextField>
+                        </TextField>*/}
+                        <Autocomplete
+                            freeSolo
+                            options={users}
+                            value={selectedUser}
+                            onChange={(e) => setSelectedUser(e.target.value)}
+                            getOptionLabel={(option) =>
+                                typeof option === "string" ? option : option.label
+                            }
+                            renderOption={(props, option) => (
+                                <li {...props} key={option.id || option.label}>
+                                    {option.label}
+                                </li>
+                            )}
+                            fullWidth
+                            sx={{ mb: 2 }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Responsible User"
+                                    variant="outlined"
+                                />
+                            )}
+                        />
                         <Button
                             variant="contained"
                             color="primary"
