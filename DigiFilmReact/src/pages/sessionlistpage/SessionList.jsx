@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import { jsPDF } from 'jspdf';
 import "./SessionList.css";
+import "../../css/common.css"
 import { fetchBatches } from '../../api/RoleApi.jsx'; // Adjust as needed
 import { fetchUsers } from '../../api/RoleApi.jsx';
 import { sendReturnedBatches } from '../../api/RoleApi.jsx'; // <--- Import your helper function
@@ -216,9 +217,8 @@ const SessionList = () => {
   };
 
   return (
-      <div className="sessionlist">
+      <div className="app-container">
         <Navbar /> {/* Add the Navbar here */}
-        <Header />
         <Box sx={{ padding: "20px" }}>
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
             Batch List
@@ -229,7 +229,7 @@ const SessionList = () => {
                 variant="outlined"
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                sx={{ width: "80%" }}
+                sx={{ width: "70%" }}
             />
             <Typography sx={{ marginLeft: "5%" }}>
                 Batches found: {filteredBatches.length}

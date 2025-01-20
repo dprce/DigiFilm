@@ -33,6 +33,7 @@ import Navbar from "../../components/Navbar.jsx";
 import "./FilmList.css";
 import {useNavigate} from "react-router-dom";
 import {fetchCurrentUser} from "../../components/Navbar.jsx";
+import "../../css/common.css"
 
 // Fetch films from backend
 export async function fetchFilms() {
@@ -384,12 +385,11 @@ const FilmList = () => {
 
     return (
         <ThemeProvider theme={theme}>
-            <div className="filmlist">
+            <div className="app-container">
                 <Navbar />
-                <Header />
-                <Box sx={{ padding: "20px", maxWidth: "1200px", /*margin: "auto",*/ display: "flex", gap: 3 }}>
+                <Box sx={{ padding: "24px 40px", maxWidth: "1200px", /*margin: "auto",*/ display: "flex", gap: 3 }}>
                     {/* Film List */}
-                    <Box flex={2}>
+                    <Box flex={2} sx={{ width: "60%" }}>
                         <Typography variant="h4" gutterBottom>
                             Film List
                         </Typography>
@@ -399,7 +399,7 @@ const FilmList = () => {
                                 variant="outlined"
                                 value={searchQuery}
                                 onChange={(e) => handleSearch(e.target.value)}
-                                sx={{ width: "80%" }}
+                                sx={{ width: "60%" }}
                             />
                             <Typography>
                                 Movies found: {filteredMovies.length}
@@ -436,7 +436,7 @@ const FilmList = () => {
                             <ToggleButton value="Digitalized">Digitalized</ToggleButton>
                             <ToggleButton value="Not digitalized">Not digitalized</ToggleButton>
                         </ToggleButtonGroup>
-                        <TableContainer component={Paper}>
+                        <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
                             <Table>
                                 <TableHead>
                                     <TableRow>
@@ -551,10 +551,10 @@ const FilmList = () => {
                             Group Movies into Batches
                         </Button>
                         <Button
-                            variant="outlined"
-                            color="warning"
+                            variant="contained"
+                            //color="warning"
                             onClick={handleReset}
-                            sx={{ mb: 2 }}
+                            sx={{ mb: 2 , backgroundColor: "#c62828", color: "#ffebee"}}
                         >
                             Reset
                         </Button>

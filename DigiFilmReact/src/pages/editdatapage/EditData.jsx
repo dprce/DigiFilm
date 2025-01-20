@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
-import Header from '../../components/Header.jsx';
 import Navbar from '../../components/Navbar.jsx';
 import Footer from '../../components/Footer.jsx';
 import { Box, Button, TextField } from "@mui/material";
 import { useLocation } from "react-router-dom";
-
+import "../../css/common.css"
 import "./EditData.css";
 
 const EditData = () => {
@@ -101,9 +100,8 @@ const EditData = () => {
     };
 
     return (
-        <div className="editData">
+        <div className="app-container">
             <Navbar /> {/* Add the Navbar here */}
-            <Header />
             <Box className="edit-data">
                 <form className="edit-data__form" onSubmit={handleSubmit}>
                     <fieldset className="edit-data__fieldset">

@@ -5,16 +5,16 @@ import "./HomePage.css";
 import { useNavigate } from "react-router-dom";
 import {Button} from "@mui/material";
 import Navbar from '../../components/Navbar.jsx';
+import "../../css/common.css"
 
 const HomePage = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="homepage">
+        <div className="app-container">
             <Navbar/> {/* Add the Navbar here */}
-            <Header/>
-            <div style={{display: "flex", justifyContent: "center", height: "100vh", alignItems: "center"}}>
-                <h1 style={{fontSize: '100px', color: '#5d4037', margin: '32px', textAlign: "center"}}>Welcome to DigiFilm!</h1>
+            <div style={{display: "flex", justifyContent: "center", margin:"80px 16px", alignItems: "center"}}>
+                <h1 style={{ color: '#5d4037', textAlign: "center"}}>Welcome to DigiFilm!</h1>
             </div>
             <Footer/>
         </div>

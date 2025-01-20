@@ -1,13 +1,7 @@
-.home{
-    background-color: #efebe9;
-    width: 100%;        /* Zauzima cijelu širinu */
-    height: 100vh;      /* Zauzima cijelu visinu prozora pretraživača */
-}
 .add-employee {
     display: flex;
     flex-direction: column;
-    padding: 64px;
-    padding-bottom: 32px;
+    padding: 40px;
 }
 
 .add-employee__form {

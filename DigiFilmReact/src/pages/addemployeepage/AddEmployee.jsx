@@ -6,6 +6,7 @@ import Footer from "../../components/Footer.jsx";
 import Navbar from '../../components/Navbar.jsx';
 import {fetchRoles, registerEmployee} from "../../api/RoleApi.jsx";
 import {Box, Button, MenuItem, TextField} from "@mui/material";
+import "../../css/common.css"
 
 
 const AddEmployee = () => {
@@ -65,9 +66,8 @@ const AddEmployee = () => {
 
 
     return (
-        <div className="home">
+        <div className="app-container">
             <Navbar /> {/* Add the Navbar here */}
-            <Header/>
             <Box className="add-employee">
 
                 <form  className="add-employee__form" onSubmit={handleSubmit}>
