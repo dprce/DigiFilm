@@ -14,9 +14,6 @@ import {
     LinearProgress,
     Card,
     CardContent,
-    Snackbar,
-    Alert,
-    MenuItem,
     CircularProgress,
     Dialog,
     DialogActions,
@@ -35,19 +32,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Navbar from "../../components/Navbar.jsx";
 import "./FilmList.css";
 import {useNavigate} from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
 import {fetchCurrentUser} from "../../components/Navbar.jsx";
-
-const token = await fetchCurrentUser();
-let role = null;
-
-console.log("Token: " + token);
-
-if (token) {
-    const decodedToken = jwtDecode(token);
-    role = decodedToken.role;
-    console.log(role);
-}
 
 // Fetch films from backend
 export async function fetchFilms() {
@@ -112,6 +97,7 @@ const FilmList = () => {
     const [dialogOpen, setDialogOpen] = useState(false); // Dialog state
     const [dialogMessage, setDialogMessage] = useState(""); // Dialog message
     const navigate = useNavigate();
+    const [role, setRole] = useState(null); // Role state
 
     const theme = createTheme({
         typography: {
@@ -124,6 +110,21 @@ const FilmList = () => {
             secondary: { main: "#ff4081" },
         },
     });
+
+    useEffect(() => {
+        const initializeUserRole = async () => {
+            try {
+                const userData = await fetchCurrentUser();
+                const roleClaim = userData?.find((claim) => claim.type === "RoleId");
+                setRole(roleClaim?.value || null);
+            } catch (error) {
+                console.error("Error fetching user role:", error);
+                setRole(null);
+            }
+        };
+
+        initializeUserRole();
+    }, []);
 
     useEffect(() => {
         const fetchMovies = async () => {

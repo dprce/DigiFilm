@@ -29,18 +29,6 @@ import { fetchUsers } from '../../api/RoleApi.jsx';
 import { sendReturnedBatches } from '../../api/RoleApi.jsx'; // <--- Import your helper function
 import Navbar from '../../components/Navbar.jsx';
 import {fetchCurrentUser} from "../../components/Navbar.jsx";
-import {jwtDecode} from "jwt-decode";
-
-const token = await fetchCurrentUser();
-let role = null;
-
-console.log("Token: " + token);
-
-if (token) {
-  const decodedToken = jwtDecode(token);
-  role = decodedToken.role;
-  console.log(role);
-}
 
 const SessionList = () => {
   const [batches, setBatches] = useState([]);
@@ -55,6 +43,23 @@ const SessionList = () => {
   const [dialogMessage, setDialogMessage] = useState(""); // Dialog message
   const [doneBatches, setDoneBatches] = useState([]);
   const [statusFilter, setStatusFilter] = useState("All");
+  const [role, setRole] = useState(null); // Role state
+
+  useEffect(() => {
+    const initializeUserRole = async () => {
+      try {
+        const userData = await fetchCurrentUser();
+        const roleClaim = userData?.find((claim) => claim.type === 'RoleId');
+        setRole(roleClaim?.value || null);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setRole(null);
+      }
+    };
+
+    initializeUserRole();
+  }, []);
+
 
   useEffect(() => {
     const fetchBatchData = async () => {

@@ -71,7 +71,7 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             {
                 // Add claims (Role, TenantId) if the user is authorized
                 var claimsIdentity = userPrincipal.Identity as ClaimsIdentity;
-                claimsIdentity?.AddClaim(new Claim(ClaimTypes.Role, user.RoleId.ToString()));
+                claimsIdentity?.AddClaim(new Claim("RoleId", user.RoleId.ToString()));
                 claimsIdentity?.AddClaim(new Claim("TenantId", user.TenantId.ToString()));
             }
         }

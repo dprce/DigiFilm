@@ -1,28 +1,20 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { AppBar, Toolbar, Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
 
 export const fetchCurrentUser = async () => {
-    const token = localStorage.getItem("authToken"); // Or wherever you're storing it
-    if (!token) {
-        console.error("Token is missing.");
-        return;
-    }
-
-    console.log("Token:", token);
-
     try {
-        const response = await fetch('https://localhost:7071/Authenticate/post-login', {
+        const response = await fetch('https://localhost:7071/Authenticate/claims', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
         });
 
         if (response.status === 401) {
             console.error("Unauthorized access. Token may be invalid or expired.");
-            return;
+            return null;
         }
 
         const userData = await response.json();
@@ -34,67 +26,46 @@ export const fetchCurrentUser = async () => {
     }
 };
 
-const token = await fetchCurrentUser();
-let role = null;
-
-console.log("Token: " + token);
-
-if (token) {
-   const decodedToken = jwtDecode(token);
-   role = decodedToken.role;
-   console.log(role);
-}
-
 const Navbar = () => {
     const navigate = useNavigate();
+    const [role, setRole] = useState(null);
+
+    useEffect(() => {
+        const getUserData = async () => {
+            const userData = await fetchCurrentUser();
+            if (userData) {
+                const roleClaim = userData.find((claim) => claim.type === 'RoleId');
+                setRole(roleClaim?.value || null);
+            }
+        };
+
+        getUserData();
+    }, []);
 
     return (
         <AppBar position="static" sx={{ backgroundColor: '#bcaaa4' }}>
             <Toolbar>
-                
                 <Box sx={{ display: 'flex', gap: 2 }}>
-                    <Button
-                        color="inherit"
-                        onClick={() => navigate('/home')}
-                        sx={{ color: '#5d4037' }}
-                    >
+                    <Button color="inherit" onClick={() => navigate('/home')} sx={{ color: '#5d4037' }}>
                         Home
                     </Button>
-                    <Button
-                        color="inherit"
-                        onClick={() => navigate('/scanBarcode')}
-                        sx={{ color: '#5d4037' }}
-                    >
+                    <Button color="inherit" onClick={() => navigate('/scanBarcode')} sx={{ color: '#5d4037' }}>
                         Scan Barcode
                     </Button>
-                    <Button
-                        color="inherit"
-                        onClick={() => navigate('/editData')}
-                        sx={{ color: '#5d4037' }}
-                    >
+                    <Button color="inherit" onClick={() => navigate('/editData')} sx={{ color: '#5d4037' }}>
                         Edit Data
                     </Button>
-                    <Button
-                        color="inherit"
-                        onClick={() => navigate('/filmList')}
-                        sx={{ color: '#5d4037' }}
-                    >
+                    <Button color="inherit" onClick={() => navigate('/filmList')} sx={{ color: '#5d4037' }}>
                         Film list
                     </Button>
-                    <Button
-                        color="inherit"
-                        onClick={() => navigate('/sessionList')}
-                        sx={{ color: '#5d4037' }}
-                    >
+                    <Button color="inherit" onClick={() => navigate('/sessionList')} sx={{ color: '#5d4037' }}>
                         Batch list
                     </Button>
-                    {(role === "4") && <Button
-                        color="inherit"
-                        onClick={() => navigate('/addEmployee')}
-                        sx={{ color: '#5d4037' }}
-                    >
-                        Add Employee
-                    </Button>}
+                    {role === "4" && (
+                        <Button color="inherit" onClick={() => navigate('/addEmployee')} sx={{ color: '#5d4037' }}>
+                            Add Employee
+                        </Button>
+                    )}
                 </Box>
             </Toolbar>
         </AppBar>
