@@ -206,5 +206,18 @@ namespace DigiFilmWebApi.Controllers
 
             return Ok(new {film = film, message = "Film uspješno dohvaćen." });
         }
+        
+        [HttpPost("get-employee-batches")]
+        public async Task<IActionResult> GetEmployeeBatches([FromBody] List<int> employeeIds)
+        {
+            if (employeeIds == null || !employeeIds.Any())
+            {
+                return BadRequest(new { message = "Employee IDs cannot be null or empty." });
+            }
+
+            var data = await _filmService.GetEmployeeBatchDataAsync(employeeIds);
+            return Ok(data);
+        }
+
     }
 }

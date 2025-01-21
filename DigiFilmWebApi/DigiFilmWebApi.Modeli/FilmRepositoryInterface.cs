@@ -18,5 +18,6 @@ namespace DigiFilmWebApi.DAL
         Task LogBatchCompletionAsync(int batchId, string performedBy);
         Task<Film> GetScannedFilmByIdAsync(int id);
         Task EditScannedFilmAsync(Film film);
+        Task<List<EmployeeBatchDAO>> GetEmployeeBatchDataAsync(List<int> employeeIds);
     }
 }

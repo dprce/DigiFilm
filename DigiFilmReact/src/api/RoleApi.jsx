@@ -119,35 +119,43 @@ export async function fetchUsers() {
 
 
 export const sendReturnedBatches = async (selectedBatches, allBatches, performedBy) => {
-    
+
     const payload = selectedBatches.map((batchId) => {
-    
-      return {
-        batchId: batchId,
-        action: "Completed", //NEVAŽNO
-        performedBy: performedBy,
-      };
+
+        return {
+            batchId: batchId,
+            action: "Completed", //NEVAŽNO
+            performedBy: performedBy,
+        };
     });
-  
+
     try {
-      const response = await fetch("https://localhost:7071/Film/complete-batch", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-  
-      if (!response.ok) {
-        throw new Error("Failed to send data to the backend");
-      }
-  
-      // If your backend returns JSON, parse and return it (optional):
-      const data = await response.json();
-      return data;
+        const response = await fetch("https://localhost:7071/Film/complete-batch", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to send data to the backend");
+        }
+
+        // If your backend returns JSON, parse and return it (optional):
+        const data = await response.json();
+        return data;
     } catch (error) {
-      console.error("Error sending data to backend:", error);
-      // Throw or handle error as needed
+        console.error("Error sending data to backend:", error);
+        // Throw or handle error as needed
     }
+};
+
+export const fetchEmployeeBatchData = async (employeeIds) => {
+    const response = await fetch("https://localhost:7071/Film/get-employee-batches", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(employeeIds),
+    });
+    return response.json();
   };
-  

@@ -20,7 +20,7 @@ namespace DigiFilmWebApi.DAL
                 new { Barcode = barcode });
             return result.FirstOrDefault();
         }
-        
+
         public async Task<Film> GetScannedFilmByIdAsync(int id)
         {
             using IDbConnection conn = CentralConnection;
@@ -163,7 +163,7 @@ namespace DigiFilmWebApi.DAL
 
             await conn.ExecuteAsync(query, parameters);
         }
-        
+
         public async Task LogBatchCompletionAsync(int batchId, string performedBy)
         {
             using IDbConnection conn = CentralConnection;
@@ -206,6 +206,64 @@ namespace DigiFilmWebApi.DAL
 
             await conn.ExecuteAsync(query, film);
         }
-        
+
+        public async Task<List<EmployeeBatchDAO>> GetEmployeeBatchDataAsync(List<int> employeeIds)
+        {
+            using IDbConnection conn = CentralConnection;
+
+            var query = @"
+        SELECT 
+            u.ID AS EmployeeId,
+            CONCAT(u.FirstName, ' ', u.LastName) AS PerformedBy,
+            b.BatchID,
+            b.CreatedAt AS BatchCreatedAt,
+            b.Status AS BatchStatus,
+            dl.Action,
+            dl.Timestamp AS ActionTimestamp,
+            sf.Id AS FilmId,
+            sf.OriginalniNaslov AS FilmTitle
+        FROM DigitalizationLogs dl
+        INNER JOIN Batch b ON dl.BatchID = b.BatchID
+        INNER JOIN [User] u ON dl.PerformedBy = CONCAT(u.FirstName, ' ', u.LastName)
+        LEFT JOIN BatchFilms bf ON b.BatchID = bf.BatchID
+        LEFT JOIN ScannedFilms sf ON bf.FilmID = sf.Id
+        WHERE u.ID IN @EmployeeIds
+        ORDER BY u.ID, b.BatchID, dl.Timestamp";
+
+            var results = await conn.QueryAsync<EmployeeBatchRaw>(query, new { EmployeeIds = employeeIds });
+
+            // Group and structure the data into DTOs
+            var groupedData = results
+                .GroupBy(row => new { row.EmployeeId, row.PerformedBy })
+                .Select(group => new EmployeeBatchDAO
+                {
+                    EmployeeId = group.Key.EmployeeId,
+                    PerformedBy = group.Key.PerformedBy,
+                    Batches = group.GroupBy(row => row.BatchID).Select(batchGroup => new BatchDAO
+                    {
+                        BatchId = batchGroup.Key,
+                        BatchCreatedAt = batchGroup.First().BatchCreatedAt,
+                        BatchStatus = batchGroup.First().BatchStatus,
+                        Films = batchGroup
+                            .Where(row => row.FilmId != null)
+                            .GroupBy(row => row.FilmId)
+                            .Select(filmGroup => new FilmDAO
+                            {
+                                FilmId = filmGroup.Key,
+                                FilmTitle = filmGroup.First().FilmTitle
+                            }).ToList(),
+                        Actions = batchGroup
+                            .GroupBy(row => new { row.Action, row.ActionTimestamp })
+                            .Select(actionGroup => new ActionDAO
+                            {
+                                Action = actionGroup.Key.Action,
+                                ActionTimestamp = actionGroup.Key.ActionTimestamp
+                            }).ToList()
+                    }).ToList()
+                }).ToList();
+
+            return groupedData;
+        }
+
     }
 }

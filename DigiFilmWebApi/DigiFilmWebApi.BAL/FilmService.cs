@@ -81,5 +81,10 @@ namespace DigiFilmWebApi.BAL
         {
             await _filmRepository.EditScannedFilmAsync(film);
         }
+
+        public async Task<List<EmployeeBatchDAO>> GetEmployeeBatchDataAsync(List<int> employeeIds)
+        {
+            return await _filmRepository.GetEmployeeBatchDataAsync(employeeIds);
+        }
     }
 }
