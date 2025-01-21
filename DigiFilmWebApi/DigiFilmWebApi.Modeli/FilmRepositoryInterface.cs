@@ -16,5 +16,7 @@ namespace DigiFilmWebApi.DAL
         Task UpdateBatchStatusAsync(int batchId, string status);
         Task UpdateMoviesStatusInBatchAsync(int batchId, string status);
         Task LogBatchCompletionAsync(int batchId, string performedBy);
+        Task<Film> GetScannedFilmByIdAsync(int id);
+        Task EditScannedFilmAsync(Film film);
     }
 }

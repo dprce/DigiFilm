@@ -20,6 +20,14 @@ namespace DigiFilmWebApi.DAL
                 new { Barcode = barcode });
             return result.FirstOrDefault();
         }
+        
+        public async Task<Film> GetScannedFilmByIdAsync(int id)
+        {
+            using IDbConnection conn = CentralConnection;
+            var result = await conn.QueryAsync<Film>("SELECT * FROM [ScannedFilms] WHERE Id = @Id",
+                new { Id = id });
+            return result.FirstOrDefault();
+        }
 
         public async Task<int> InsertScannedFilmAsync(Film film)
         {
@@ -173,5 +181,31 @@ namespace DigiFilmWebApi.DAL
 
             await conn.ExecuteAsync(query, parameters);
         }
+
+        public async Task EditScannedFilmAsync(Film film)
+        {
+            using IDbConnection conn = CentralConnection;
+
+            var query = @"
+        UPDATE ScannedFilms
+        SET 
+            IDEmisije = @IDEmisije,
+            OriginalniNaslov = @OriginalniNaslov,
+            RadniNaslov = @RadniNaslov,
+            JezikOriginala = @JezikOriginala,
+            Ton = @Ton,
+            Emisija = @Emisija,
+            Porijeklo_ZemljaProizvodnje = @Porijeklo_ZemljaProizvodnje,
+            GodinaProizvodnje = @GodinaProizvodnje,
+            MarkIn = @MarkIn,
+            MarkOut = @MarkOut,
+            Duration = @Duration,
+            BrojMedija = @BrojMedija,
+            BarCode = @BarCode
+        WHERE Id = @Id";
+
+            await conn.ExecuteAsync(query, film);
+        }
+        
     }
 }

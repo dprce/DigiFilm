@@ -72,5 +72,14 @@ namespace DigiFilmWebApi.BAL
             await _filmRepository.LogBatchCompletionAsync(batchId, performedBy);
         }
 
+        public async Task<Film> GetScannedFilmByIdAsync(int id)
+        {
+            return await _filmRepository.GetScannedFilmByIdAsync(id);
+        }
+
+        public async Task EditScannedFilmAsync(Film film)
+        {
+            await _filmRepository.EditScannedFilmAsync(film);
+        }
     }
 }
