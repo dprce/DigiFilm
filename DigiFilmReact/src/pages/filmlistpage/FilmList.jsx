@@ -415,9 +415,9 @@ const FilmList = () => {
         <ThemeProvider theme={theme}>
             <div className="app-container">
                 <Navbar />
-                <Box sx={{ padding: "24px 40px", maxWidth: "1200px", /*margin: "auto",*/ display: "flex", gap: 3 }}>
+                <Box sx={{ padding: "24px 40px", maxWidth: "1200px", /*margin: "auto",*/  gap: 3, display:"flex", flex:1, flexDirection: {xs: 'column', md: 'row'} }}>
                     {/* Film List */}
-                    <Box flex={2} sx={{ width: "60%" }}>
+                    <Box flex={2} >
                         <Typography variant="h4" gutterBottom>
                             Film List
                         </Typography>

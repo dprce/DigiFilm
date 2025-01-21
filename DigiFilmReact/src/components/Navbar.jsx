@@ -61,23 +61,15 @@ const Navbar = () => {
             { title: "Session list", href: "/sessionList" },
             { title: "Film list", href: "/filmList" }
         ];
+    console.log(role);
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
-
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
-    };
-
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
     };
 
     const handleLogout = async () => {
@@ -145,9 +137,9 @@ const Navbar = () => {
                     </Box>
                     <TheatersIcon sx={{display: {xs: 'flex', md: 'none'}, mr: 1}}/>
                     <Typography
-                        variant="h7"
+                        variant="h6"
                         noWrap
-                        component="h7"
+                        component="h6"
                         sx={{
                             mr: 2,
                             display: {xs: 'flex', md: 'none'},

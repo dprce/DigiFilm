@@ -219,7 +219,7 @@ const SessionList = () => {
   return (
       <div className="app-container">
         <Navbar /> {/* Add the Navbar here */}
-        <Box sx={{ padding: "20px" }}>
+        <Box sx={{ padding: "20px" }} >
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
             Batch List
           </Typography>
