@@ -45,14 +45,15 @@ const Navbar = () => {
         getUserData();
     }, []);
 
-    const PAGES = role === 4
+    const PAGES = role === "4"
         ? [
             { title: "Scan Barcode", href: "/scanBarcode" },
             { title: "Edit Data", href: "/editData" },
             { title: "Home", href: "/home" },
             { title: "Session list", href: "/sessionList" },
             { title: "Film list", href: "/filmList" },
-            { title: "Add Employee", href: "/addEmployee" }
+            { title: "Add Employee", href: "/addEmployee" }, 
+            {title: "View employee stats", href: "/employeeBatchData"}
         ]
         : [
             { title: "Scan Barcode", href: "/scanBarcode" },

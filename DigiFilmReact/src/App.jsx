@@ -9,6 +9,7 @@ import SessionList from "./pages/sessionlistpage/SessionList.jsx";
 import AddEmployee from "./pages/addemployeepage/AddEmployee.jsx";
 import "./App.css";
 import "./index.css";
+import EmployeeBatchList from "./pages/employeebatchlist/EmployeeBatchList.jsx";
 
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
             <Route path="/filmList" element={<FilmList />} />
             <Route path="/sessionList" element={<SessionList />} />
             <Route path="/addEmployee" element={<AddEmployee />} />
+            <Route path="/employeeBatchData" element={<EmployeeBatchList/>}/>
             {/* Dodatne rute idu ovdje kad se rade novi ekrani */}
         </Routes>
 
