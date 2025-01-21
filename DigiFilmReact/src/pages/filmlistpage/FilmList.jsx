@@ -58,6 +58,31 @@ export async function fetchFilms() {
         return [];
     }
 }
+const fetchFilmById = async (id) => {
+    try {
+        const response = await fetch(`https://localhost:7071/Film/get-scanned-film/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error fetching film:", errorData);
+            alert("Film not found or an error occurred.");
+            return null;
+        }
+
+        const filmData = await response.json();
+        return filmData.film;
+    } catch (error) {
+        console.error("Error fetching film by ID:", error);
+        alert("An error occurred while fetching the film.");
+        return null;
+    }
+};
 
 // Fetch users from backend
 export async function fetchUsers() {
@@ -264,8 +289,11 @@ const FilmList = () => {
         }
     }
 
-    const handleEdit = (movie) => {
-        navigate("/editData", {state: {film: movie}});
+    const handleEdit = async (movie) => {
+        const film = await fetchFilmById(movie.id);
+        //setFilmToEdit(film);
+        console.log(film);
+        navigate("/editData", {state: {film: film, isEditing: true}});
     };
 
     const groupMoviesIntoBatches = () => {
