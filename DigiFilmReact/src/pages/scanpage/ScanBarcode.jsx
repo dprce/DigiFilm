@@ -31,7 +31,7 @@ const ScanBarcode = () => {
 
             const filmData = await response.json();
             // Navigate to the editData page with film data in state
-            navigate("/editData", { state: { film: filmData.film } });
+            navigate("/editData", { state: { film: filmData.film, isEditing: false } });
         } catch (error) {
             console.error("Error fetching film by barcode:", error);
             alert("An error occurred while fetching the film.");
