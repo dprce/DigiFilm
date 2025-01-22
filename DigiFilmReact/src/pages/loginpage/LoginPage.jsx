@@ -1,9 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Paper, Typography, TextField, Button, GlobalStyles, Icon } from "@mui/material";
+import {
+    Container,
+    Paper,
+    Typography,
+    TextField,
+    Button,
+    GlobalStyles,
+    Icon,
+    InputAdornment,
+    IconButton
+} from "@mui/material";
 import { login } from "../../api/AuthApi.jsx"; // Assuming AuthApi.js contains login logic
 import "./LoginPage.css";
 import "./separator.css";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 const hexToRgba = (hex, alpha) => {
     const r = parseInt(hex.slice(1, 3), 16);
@@ -11,6 +22,7 @@ const hexToRgba = (hex, alpha) => {
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
+
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -58,6 +70,18 @@ const LoginPage = () => {
         if (!isUsernameValid() && username) {
             setError("Invalid email domain. Use your FER account.");
         }
+    };
+
+    const [showPassword, setShowPassword] = React.useState(false);
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
+
+    const handleMouseUpPassword = (event) => {
+        event.preventDefault();
     };
 
     const microsoftIcon = (
@@ -115,13 +139,26 @@ const LoginPage = () => {
                         />
                         <TextField
                             variant="outlined"
-                            type="password"
+                            type={showPassword ? 'text' : 'password'} // Prikazivanje ili sakrivanje lozinke
                             name="password"
                             placeholder="Password"
                             label="Password"
                             className="password-field"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
                         />
                         <Button
                             variant="contained"

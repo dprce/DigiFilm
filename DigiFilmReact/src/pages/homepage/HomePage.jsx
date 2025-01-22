@@ -48,7 +48,7 @@ const HomePage = () => {
                     materials on film tapes.
                     Today, this method of storage and reproduction is no longer used. However, there is still a large
                     number of archival film materials that are still stored on film tapes, and whose preservation is of
-                    great importance for our culture, education and entertainment. That's why this application was
+                    great importance for our culture, education and entertainment. That's why this app was
                     created, it will enable you to track and facilitate the digitization of film materials.</h4>
             </div>
             <Footer/>

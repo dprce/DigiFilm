@@ -161,7 +161,7 @@ const EmployeeBatchList = () => {
   return (
     <div className="app-container">
       <Navbar />
-      <Box sx={{ padding: "20px" }}>
+      <Box flex="1" sx={{ padding: "20px" }}>
         <Typography variant="h4" gutterBottom>
           Employee Digitalization Report
         </Typography>
