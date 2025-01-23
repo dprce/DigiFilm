@@ -46,7 +46,7 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 // Configure OpenID Connect Options
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
-    options.SaveTokens = true; // Save tokens to properties if needed
+    options.SaveTokens = false; // Save tokens to properties if needed
     options.Events.OnTokenValidated = async context =>
     {
         var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
