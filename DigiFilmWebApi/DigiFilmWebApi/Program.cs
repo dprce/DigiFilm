@@ -11,9 +11,9 @@ using DigiFilmWebApi.BAL;
 using DigiFilmWebApi.DAL;
 using DigiFilmWebApi.Modeli;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Define initial scopes for downstream API
 IEnumerable<string>? initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ');
@@ -29,10 +29,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("https://digi-film-react.vercel.app")
+            policy.WithOrigins("https://digi-film-react.vercel.app") // Exact frontend URL
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowCredentials(); // Required for cookies
         });
 });
 
@@ -62,7 +62,7 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             if (user == null)
             {
                 // User not found, redirect to registration or error page
-                context.Response.Redirect($"https://digi-film-react.vercel.app");
+                context.Response.Redirect("https://digi-film-react.vercel.app");
                 context.HandleResponse(); // Stop further processing
                 return;
             }
@@ -82,16 +82,27 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             return;
         }
     };
-    options.NonceCookie.SameSite = SameSiteMode.None;
-    options.NonceCookie.SecurePolicy = CookieSecurePolicy.Always;
+
+    options.NonceCookie.SameSite = SameSiteMode.None; // Allow cross-origin cookies
+    options.NonceCookie.SecurePolicy = CookieSecurePolicy.Always; // Enforce HTTPS
     options.CorrelationCookie.SameSite = SameSiteMode.None;
     options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.Cookie.SameSite = SameSiteMode.None; // Required for cross-origin cookies
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Disable Secure for development (HTTP allowed)
+    options.Cookie.SameSite = SameSiteMode.None; // Allow cross-origin cookies
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Enforce HTTPS
+});
+
+// Proxy/Load Balancer Configuration
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+
+    // Optionally clear known networks/proxies if behind a load balancer
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
 });
 
 // Dependency Injection for services
@@ -113,23 +124,37 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 // Add Swagger to services
 builder.Services.AddSwaggerGen();
 
-// Build the application
 var app = builder.Build();
 
 // Middleware Setup
+
+// Handle forwarded headers before anything else
+app.UseForwardedHeaders();
+
+// Redirect to HTTPS
 app.UseHttpsRedirection();
 
-// Ensure CORS is applied before authentication and routing
+// Ensure CORS is applied before authentication
 app.UseCors("AllowFrontend");
+
+// Ensure cookies are handled
 app.UseCookiePolicy();
 
+// Serve static files (if any)
 app.UseStaticFiles();
+
+// Enable routing
 app.UseRouting();
+
+// Authentication and Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Swagger UI
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Docs"));
+
+// Map controllers
 app.MapControllers();
 
 app.Run();
