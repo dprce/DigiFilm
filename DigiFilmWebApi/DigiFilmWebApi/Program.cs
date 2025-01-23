@@ -33,6 +33,7 @@ builder.Services.AddCors(options =>
                     "https://digi-film-react.vercel.app",
                     "https://login.microsoftonline.com"
                 )
+                .SetIsOriginAllowed(_ => true)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
