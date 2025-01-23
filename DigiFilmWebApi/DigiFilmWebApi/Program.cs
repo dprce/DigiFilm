@@ -50,6 +50,9 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
     options.Events.OnTokenValidated = async context =>
     {
         var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
+        
+        var userPrincipal = context.Principal;
+        var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
 
         // Remove all existing claims
         if (claimsIdentity != null)
@@ -60,9 +63,6 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
                 claimsIdentity.RemoveClaim(claim); // Remove each claim individually
             }
         }
-
-        var userPrincipal = context.Principal;
-        var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
 
         if (!string.IsNullOrEmpty(userEmail))
         {
