@@ -47,6 +47,43 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
     options.SaveTokens = true; // Save tokens to properties
+    options.Events.OnTokenValidated = async context =>
+    {
+        var userPrincipal = context.Principal;
+        var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
+
+        if (userEmail != null)
+        {
+            // Fetch the UserRepository service
+            var userRepository = context.HttpContext.RequestServices.GetRequiredService<UserRepository>();
+
+            // Check if user exists in the database
+            var user = await userRepository.GetUserByEmailAsync(userEmail);
+
+            if (user == null)
+            {
+                // User not found, redirect to registration or error page
+                context.Response.Redirect("https://digi-film-react.vercel.app");
+                context.HandleResponse(); // Stop further processing
+                return;
+            }
+            else
+            {
+                // Add claims (Role, TenantId) if the user is authorized
+                var claimsIdentity = userPrincipal.Identity as ClaimsIdentity;
+                claimsIdentity?.AddClaim(new Claim("RoleId", user.RoleId.ToString()));
+                claimsIdentity?.AddClaim(new Claim("TenantId", user.TenantId.ToString()));
+            }
+        }
+        else
+        {
+            // No email claim, redirect to error page
+            context.Response.Redirect("https://digi-film-react.vercel.app");
+            context.HandleResponse();
+            return;
+        }
+    };
+
     options.NonceCookie.SameSite = SameSiteMode.None; // Allow cross-origin cookies
     options.NonceCookie.SecurePolicy = CookieSecurePolicy.Always; // Enforce HTTPS
     options.CorrelationCookie.SameSite = SameSiteMode.None;
