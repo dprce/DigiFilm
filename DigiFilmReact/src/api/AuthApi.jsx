@@ -40,9 +40,19 @@ export async function login(email, password) {
 
 export const logout = async () => {
     try {
-        window.location.href = "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/logout";
-        
+        const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/logout", {
+            method: "POST",
+            credentials: "include", // Include credentials (cookies)
+        });
+
+        if (response.ok) {
+            // Redirect to the redirect URI after logout
+            window.location.href = "https://digi-film-react.vercel.app";
+        } else {
+            console.error("Failed to log out:", response.status, response.statusText);
+        }
     } catch (error) {
         console.error("Network error during logout:", error);
     }
 };
+
