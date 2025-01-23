@@ -46,46 +46,56 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 // Configure OpenID Connect Options
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
-    options.SaveTokens = true; // Save tokens to properties
+    options.SaveTokens = true; // Save tokens to properties if needed
     options.Events.OnTokenValidated = async context =>
     {
+        var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
+
+        // Remove all existing claims
+        if (claimsIdentity != null)
+        {
+            var claimsToRemove = claimsIdentity.Claims.ToList(); // Create a list of all claims
+            foreach (var claim in claimsToRemove)
+            {
+                claimsIdentity.RemoveClaim(claim); // Remove each claim individually
+            }
+        }
+
         var userPrincipal = context.Principal;
         var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
 
-        if (userEmail != null)
+        if (!string.IsNullOrEmpty(userEmail))
         {
             // Fetch the UserRepository service
             var userRepository = context.HttpContext.RequestServices.GetRequiredService<UserRepository>();
-
-            // Check if user exists in the database
             var user = await userRepository.GetUserByEmailAsync(userEmail);
 
-            if (user == null)
+            if (user != null)
             {
-                // User not found, redirect to registration or error page
-                context.Response.Redirect("https://digi-film-react.vercel.app");
-                context.HandleResponse(); // Stop further processing
-                return;
+                // Add only the necessary claims
+                claimsIdentity?.AddClaim(new Claim("RoleId", user.RoleId.ToString()));
+                claimsIdentity?.AddClaim(new Claim("TenantId", user.TenantId.ToString()));
             }
             else
             {
-                // Add claims (Role, TenantId) if the user is authorized
-                var claimsIdentity = userPrincipal.Identity as ClaimsIdentity;
-                claimsIdentity?.AddClaim(new Claim("RoleId", user.RoleId.ToString()));
-                claimsIdentity?.AddClaim(new Claim("TenantId", user.TenantId.ToString()));
+                // Redirect if user is not found
+                context.Response.Redirect("https://digi-film-react.vercel.app");
+                context.HandleResponse();
+                return;
             }
         }
         else
         {
-            // No email claim, redirect to error page
+            // Redirect if no email claim is present
             context.Response.Redirect("https://digi-film-react.vercel.app");
             context.HandleResponse();
             return;
         }
     };
 
-    options.NonceCookie.SameSite = SameSiteMode.None; // Allow cross-origin cookies
-    options.NonceCookie.SecurePolicy = CookieSecurePolicy.Always; // Enforce HTTPS
+    // Configure cookies to handle cross-origin scenarios
+    options.NonceCookie.SameSite = SameSiteMode.None;
+    options.NonceCookie.SecurePolicy = CookieSecurePolicy.Always;
     options.CorrelationCookie.SameSite = SameSiteMode.None;
     options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
 });
