@@ -47,7 +47,6 @@ namespace DigiFilmWebApi.Controllers
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 
-        [Authorize]
         [HttpGet("post-login-redirect")]
         public IActionResult PostLoginRedirect()
         {
