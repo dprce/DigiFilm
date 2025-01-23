@@ -99,10 +99,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-
-    // Optionally clear known networks/proxies if behind a load balancer
-    options.KnownNetworks.Clear();
-    options.KnownProxies.Clear();
 });
 
 // Dependency Injection for services
