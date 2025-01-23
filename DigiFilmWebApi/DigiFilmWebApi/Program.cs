@@ -32,7 +32,8 @@ builder.Services.AddCors(options =>
             policy.WithOrigins("https://digi-film-react.vercel.app") // Exact frontend URL
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials(); // Required for cookies
+                .AllowCredentials()
+                .WithExposedHeaders("Set-Cookie");
         });
 });
 
