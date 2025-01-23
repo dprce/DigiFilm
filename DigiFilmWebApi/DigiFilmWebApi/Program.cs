@@ -82,12 +82,17 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             return;
         }
     };
+    options.NonceCookie.SameSite = SameSiteMode.None;
+    options.NonceCookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.CorrelationCookie.SameSite = SameSiteMode.None;
+    options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.SameSite = SameSiteMode.None; // Required for cross-origin cookies
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Disable Secure for development (HTTP allowed)
+    options.Cookie.Domain = "https://digi-film-react.vercel.app";
 });
 
 
