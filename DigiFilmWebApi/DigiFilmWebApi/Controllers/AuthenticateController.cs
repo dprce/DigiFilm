@@ -80,6 +80,18 @@ namespace DigiFilmWebApi.Controllers
             return Ok(claims);
         }
         
+        [HttpGet("set-test-cookie")]
+        public IActionResult SetTestCookie()
+        {
+            Response.Cookies.Append("TestCookie", "TestValue", new CookieOptions
+            {
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                HttpOnly = true
+            });
+            return Ok("Cookie Set!");
+        }
+        
         [Authorize]
         [HttpGet("all-roles")]
         public async Task<IActionResult> GetAllRoles()
