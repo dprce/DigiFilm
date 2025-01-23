@@ -62,7 +62,7 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             if (user == null)
             {
                 // User not found, redirect to registration or error page
-                context.Response.Redirect($"https://digi-film-react.vercel.app/");
+                context.Response.Redirect($"https://digi-film-react.vercel.app");
                 context.HandleResponse(); // Stop further processing
                 return;
             }
@@ -77,7 +77,7 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
         else
         {
             // No email claim, redirect to error page
-            context.Response.Redirect("https://digi-film-react.vercel.app/");
+            context.Response.Redirect("https://digi-film-react.vercel.app");
             context.HandleResponse();
             return;
         }

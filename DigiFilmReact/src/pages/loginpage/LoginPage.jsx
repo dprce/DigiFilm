@@ -38,8 +38,7 @@ const LoginPage = () => {
         try {
             window.location.href = "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login";
         } catch (error) {
-            console.error("Error initiating login:", error);
-            setError("Something went wrong during login.");
+            console.error("Login error:", error);
         }
     };
 
