@@ -40,9 +40,19 @@ export async function login(email, password) {
 
 export const logout = async () => {
     try {
-        window.location.href = "https://localhost:7071/Authenticate/logout";
-        
+        const response = await fetch("https://localhost:7071/Authenticate/logout", {
+            method: "POST",
+            credentials: "include", // Include credentials (cookies)
+        });
+
+        if (response.ok) {
+            // Redirect to the redirect URI after logout
+            window.location.href = "https://localhost:5173/home";
+        } else {
+            console.error("Failed to log out:", response.status, response.statusText);
+        }
     } catch (error) {
         console.error("Network error during logout:", error);
     }
 };
+
