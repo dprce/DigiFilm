@@ -152,7 +152,7 @@ export const sendReturnedBatches = async (selectedBatches, allBatches, performed
 };
 
 export const fetchEmployeeBatchData = async (employeeIds) => {
-    const response = await fetch("https://localhost:7071/Film/get-employee-batches", {
+    const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/get-employee-batches", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(employeeIds),

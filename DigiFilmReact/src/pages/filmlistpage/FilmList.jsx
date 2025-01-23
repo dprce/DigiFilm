@@ -60,7 +60,7 @@ export async function fetchFilms() {
 }
 const fetchFilmById = async (id) => {
     try {
-        const response = await fetch(`https://localhost:7071/Film/get-scanned-film/${id}`, {
+        const response = await fetch(`https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/get-scanned-film/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

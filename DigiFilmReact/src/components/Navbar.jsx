@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const fetchCurrentUser = async () => {
     try {
-        const response = await fetch('https://localhost:7071/Authenticate/claims', {
+        const response = await fetch('https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/claims', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
