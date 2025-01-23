@@ -29,11 +29,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins(
-                    "https://digi-film-react.vercel.app",
-                    "https://login.microsoftonline.com"
-                )
-                .SetIsOriginAllowed(_ => true)
+            policy.WithOrigins("https://digi-film-react.vercel.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -96,14 +92,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.SameSite = SameSiteMode.None; // Required for cross-origin cookies
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Disable Secure for development (HTTP allowed)
-    options.Cookie.Domain = "digi-film-react.vercel.app";
-});
-
-
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    options.MinimumSameSitePolicy = SameSiteMode.None;
-    options.Secure = CookieSecurePolicy.Always;
 });
 
 // Dependency Injection for services

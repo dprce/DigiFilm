@@ -54,10 +54,10 @@ namespace DigiFilmWebApi.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            Response.Headers.Add("Access-Control-Allow-Origin", "https://localhost:5173/home");
+            Response.Headers.Add("Access-Control-Allow-Origin", "https://digi-film-react.vercel.app");
             Response.Headers.Add("Access-Control-Allow-Credentials", "true");
             return SignOut(new AuthenticationProperties { 
-                    RedirectUri = "https://localhost:5173/home" 
+                    RedirectUri = "https://digi-film-react.vercel.app" 
             },
                 OpenIdConnectDefaults.AuthenticationScheme, 
                 CookieAuthenticationDefaults.AuthenticationScheme);
