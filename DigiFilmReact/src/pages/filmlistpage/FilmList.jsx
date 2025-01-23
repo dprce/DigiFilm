@@ -119,6 +119,7 @@ const FilmList = () => {
     const [totalSelectedDuration, setTotalSelectedDuration] = useState(0);
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState("");
+    const [selectedUserId, setSelectedUserId] = useState("");
     const [loading, setLoading] = useState(false); // Spinner state
     const [dialogOpen, setDialogOpen] = useState(false); // Dialog state
     const [dialogMessage, setDialogMessage] = useState(""); // Dialog message
@@ -190,6 +191,7 @@ const FilmList = () => {
 
         const requestBody = {
             Batches: batches.map((batch) => batch.map((movie) => parseInt(movie.id))),
+            UserId: selectedUser,
             CreatedBy: selectedUser,
         };
 
@@ -551,7 +553,10 @@ const FilmList = () => {
                             freeSolo
                             options={users}
                             value={selectedUser}
-                            onChange={(e) => setSelectedUser(e.target.value)}
+                            onChange={(e, value) => {
+                                setSelectedUser(value?.id);
+                                setCreatedBy(value?.label); // This stores the user's full name
+                            }}
                             getOptionLabel={(option) =>
                                 typeof option === "string" ? option : option.label
                             }

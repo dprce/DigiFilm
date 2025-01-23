@@ -109,9 +109,7 @@ namespace DigiFilmWebApi.Controllers
 
             try
             {
-                var userId = 1;
-
-                await _filmService.CreateBatchesAsync(request.CreatedBy, userId, request.Batches);
+                await _filmService.CreateBatchesAsync(request.CreatedBy, request.UserId, request.Batches);
 
                 return Ok(new { message = "Batches created successfully." });
             }
