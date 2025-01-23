@@ -47,23 +47,25 @@ namespace DigiFilmWebApi.Controllers
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 
-        [Authorize]
         [HttpGet("post-login-redirect")]
         public IActionResult PostLoginRedirect()
         {
-            // Set a cookie
+            // Set a test cookie for debugging
             Response.Cookies.Append("TestCookie", "TestValue", new CookieOptions
             {
                 SameSite = SameSiteMode.None, // Required for cross-origin cookies
-                Secure = true,                // Ensure cookies work over HTTPS
-                HttpOnly = true,              // Optional, prevents client-side access
-                Path = "/",                   // Ensure cookie is available for the entire app
-                Expires = DateTime.UtcNow.AddMinutes(30) // Optional expiration
+                Secure = true, // Ensure cookies are sent only over HTTPS
+                HttpOnly = true, // Prevent access via JavaScript for security (optional)
+                Path = "/", // Ensure it's available across the entire application
+                Expires = DateTime.UtcNow.AddMinutes(30) // Set an expiration time (optional)
             });
 
-            return Ok(new { message = "Cookie set successfully in PostLoginRedirect" });
-        }
+            // Optional: Add logging for debugging purposes
+            Console.WriteLine("Cookie set successfully in PostLoginRedirect");
 
+            // Redirect the user to the frontend home page
+            return Redirect("https://digi-film-react.vercel.app/home");
+        }
         
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
