@@ -65,7 +65,7 @@ namespace DigiFilmWebApi.Controllers
             Console.WriteLine("Cookie set successfully in PostLoginRedirect");
 
             // Redirect the user to the frontend home page
-            return Redirect("https://digi-film-react.vercel.app/home");
+            return Redirect("https://digi-film-react.vercel.app");
         }
         
         [HttpPost("logout")]
