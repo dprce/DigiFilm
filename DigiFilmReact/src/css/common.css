@@ -1,0 +1,6 @@
+.app-container {
+    background-color: #efebe9;
+    min-height: 100vh;      /* Zauzima cijelu visinu prozora pretraživača */
+    display: flex;
+    flex-direction: column;
+}

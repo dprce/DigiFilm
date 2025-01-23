@@ -29,6 +29,7 @@ namespace DigiFilmWebApi.Controllers
             return Ok(new {film = film, message = "Film uspješno dohvaćen." });
         }
         
+        
         [HttpPost("submit-scanned-film")]
         public async Task<IActionResult> SubmitScannedFilm([FromBody] Film film)
         {
@@ -53,6 +54,25 @@ namespace DigiFilmWebApi.Controllers
             return Ok(new { filmId = filmId, message = "Film successfully submitted to ScannedFilms." });
         }
         
+        [HttpPost("edit-scanned-film")]
+        public async Task<IActionResult> EditFilm([FromBody] Film film)
+        {
+            if (film == null)
+            {
+                return BadRequest(new { message = "Invalid film data provided." });
+            }
+
+            try
+            {
+                await _filmService.EditScannedFilmAsync(film);
+                return Ok(new { message = "Film successfully updated." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the film.", details = ex.Message });
+            }
+        }
+
         [HttpGet("get-all-films")]
         public async Task<IActionResult> GetAllFilms()
         {
@@ -174,5 +194,35 @@ namespace DigiFilmWebApi.Controllers
                 return StatusCode(500, new { error = "An error occurred while completing the batches.", details = ex.Message });
             }
         }
+        
+        [HttpGet("get-scanned-film/{id}")]
+        public async Task<IActionResult> GetFilmByBarcodeNumber(int id)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Return JSON response for unauthorized access
+                return Unauthorized(new
+                {
+                    Error = "User is not authenticated."
+                });
+            }
+
+            var film = await _filmService.GetScannedFilmByIdAsync(id);
+
+            return Ok(new {film = film, message = "Film uspješno dohvaćen." });
+        }
+        
+        [HttpPost("get-employee-batches")]
+        public async Task<IActionResult> GetEmployeeBatches([FromBody] List<int> employeeIds)
+        {
+            if (employeeIds == null || !employeeIds.Any())
+            {
+                return BadRequest(new { message = "Employee IDs cannot be null or empty." });
+            }
+
+            var data = await _filmService.GetEmployeeBatchDataAsync(employeeIds);
+            return Ok(data);
+        }
+
     }
 }

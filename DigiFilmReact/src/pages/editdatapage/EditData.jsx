@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
-import Header from '../../components/Header.jsx';
 import Navbar from '../../components/Navbar.jsx';
 import Footer from '../../components/Footer.jsx';
 import { Box, Button, TextField } from "@mui/material";
 import { useLocation } from "react-router-dom";
-
+import "../../css/common.css"
 import "./EditData.css";
 
 const EditData = () => {
     const location = useLocation();
     const [movie, setMovie] = React.useState({
+        Id: 0,
         OriginalniNaslov: '',
         IDEmisije: '',
         RadniNaslov: '',
@@ -29,14 +29,15 @@ const EditData = () => {
         const filmData = location.state?.film;
         if (filmData) {
             setMovie({
-                OriginalniNaslov: filmData.originalniNaslov || '',
+                Id: filmData.id,
+                OriginalniNaslov: filmData.originalniNaslov || filmData.title || '',
                 IDEmisije: filmData.idEmisije || '',
                 RadniNaslov: filmData.radniNaslov || '',
-                JezikOriginala: filmData.jezikOriginala || '',
+                JezikOriginala: filmData.jezikOriginala || filmData.language || '',
                 Ton: filmData.ton || '',
                 Emisija: filmData.emisija || '',
-                Porijeklo_ZemljaProizvodnje: filmData.porijeklo_ZemljaProizvodnje || '',
-                GodinaProizvodnje: filmData.godinaProizvodnje || '',
+                Porijeklo_ZemljaProizvodnje: filmData.porijeklo_ZemljaProizvodnje || filmData.country || '',
+                GodinaProizvodnje: filmData.godinaProizvodnje || filmData.year || '',
                 Duration: filmData.duration || '',
                 BrojMedija: filmData.brojMedija || '',
                 MarkIn: filmData.markIn || '',
@@ -44,6 +45,7 @@ const EditData = () => {
                 BarCode: filmData.barCode || ''
             });
         }
+        console.log(movie);
     }, [location.state]);
 
     const handleChange = (e) => {
@@ -58,8 +60,12 @@ const EditData = () => {
         event.preventDefault();
         console.log("Submitting movie:", movie);
 
+        const apiEndpoint = location.state?.isEditing === true
+            ? `https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/edit-scanned-film` // Editing endpoint
+            : `https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/submit-scanned-film`; // Insertion endpoint
+
         try {
-            const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/submit-scanned-film", {
+            const response = await fetch(apiEndpoint, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -70,16 +76,17 @@ const EditData = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error("Error submitting movie:", errorData);
+                console.error("Error submitting/editing movie:", errorData);
                 alert(`Error: ${errorData.message}`);
                 return;
             }
 
             const responseData = await response.json();
-            console.log("Movie data updated successfully:", responseData.message);
+            console.log("Movie data updated/submitted successfully:", responseData.message);
             alert("Movie data submitted successfully!");
 
             setMovie({
+                Id: 0,
                 OriginalniNaslov: '',
                 IDEmisije: '',
                 RadniNaslov: '',
@@ -101,9 +108,8 @@ const EditData = () => {
     };
 
     return (
-        <div className="editData">
+        <div className="app-container">
             <Navbar /> {/* Add the Navbar here */}
-            <Header />
             <Box className="edit-data">
                 <form className="edit-data__form" onSubmit={handleSubmit}>
                     <fieldset className="edit-data__fieldset">
@@ -239,7 +245,7 @@ const EditData = () => {
                                 },
                             }}
                         >
-                            Submit data
+                            {location.state?.isEditing === true ? "Edit movie" : "Submit movie"}
                         </Button>
                     </fieldset>
                 </form>

@@ -113,16 +113,17 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("claims")]
         public async Task<IActionResult> GetClaims()
         {
+            
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Return JSON response for unauthorized access
+                return Unauthorized(new
+                {
+                    Error = "User is not authenticated."
+                });
+            }
+            
             var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
-            var idToken = await HttpContext.GetTokenAsync("id_token");
-
-            Console.WriteLine("Access Token:");
-            Console.WriteLine(accessToken);
-            Console.WriteLine("ID Token:");
-            Console.WriteLine(idToken);
-
             return Ok(claims);
         }
         

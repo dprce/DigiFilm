@@ -1,13 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
-import { Box, Typography, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Autocomplete, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Autocomplete,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  ToggleButton, ToggleButtonGroup
+} from "@mui/material";
 import { jsPDF } from 'jspdf';
 import "./SessionList.css";
+import "../../css/common.css"
 import { fetchBatches } from '../../api/RoleApi.jsx'; // Adjust as needed
 import { fetchUsers } from '../../api/RoleApi.jsx';
 import { sendReturnedBatches } from '../../api/RoleApi.jsx'; // <--- Import your helper function
 import Navbar from '../../components/Navbar.jsx';
+import {fetchCurrentUser} from "../../components/Navbar.jsx";
 
 const SessionList = () => {
   const [batches, setBatches] = useState([]);
@@ -20,6 +42,25 @@ const SessionList = () => {
   const [loading, setLoading] = useState(false); // Spinner state
   const [dialogOpen, setDialogOpen] = useState(false); // Dialog state
   const [dialogMessage, setDialogMessage] = useState(""); // Dialog message
+  const [doneBatches, setDoneBatches] = useState([]);
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [role, setRole] = useState(null); // Role state
+
+  useEffect(() => {
+    const initializeUserRole = async () => {
+      try {
+        const userData = await fetchCurrentUser();
+        const roleClaim = userData?.find((claim) => claim.type === 'RoleId');
+        setRole(roleClaim?.value || null);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setRole(null);
+      }
+    };
+
+    initializeUserRole();
+  }, []);
+
 
   useEffect(() => {
     const fetchBatchData = async () => {
@@ -70,14 +111,39 @@ const SessionList = () => {
     } else {
       const lowerCaseQuery = query.toLowerCase();
       const result = batches.filter(batch =>
-          batch.movies.join(", ").toLowerCase().includes(lowerCaseQuery) ||
+          batch.movies.toLowerCase().includes(lowerCaseQuery) ||
           batch.id.toString().includes(lowerCaseQuery) ||
           batch.totalDuration.toLowerCase().includes(lowerCaseQuery) ||
-          (batch.status && batch.status.toLowerCase().includes(lowerCaseQuery))
+
+          ((role ==="3" || role ==="4") && batch.createdBy.toLowerCase().includes(lowerCaseQuery))
       );
       setFilteredBatches(result);
     }
   };
+
+  const handleStatusFilter = (newFilter) => {
+    if (newFilter){
+      setStatusFilter(newFilter);
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      let result = batches;
+
+      if(lowerCaseQuery !== ""){
+        result = batches.filter((batch) =>
+            batch.title.toLowerCase().includes(lowerCaseQuery)
+        );
+      }
+
+      if(newFilter !== "All"){
+        result = result.filter(
+            (batch) =>
+                (newFilter === "Digitalized" && batch.status === "Digitalized") ||
+                (newFilter === "Not digitalized" && batch.status === "Not Digitalized")
+        )
+      }
+
+      setFilteredBatches(result);
+    }
+  }
 
   const generatePDF = async () => {
     if (!selectedEmployee) {
@@ -151,48 +217,71 @@ const SessionList = () => {
   };
 
   return (
-      <div className="sessionlist">
+      <div className="app-container">
         <Navbar /> {/* Add the Navbar here */}
-        <Header />
-        <Box sx={{ padding: "20px" }}>
-          <Typography variant="h4" gutterBottom>
+        <Box flex="1" sx={{ padding: "20px" }} >
+          <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
             Batch List
           </Typography>
           <Box display="flex" alignItems="center" gap={2} mb={2}>
             <TextField
-                label="Search"
+                label="Search batches"
                 variant="outlined"
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                fullWidth
+                sx={{ width: "70%" }}
             />
+            <Typography sx={{ marginLeft: "5%" }}>
+                Batches found: {filteredBatches.length}
+            </Typography>
           </Box>
+          <ToggleButtonGroup
+              value={statusFilter}
+              exclusive
+              onChange={(e, newFilter) => handleStatusFilter(newFilter)}
+              sx={{ marginBottom: "16px" }}
+          >
+            <ToggleButton value="All">All</ToggleButton>
+            <ToggleButton value="Digitalized">Digitalized</ToggleButton>
+            <ToggleButton value="Not digitalized">Not digitalized</ToggleButton>
+          </ToggleButtonGroup>
           <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Select</TableCell>
+                  {role !== "2" &&
+                      <TableCell>Select</TableCell>
+                  }
                   <TableCell>Batch Number</TableCell>
                   <TableCell>Movies</TableCell>
                   <TableCell>Total Duration</TableCell>
                   <TableCell>Status</TableCell>
+                  {(role ==="3" || role === "4") &&
+                      <TableCell>Responsible Employee</TableCell>
+                  }
+
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filteredBatches.map((batch) => (
                     <TableRow key={batch.id} hover>
-                      <TableCell>
-                        <input
-                            type="checkbox"
-                            checked={selectedBatches.includes(batch.id)}
-                            onChange={() => handleSelectBatch(batch.id)}
-                            disabled={batch.status === "Digitalized"}
-                        />
-                      </TableCell>
+                      {role !== "2" &&
+                          <TableCell>
+                            <input
+                                type="checkbox"
+                                checked={selectedBatches.includes(batch.id)}
+                                onChange={() => handleSelectBatch(batch.id)}
+                                disabled={batch.status === "Digitalized"}
+                            />
+                          </TableCell>
+                      }
                       <TableCell>{batch.id}</TableCell>
                       <TableCell>{batch.movies}</TableCell>
                       <TableCell>{batch.totalDuration}</TableCell>
                       <TableCell>{batch.status}</TableCell>
+                      {(role ==="3" || role ==="4") &&
+                          <TableCell>{batch.createdBy}</TableCell>
+                      }
                     </TableRow>
                 ))}
               </TableBody>
@@ -259,7 +348,6 @@ const SessionList = () => {
             </Button>
           </DialogActions>
         </Dialog>
-
         <Footer />
       </div>
   );

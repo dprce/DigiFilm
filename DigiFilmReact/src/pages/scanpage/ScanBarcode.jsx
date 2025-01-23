@@ -6,6 +6,7 @@ import "./ScanBarcode.css";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Navbar from '../../components/Navbar.jsx';
+import "../../css/common.css"
 
 const ScanBarcode = () => {
     const [data, setData] = React.useState('No result');
@@ -30,7 +31,7 @@ const ScanBarcode = () => {
 
             const filmData = await response.json();
             // Navigate to the editData page with film data in state
-            navigate("/editData", { state: { film: filmData.film } });
+            navigate("/editData", { state: { film: filmData.film, isEditing: false } });
         } catch (error) {
             console.error("Error fetching film by barcode:", error);
             alert("An error occurred while fetching the film.");
@@ -38,9 +39,8 @@ const ScanBarcode = () => {
     };
 
     return (
-        <div className="scanbarcode">
+        <div className="app-container">
             <Navbar /> {/* Add the Navbar here */}
-            <Header />
             <BarcodeScannerComponent
                 width="100%"
                 height={500}
@@ -64,7 +64,7 @@ const ScanBarcode = () => {
                         '&:hover': {
                             backgroundColor: "#9e9e9e",
                         },
-                        width: '512px',
+                        width: '60%',
                     }}
                     onClick={() => navigate("/editData")}>
                     Box without barcode?

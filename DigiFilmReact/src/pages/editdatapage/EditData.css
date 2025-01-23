@@ -1,14 +1,8 @@
-.editData{
-    background-color: #efebe9;
-    width: 100%;        /* Zauzima cijelu širinu */
-    height: 100%;      /* Zauzima cijelu visinu prozora pretraživača */
-    display: flex;
-    flex-direction: column;
-}
 .edit-data{
     display: flex;
     flex-direction: column;
-    padding: 72px;
+    padding: 40px;
+    flex:1;
 }
 .edit-data__form{
     display: flex;

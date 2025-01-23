@@ -1,7 +1,8 @@
 .add-employee {
     display: flex;
     flex-direction: column;
-    padding: 72px;
+    padding: 40px;
+    flex:1;
 }
 
 .add-employee__form {
