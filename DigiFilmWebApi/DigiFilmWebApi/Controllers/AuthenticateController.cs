@@ -118,13 +118,9 @@ namespace DigiFilmWebApi.Controllers
                 return Unauthorized("Tenant ne postoji.");
             }
 
-            Console.WriteLine($"TenantId found: {tenantIdClaim.Value}");
-
-            int tenantId = int.Parse(tenantIdClaim.Value);
-
             try
             {
-                await _userService.RegisterNewEmployeeAsync(request, tenantId);
+                await _userService.RegisterNewEmployeeAsync(request, 1);
                 return Ok(new { message = "Zaposlenik uspješno registriran." });
             }
             catch (InvalidOperationException ex)
