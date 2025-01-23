@@ -47,9 +47,22 @@ namespace DigiFilmWebApi.Controllers
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 
-        [Authorize]
         [HttpGet("post-login-redirect")]
-        public IActionResult PostLoginRedirect() => Redirect("https://digi-film-react.vercel.app/home");
+        public IActionResult PostLoginRedirect()
+        {
+            // Set cookies here
+            Response.Cookies.Append("TestCookie", "TestValue", new CookieOptions
+            {
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                HttpOnly = true,
+                Path = "/",
+                Expires = DateTime.UtcNow.AddMinutes(30)
+            });
+
+            // Return JSON with redirect URL
+            return Ok(new { redirectUrl = "https://digi-film-react.vercel.app/home" });
+        }
         
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
