@@ -30,11 +30,9 @@ import { fetchUsers } from '../../api/RoleApi.jsx';
 import { sendReturnedBatches } from '../../api/RoleApi.jsx'; // <--- Import your helper function
 import Navbar from '../../components/Navbar.jsx';
 import {fetchCurrentUser} from "../../components/Navbar.jsx";
-import checkAuthentication from "../../auth.js";
 
 const SessionList = () => {
   const [batches, setBatches] = useState([]);
-  const { isAuthenticated } = checkAuthentication();
   const [filteredBatches, setFilteredBatches] = useState([]);
   const [selectedBatches, setSelectedBatches] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,9 +64,6 @@ const SessionList = () => {
 
   useEffect(() => {
     const fetchBatchData = async () => {
-
-      if (!isAuthenticated()) return;
-
       try {
         const data = await fetchBatches();
         const mappedBatches = data.map(batch => ({

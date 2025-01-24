@@ -24,11 +24,11 @@ const PostLoginRedirect = () => {
                     navigate("/home");
                 } else {
                     console.error("Login failed:", await response.json());
-                    navigate("/"); // Redirect to login page on failure
+                    navigate("/login"); // Redirect to login page on failure
                 }
             } catch (error) {
                 console.error("Error during post-login:", error);
-                navigate("/"); // Redirect to login page on error
+                navigate("/login"); // Redirect to login page on error
             }
         };
 

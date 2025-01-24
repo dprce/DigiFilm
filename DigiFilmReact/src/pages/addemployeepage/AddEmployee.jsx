@@ -7,11 +7,9 @@ import Navbar from '../../components/Navbar.jsx';
 import {fetchRoles, registerEmployee} from "../../api/RoleApi.jsx";
 import {Box, Button, MenuItem, TextField} from "@mui/material";
 import "../../css/common.css"
-import checkAuthentication from "../../auth.js";
 
 
 const AddEmployee = () => {
-    const { isAuthenticated } = checkAuthentication();
     const [roles, setRoles] = useState([]);
     const [employee, setEmployee] = useState({
         firstName: "",
@@ -25,9 +23,6 @@ const AddEmployee = () => {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        if (!isAuthenticated()) {
-            return;
-        }
         const loadRoles = async () => {
             try {
                 const rolesData = await fetchRoles();

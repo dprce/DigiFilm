@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
 import BarcodeScannerComponent from "react-qr-barcode-scanner";
@@ -7,10 +7,8 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Navbar from '../../components/Navbar.jsx';
 import "../../css/common.css"
-import checkAuthentication from "../../auth.js";
 
 const ScanBarcode = () => {
-    const { isAuthenticated } = checkAuthentication();
     const [data, setData] = React.useState('No result');
     const navigate = useNavigate();
 
@@ -39,12 +37,6 @@ const ScanBarcode = () => {
             alert("An error occurred while fetching the film.");
         }
     };
-
-    useEffect(() => {
-        if (!isAuthenticated()) {
-            return;
-        }
-    }, [isAuthenticated]);
 
     return (
         <div className="app-container">

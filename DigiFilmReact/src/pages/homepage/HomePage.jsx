@@ -7,7 +7,6 @@ import { Button } from "@mui/material";
 import Navbar from "../../components/Navbar.jsx";
 import "../../css/common.css";
 import filmtape from "../../../public/filmtape.jpg";
-import checkAuthentication from "../../auth.js";
 
 const decodeToken = (token) => {
     try {
@@ -22,15 +21,25 @@ const decodeToken = (token) => {
 };
 
 const HomePage = () => {
-    const { isAuthenticated } = checkAuthentication();
+    const navigate = useNavigate();
 
     useEffect(() => {
+<<<<<<< HEAD
         // Check if the user is authenticated
         //if (!isAuthenticated()) return;
+=======
+        // Get query parameters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get("accessToken");
+        const refreshToken = urlParams.get("refreshToken");
+>>>>>>> parent of 30d1359 (Authentication check)
 
-        // Token decoding logic (if needed)
-        const accessToken = localStorage.getItem("accessToken");
-        if (accessToken) {
+        if (accessToken && refreshToken) {
+            // Store tokens in localStorage
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+
+            // Decode the access token and extract the role
             const decodedToken = decodeToken(accessToken);
             if (decodedToken) {
                 const { role } = decodedToken;
@@ -39,8 +48,15 @@ const HomePage = () => {
             } else {
                 console.warn("Failed to decode access token.");
             }
+
+            // Remove tokens from the URL after saving them
+            const cleanUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+        } else {
+            console.warn("Tokens not found in URL. Redirecting to login...");
+            navigate("/login"); // Redirect to login page if tokens are missing
         }
-    }, [isAuthenticated]);
+    }, [navigate]);
 
     return (
         <div className="app-container">
