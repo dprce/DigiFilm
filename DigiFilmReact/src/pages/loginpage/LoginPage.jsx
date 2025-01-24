@@ -37,19 +37,28 @@ const LoginPage = () => {
     const handleLogin = async () => {
         try {
             // Trigger the backend login process
-            const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login", {
-                method: "GET",
-                credentials: "include", // Ensure cookies are included
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await fetch(
+                "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login",
+                {
+                    method: "GET",
+                    credentials: "include", // Include cookies for authentication
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+    
             const data = await response.json();
-            // Expecting the backend to return JSON response
+    
             if (response.ok) {
+                // Store tokens locally if needed
+                localStorage.setItem("accessToken", data.accessToken);
+                localStorage.setItem("refreshToken", data.refreshToken);
+    
+                // Navigate to the frontend home page
                 navigate(data.redirectUrl);
             } else {
-                setError("Failed to initiate login.");
+                setError(data.message || "Login failed.");
             }
         } catch (error) {
             console.error("Login error:", error);
