@@ -16,7 +16,7 @@ const HomePage = () => {
 
         if (!isAuthenticated()) {
             console.warn("User is not authenticated. Redirecting to login...");
-            navigate("/login");
+            navigate("/");
         } else {
             console.log("User is authenticated.");
 
