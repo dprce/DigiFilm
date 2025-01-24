@@ -26,7 +26,7 @@ const HomePage = () => {
 
     useEffect(() => {
         // Check if the user is authenticated
-        if (!isAuthenticated()) return;
+        //if (!isAuthenticated()) return;
 
         // Token decoding logic (if needed)
         const accessToken = localStorage.getItem("accessToken");

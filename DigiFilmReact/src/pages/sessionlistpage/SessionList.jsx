@@ -276,7 +276,7 @@ const SessionList = () => {
                                 type="checkbox"
                                 checked={selectedBatches.includes(batch.id)}
                                 onChange={() => handleSelectBatch(batch.id)}
-                                disabled={batch.status === "Digitalized"}
+                                disabled={batch.status === "Digitalized" || role === "1"}
                             />
                           </TableCell>
                       }

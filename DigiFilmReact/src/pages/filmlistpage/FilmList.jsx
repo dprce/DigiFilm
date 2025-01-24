@@ -496,7 +496,7 @@ const FilmList = () => {
                                                         type="checkbox"
                                                         checked={selectedMovies.includes(movie)}
                                                         onChange={() => handleSelect(movie.id)}
-                                                        disabled={movie.status !== "Not Digitalized"}
+                                                        disabled={movie.status !== "Not Digitalized" || role === "1"}
                                                     />
                                                 </TableCell>
                                             }
@@ -509,6 +509,7 @@ const FilmList = () => {
                                             {(role === "3" || role === "4") &&
                                                 <TableCell>
                                                     <Button
+                                                        disabled={role === "1" || role === "2"}
                                                         variant="contained"
                                                         color="primary"
                                                         onClick={() => handleEdit(movie)}
