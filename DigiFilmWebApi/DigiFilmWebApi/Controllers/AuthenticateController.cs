@@ -60,7 +60,7 @@ namespace DigiFilmWebApi.Controllers
             if (string.IsNullOrEmpty(userEmail))
             {
                 // Redirect to an error page if email is missing
-                return Redirect("https://digi-film-react.vercel.app/");
+                return BadRequest();
             }
 
             // Fetch user from the database based on the email
@@ -69,7 +69,7 @@ namespace DigiFilmWebApi.Controllers
             if (user == null)
             {
                 // Redirect to registration or error page if the user doesn't exist
-                return Redirect("https://digi-film-react.vercel.app/");
+                return BadRequest(new{message = "User not found.", redirectUrl = "https://digi-film-react.vercel.app/home"});
             }
 
             // Generate your own JWT
@@ -81,26 +81,12 @@ namespace DigiFilmWebApi.Controllers
             await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, hashedRefreshToken);
 
             // Set the tokens in cookies
-            _httpContextAccessor.HttpContext?.Response.Cookies.Append("accessToken", accessToken, new CookieOptions
+            return Ok(new
             {
-                HttpOnly = true, // Ensures the cookie is not accessible via JavaScript
-                SameSite = SameSiteMode.None, // Required for cross-origin requests
-                Secure = true, // Ensures the cookie is only sent over HTTPS
-                Expires = DateTime.UtcNow.AddMinutes(15), // Set appropriate expiration
-                Domain = "digi-film-react.vercel.app" // Use the exact domain of your deployed app
+                accessToken = accessToken,
+                refreshToken = refreshToken,
+                redirectUrl = "https://digi-film-react.vercel.app/home"
             });
-
-            _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddDays(7),
-                Domain = "digi-film-react.vercel.app"
-            });
-
-            // Redirect to the frontend's home page
-            return Redirect("https://digi-film-react.vercel.app/home");
         }
 
         

@@ -36,11 +36,27 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-            window.location.href = "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login";
+            const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                navigate(data.redirectUrl);
+            } else {
+                setError(data.message || "Login failed.");
+            }
         } catch (error) {
             console.error("Login error:", error);
+            setError("An error occurred during login.");
         }
     };
+    
 
     const handleSubmit = async (event) => {
         event.preventDefault();
