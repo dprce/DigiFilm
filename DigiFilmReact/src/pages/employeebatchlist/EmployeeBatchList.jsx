@@ -19,8 +19,10 @@ import { jsPDF } from 'jspdf';
 import Navbar from '../../components/Navbar.jsx';
 // Import your API function
 import { fetchUsers, fetchEmployeeBatchData } from '../../api/RoleApi.jsx';
+import checkAuthentication from "../../auth.js";
 
 const EmployeeBatchList = () => {
+  const { isAuthenticated } = checkAuthentication();
   const [employees, setEmployees] = useState([]);
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -38,6 +40,9 @@ const EmployeeBatchList = () => {
   };
 
   useEffect(() => {
+    if (!isAuthenticated()) {
+      return; 
+    }
     const loadUsers = async () => {
       try {
         const data = await fetchUsers(); // Fetch the list of employees

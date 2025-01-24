@@ -5,9 +5,12 @@ import { Box, Button, TextField } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import "../../css/common.css"
 import "./EditData.css";
+import checkAuthentication from "../../auth.js";
 
 const EditData = () => {
     const location = useLocation();
+    const { isAuthenticated } = checkAuthentication();
+
     const [movie, setMovie] = React.useState({
         Id: 0,
         OriginalniNaslov: '',
@@ -26,6 +29,9 @@ const EditData = () => {
     });
 
     useEffect(() => {
+        if (!isAuthenticated()) {
+            return;
+        }
         const filmData = location.state?.film;
         if (filmData) {
             setMovie({

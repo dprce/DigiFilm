@@ -7,6 +7,7 @@ import { Button } from "@mui/material";
 import Navbar from "../../components/Navbar.jsx";
 import "../../css/common.css";
 import filmtape from "../../../public/filmtape.jpg";
+import checkAuthentication from "../../auth.js";
 
 const decodeToken = (token) => {
     try {
@@ -21,20 +22,15 @@ const decodeToken = (token) => {
 };
 
 const HomePage = () => {
-    const navigate = useNavigate();
+    const { isAuthenticated } = checkAuthentication();
 
     useEffect(() => {
-        // Get query parameters from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const accessToken = urlParams.get("accessToken");
-        const refreshToken = urlParams.get("refreshToken");
+        // Check if the user is authenticated
+        if (!isAuthenticated()) return;
 
-        if (accessToken && refreshToken) {
-            // Store tokens in localStorage
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
-
-            // Decode the access token and extract the role
+        // Token decoding logic (if needed)
+        const accessToken = localStorage.getItem("accessToken");
+        if (accessToken) {
             const decodedToken = decodeToken(accessToken);
             if (decodedToken) {
                 const { role } = decodedToken;
@@ -43,15 +39,8 @@ const HomePage = () => {
             } else {
                 console.warn("Failed to decode access token.");
             }
-
-            // Remove tokens from the URL after saving them
-            const cleanUrl = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, cleanUrl);
-        } else {
-            console.warn("Tokens not found in URL. Redirecting to login...");
-            navigate("/login"); // Redirect to login page if tokens are missing
         }
-    }, [navigate]);
+    }, [isAuthenticated]);
 
     return (
         <div className="app-container">

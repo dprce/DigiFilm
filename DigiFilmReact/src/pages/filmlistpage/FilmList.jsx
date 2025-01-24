@@ -34,6 +34,7 @@ import "./FilmList.css";
 import {useNavigate} from "react-router-dom";
 import {fetchCurrentUser} from "../../components/Navbar.jsx";
 import "../../css/common.css"
+import checkAuthentication from "../../auth.js";
 
 // Fetch films from backend
 export async function fetchFilms() {
@@ -110,6 +111,7 @@ export async function fetchUsers() {
 
 const FilmList = () => {
     const [movies, setMovies] = useState([]);
+    const { isAuthenticated } = checkAuthentication();
     const [searchQuery, setSearchQuery] = useState("");
     const [filteredMovies, setFilteredMovies] = useState([]);
     const [statusFilter, setStatusFilter] = useState("All");
@@ -155,6 +157,7 @@ const FilmList = () => {
 
     useEffect(() => {
         const fetchMovies = async () => {
+            if (!isAuthenticated()) return;
             const data = await fetchFilms();
             const mappedMovies = data.map((film) => ({
                 id: film.id,
