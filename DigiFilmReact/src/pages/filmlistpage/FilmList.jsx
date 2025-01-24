@@ -579,6 +579,7 @@ const FilmList = () => {
                             )}
                         />
                         <Button
+                            disabled={role === "1"}
                             variant="contained"
                             color="primary"
                             onClick={groupMoviesIntoBatches}
@@ -587,6 +588,7 @@ const FilmList = () => {
                             Group Movies into Batches
                         </Button>
                         <Button
+                            disabled={role === "1"}
                             variant="contained"
                             //color="warning"
                             onClick={handleReset}
