@@ -103,13 +103,13 @@ namespace DigiFilmWebApi.Controllers
         public async Task<IActionResult> GetClaims()
         {
             
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Unauthorized(new
-                {
-                    Error = "User is not authenticated."
-                });
-            }
+            //if (!User.Identity.IsAuthenticated)
+           // {
+                //return Unauthorized(new
+                //{
+                   // Error = "User is not authenticated."
+                //});
+            //7}
             
             var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
             return Ok(claims);

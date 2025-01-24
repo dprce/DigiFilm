@@ -196,14 +196,14 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("get-scanned-film/{id}")]
         public async Task<IActionResult> GetFilmByBarcodeNumber(int id)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
+            //if (!User.Identity.IsAuthenticated)
+            //{
                 // Return JSON response for unauthorized access
-                return Unauthorized(new
-                {
-                    Error = "User is not authenticated."
-                });
-            }
+                ///return Unauthorized(new
+                //{
+                    //Error = "User is not authenticated."
+                //});
+            //}
 
             var film = await _filmService.GetScannedFilmByIdAsync(id);
 
