@@ -57,7 +57,7 @@ namespace DigiFilmWebApi.Controllers
             if (string.IsNullOrEmpty(userEmail))
             {
                 // Redirect to an error page if email is missing
-                return Redirect("https://localhost:5173/");
+                return Redirect("https://digi-film-react.vercel.app/");
             }
 
             // Fetch user from the database based on the email
@@ -66,7 +66,7 @@ namespace DigiFilmWebApi.Controllers
             if (user == null)
             {
                 // Redirect to registration or error page if the user doesn't exist
-                return Redirect("https://localhost:5173/");
+                return Redirect("https://digi-film-react.vercel.app/");
             }
 
             // Generate your own JWT
@@ -95,7 +95,7 @@ namespace DigiFilmWebApi.Controllers
             });
 
             // Redirect to the frontend's home page
-            return Redirect("https://localhost:5173/home");
+            return Redirect("https://digi-film-react.vercel.app/home");
         }
 
         
