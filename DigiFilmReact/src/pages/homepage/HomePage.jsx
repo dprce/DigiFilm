@@ -24,15 +24,10 @@ const HomePage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-<<<<<<< HEAD
-        // Check if the user is authenticated
-        //if (!isAuthenticated()) return;
-=======
         // Get query parameters from URL
         const urlParams = new URLSearchParams(window.location.search);
         const accessToken = urlParams.get("accessToken");
         const refreshToken = urlParams.get("refreshToken");
->>>>>>> parent of 30d1359 (Authentication check)
 
         if (accessToken && refreshToken) {
             // Store tokens in localStorage
