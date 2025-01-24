@@ -8,7 +8,7 @@ import FilmList from "./pages/filmlistpage/FilmList.jsx";
 import SessionList from "./pages/sessionlistpage/SessionList.jsx";
 import AddEmployee from "./pages/addemployeepage/AddEmployee.jsx";
 import EmployeeBatchList from "./pages/employeebatchlist/EmployeeBatchList.jsx";
-import ProtectedRoute from "./ProtectedRoute.jsx";
+import ProtectedRoute from "./pages/protectedroute/ProtectedRoute.jsx";
 
 const App = () => {
     return (
