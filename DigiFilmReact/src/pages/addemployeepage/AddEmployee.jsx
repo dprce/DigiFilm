@@ -46,24 +46,31 @@ const AddEmployee = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log("Submitting employee:", employee);
+    
         try {
-            await registerEmployee(employee);
-            console.log("Employee registered successfully.");
-            setEmployee({
-                firstName: "",
-                lastName: "",
-                email: "",
-                phoneNumber: "",
-                initialPassword: "",
-                roleId: "",
-            });
-            setError("");
-            //alert("Employee added successfully.")
+            const result = await registerEmployee(employee);
+    
+            if (result.success) {
+                alert(result.message); // Show success alert
+                setEmployee({
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    phoneNumber: "",
+                    initialPassword: "",
+                    roleId: "",
+                });
+                setError("");
+            } else {
+                alert(result.message); // Show failure alert
+                setError(result.message);
+            }
         } catch (error) {
             console.error("Error registering employee:", error);
-            setError("Failed to register employee. Please try again.");
+            setError("An unexpected error occurred. Please try again.");
         }
     };
+    
 
 
     return (

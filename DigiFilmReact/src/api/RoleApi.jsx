@@ -23,31 +23,33 @@ export async function fetchRoles() {
 
 export async function registerEmployee(employeeData) {
     try {
-        const response = await fetch(`https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/register`, {
-            method: 'POST',
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(employeeData),
-            credentials: 'include', // Include cookies or credentials
-        });
+        const response = await fetch(
+            `https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/register`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(employeeData),
+                credentials: "include", // Include cookies or credentials
+            }
+        );
 
         if (response.ok) {
             const data = await response.json();
             console.log("Registration successful:", data);
-            alert("Employee registered successfully.")
-            return data;
+            return { success: true, message: data.message || "Employee registered successfully." };
         } else {
             const errorData = await response.json();
             console.error("Registration failed:", errorData);
-            return errorData;
+            return { success: false, message: errorData.message || "Failed to register employee." };
         }
     } catch (error) {
-        console.error('Error during registration:', error);
-        throw error;
+        console.error("Error during registration:", error);
+        return { success: false, message: "An error occurred during registration." };
     }
 }
+
 
 export async function fetchFilms() {
     try {

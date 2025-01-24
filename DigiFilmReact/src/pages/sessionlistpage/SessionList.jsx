@@ -315,7 +315,7 @@ const SessionList = () => {
             onClick={generatePDF}
             style={{ marginTop: "20px" }}
           >
-            Generate PDF
+            Finish digitalization and generate PDF
           </Button>
         )}
       </Box>
