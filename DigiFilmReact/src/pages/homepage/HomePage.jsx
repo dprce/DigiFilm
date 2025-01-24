@@ -1,61 +1,38 @@
 import React, { useEffect } from "react";
-import Header from "../../components/Header.jsx";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/Navbar.jsx";
 import Footer from "../../components/Footer.jsx";
 import "./HomePage.css";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
-import Navbar from "../../components/Navbar.jsx";
 import "../../css/common.css";
 import filmtape from "../../../public/filmtape.jpg";
-
-const decodeToken = (token) => {
-    try {
-        const base64Url = token.split(".")[1]; // Extract the payload part
-        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-        const decodedPayload = atob(base64); // Decode base64 string
-        return JSON.parse(decodedPayload); // Parse the JSON string
-    } catch (error) {
-        console.error("Error decoding token:", error);
-        return null;
-    }
-};
+import { decodeToken, isAuthenticated } from "../../auth.js";
 
 const HomePage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Get query parameters from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const accessToken = urlParams.get("accessToken");
-        const refreshToken = urlParams.get("refreshToken");
+        const accessToken = localStorage.getItem("accessToken");
+        const refreshToken = localStorage.getItem("refreshToken");
 
-        if (accessToken && refreshToken) {
-            // Store tokens in localStorage
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
-
-            // Decode the access token and extract the role
-            const decodedToken = decodeToken(accessToken);
-            if (decodedToken) {
-                const { role } = decodedToken;
-                localStorage.setItem("role", role); // Store the role in localStorage
-                console.log("Decoded Role:", role);
-            } else {
-                console.warn("Failed to decode access token.");
-            }
-
-            // Remove tokens from the URL after saving them
-            const cleanUrl = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, cleanUrl);
+        if (!isAuthenticated()) {
+            console.warn("User is not authenticated. Redirecting to login...");
+            navigate("/login");
         } else {
-            console.warn("Tokens not found in URL. Redirecting to login...");
-            navigate("/login"); // Redirect to login page if tokens are missing
+            console.log("User is authenticated.");
+
+            if (accessToken) {
+                const decodedToken = decodeToken(accessToken);
+                if (decodedToken) {
+                    const { role } = decodedToken;
+                    localStorage.setItem("role", role);
+                }
+            }
         }
     }, [navigate]);
 
     return (
         <div className="app-container">
-            <Navbar /> {/* Add the Navbar here */}
+            <Navbar />
             <div
                 style={{
                     display: "flex",
