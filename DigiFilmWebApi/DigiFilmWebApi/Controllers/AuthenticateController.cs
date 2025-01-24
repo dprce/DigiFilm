@@ -80,18 +80,20 @@ namespace DigiFilmWebApi.Controllers
             // Set the tokens in cookies
             Response.Cookies.Append("accessToken", accessToken, new CookieOptions
             {
-                HttpOnly = true,
-                SameSite = SameSiteMode.Lax,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddMinutes(15)
+                HttpOnly = true, // Ensures the cookie is not accessible via JavaScript
+                SameSite = SameSiteMode.None, // Required for cross-origin requests
+                Secure = true, // Ensures the cookie is only sent over HTTPS
+                Expires = DateTime.UtcNow.AddMinutes(15), // Set appropriate expiration
+                Domain = "digi-film-react.vercel.app" // Use the exact domain of your deployed app
             });
 
             Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                SameSite = SameSiteMode.Lax,
+                SameSite = SameSiteMode.None,
                 Secure = true,
-                Expires = DateTime.UtcNow.AddDays(7)
+                Expires = DateTime.UtcNow.AddDays(7),
+                Domain = "digi-film-react.vercel.app"
             });
 
             // Redirect to the frontend's home page
