@@ -47,9 +47,58 @@ namespace DigiFilmWebApi.Controllers
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 
-        [Authorize]
         [HttpGet("post-login-redirect")]
-        public IActionResult PostLoginRedirect() => Redirect("https://digi-film-react.vercel.app/home");
+        public async Task<IActionResult> PostLoginRedirect()
+        {
+            // Extract user claims from the current context
+            var userPrincipal = User;
+            var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                // Redirect to an error page if email is missing
+                return Redirect("https://localhost:5173/");
+            }
+
+            // Fetch user from the database based on the email
+            var user = await _userRepositoryInterface.GetUserByEmailAsync(userEmail);
+
+            if (user == null)
+            {
+                // Redirect to registration or error page if the user doesn't exist
+                return Redirect("https://localhost:5173/");
+            }
+
+            // Generate your own JWT
+            var accessToken = GenerateJwtToken(user);
+            var refreshToken = GenerateRefreshToken();
+            var hashedRefreshToken = _passwordService.HashPassword(refreshToken);
+
+            // Save the refresh token in the database
+            await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, hashedRefreshToken);
+
+            // Set the tokens in cookies
+            Response.Cookies.Append("accessToken", accessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.Lax,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            });
+
+            Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.Lax,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
+
+            // Redirect to the frontend's home page
+            return Redirect("https://localhost:5173/home");
+        }
+
+        
         
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
@@ -191,34 +240,34 @@ namespace DigiFilmWebApi.Controllers
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["Token:Key"]);
-        
+
+            // Add custom claims, including RoleId and TenantId
             var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.RoleId.ToString()),
-            new Claim("TenantId", user.TenantId.ToString())
-        };
-        
+            {
+                new Claim(ClaimTypes.Name, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.RoleId.ToString()),
+                new Claim("TenantId", user.TenantId.ToString())
+            };
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = _configuration["Token:Issuer"],
-                Audience = _configuration["Token:Audience"]
+                Expires = DateTime.UtcNow.AddMinutes(15),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
-        
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
 
+// Generate a refresh token
         private string GenerateRefreshToken()
         {
-            var randomNumber = new byte[32];
+            var randomBytes = new byte[32];
             using (var rng = RandomNumberGenerator.Create())
             {
-                rng.GetBytes(randomNumber);
-                return Convert.ToBase64String(randomNumber);
+                rng.GetBytes(randomBytes);
+                return Convert.ToBase64String(randomBytes);
             }
         }
         

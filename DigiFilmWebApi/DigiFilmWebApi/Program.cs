@@ -46,51 +46,11 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 // Configure OpenID Connect Options
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
-    options.SaveTokens = false; // Save tokens to properties if needed
-    options.Events.OnTokenValidated = async context =>
+    options.SaveTokens = true; // Save tokens to properties
+    options.Events.OnTokenValidated = context =>
     {
-        var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
-        
-        var userPrincipal = context.Principal;
-        var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
-
-        // Remove all existing claims
-        if (claimsIdentity != null)
-        {
-            var claimsToRemove = claimsIdentity.Claims.ToList(); // Create a list of all claims
-            foreach (var claim in claimsToRemove)
-            {
-                claimsIdentity.RemoveClaim(claim); // Remove each claim individually
-            }
-        }
-
-        if (!string.IsNullOrEmpty(userEmail))
-        {
-            // Fetch the UserRepository service
-            var userRepository = context.HttpContext.RequestServices.GetRequiredService<UserRepository>();
-            var user = await userRepository.GetUserByEmailAsync(userEmail);
-
-            if (user != null)
-            {
-                // Add only the necessary claims
-                claimsIdentity?.AddClaim(new Claim("RoleId", user.RoleId.ToString()));
-                claimsIdentity?.AddClaim(new Claim("TenantId", user.TenantId.ToString()));
-            }
-            else
-            {
-                // Redirect if user is not found
-                context.Response.Redirect("https://digi-film-react.vercel.app");
-                context.HandleResponse();
-                return;
-            }
-        }
-        else
-        {
-            // Redirect if no email claim is present
-            context.Response.Redirect("https://digi-film-react.vercel.app");
-            context.HandleResponse();
-            return;
-        }
+        // Custom claims logic is now handled in the controller, so no need to add RoleId or TenantId here
+        return Task.CompletedTask;
     };
 
     // Configure cookies to handle cross-origin scenarios
