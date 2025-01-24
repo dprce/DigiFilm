@@ -146,12 +146,12 @@ namespace DigiFilmWebApi.Controllers
                 Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
             }
 
-            var tenantIdClaim = User.FindFirst("TenantId");
-            if (tenantIdClaim == null)
-            {
-                Console.WriteLine("TenantId claim is missing.");
-                return Unauthorized("Tenant ne postoji.");
-            }
+            //var tenantIdClaim = User.FindFirst("TenantId");
+            //if (tenantIdClaim == null)
+           // {
+                //Console.WriteLine("TenantId claim is missing.");
+               // return Unauthorized("Tenant ne postoji.");
+            //}
 
             try
             {
