@@ -29,18 +29,11 @@ const HomePage = () => {
         const accessToken = urlParams.get("accessToken");
         const refreshToken = urlParams.get("refreshToken");
 
-<<<<<<< HEAD
         if (!isAuthenticated()) {
             console.warn("User is not authenticated. Redirecting to login...");
             navigate("/");
         } else {
             console.log("User is authenticated.");
-=======
-        if (accessToken && refreshToken) {
-            // Store tokens in localStorage
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
->>>>>>> parent of cf4c385 (auth changes)
 
             // Decode the access token and extract the role
             const decodedToken = decodeToken(accessToken);
