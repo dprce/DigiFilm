@@ -36,26 +36,31 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login", {
-                method: "GET",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-    
-            const data = await response.json();
+            const response = await fetch(
+                "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login",
+                {
+                    method: "GET",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
     
             if (response.ok) {
-                navigate(data.redirectUrl);
+                const data = await response.json();
+                window.location.href = data.redirectUrl; // Redirect user to Microsoft login
             } else {
-                setError(data.message || "Login failed.");
+                const errorData = await response.json();
+                setError(errorData.message || "Login failed.");
             }
         } catch (error) {
             console.error("Login error:", error);
             setError("An error occurred during login.");
         }
     };
+    
+    
     
 
     const handleSubmit = async (event) => {

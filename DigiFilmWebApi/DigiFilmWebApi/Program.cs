@@ -29,13 +29,13 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("https://digi-film-react.vercel.app") // Exact frontend URL
+            policy.WithOrigins("https://digi-film-react.vercel.app") // Your frontend URL
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials()
-                .WithExposedHeaders("Set-Cookie");
+                .AllowCredentials();
         });
 });
+
 
 // Add Microsoft Identity platform (OpenID Connect) authentication
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
@@ -103,6 +103,7 @@ app.UseHttpsRedirection();
 
 // Ensure CORS is applied before authentication
 app.UseCors("AllowFrontend");
+
 
 // Ensure cookies are handled
 app.UseCookiePolicy();

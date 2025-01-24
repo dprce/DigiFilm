@@ -46,8 +46,14 @@ namespace DigiFilmWebApi.Controllers
         public IActionResult Login()
         {
             var redirectUri = Url.Action("PostLoginRedirect", "Authenticate", null, Request.Scheme);
-            return Challenge(new AuthenticationProperties { RedirectUri = redirectUri },
-                OpenIdConnectDefaults.AuthenticationScheme);
+            var microsoftLoginUrl = $"https://login.microsoftonline.com/{_configuration["AzureAd:TenantId"]}/oauth2/v2.0/authorize" +
+                                    $"?client_id={_configuration["AzureAd:ClientId"]}" +
+                                    $"&response_type=code" +
+                                    $"&redirect_uri={redirectUri}" +
+                                    $"&response_mode=query" +
+                                    $"&scope=openid email profile";
+
+            return Ok(new { redirectUrl = microsoftLoginUrl });
         }
 
         [HttpGet("post-login-redirect")]
@@ -81,6 +87,7 @@ namespace DigiFilmWebApi.Controllers
                 redirectUrl = "https://digi-film-react.vercel.app/home"
             });
         }
+        
 
 
         
