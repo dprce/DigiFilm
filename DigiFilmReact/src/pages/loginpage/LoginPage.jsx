@@ -43,7 +43,7 @@ const LoginPage = () => {
             // Navigate to the home page or provided redirect URL
             navigate(redirectUrl || "/home");
         }
-    }, [navigate]);
+    });
 
     const isUsernameValid = () => {
         return username.endsWith("@fer.hr") || username.endsWith("@fer.unizg.hr");
