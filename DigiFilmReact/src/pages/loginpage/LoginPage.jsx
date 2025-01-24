@@ -41,7 +41,7 @@ const LoginPage = () => {
                 "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login",
                 {
                     method: "GET",
-                    credentials: "include", // Include cookies for authentication
+                    //credentials: "include", // Include cookies for authentication
                     headers: {
                         "Content-Type": "application/json",
                     },
