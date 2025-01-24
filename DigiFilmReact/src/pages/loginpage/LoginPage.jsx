@@ -38,20 +38,16 @@ const LoginPage = () => {
         try {
             // Trigger the backend login process
             const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login", {
-                method: "GET",
+                method: "POST",
                 credentials: "include", // Ensure cookies are included
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
-    
+            const data = await response.json();
             // Expecting the backend to return JSON response
             if (response.ok) {
-                const data = await response.json();
-                if (data.redirectUrl) {
-                    // Navigate the user to the Microsoft login screen
-                    window.location.href = data.redirectUrl;
-                }
+                navigate(data.redirectUrl);
             } else {
                 setError("Failed to initiate login.");
             }
