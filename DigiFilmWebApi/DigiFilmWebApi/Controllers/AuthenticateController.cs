@@ -53,41 +53,35 @@ namespace DigiFilmWebApi.Controllers
         [HttpGet("post-login-redirect")]
         public async Task<IActionResult> PostLoginRedirect()
         {
-            // Extract user claims from the current context
             var userPrincipal = User;
             var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
 
             if (string.IsNullOrEmpty(userEmail))
             {
-                // Redirect to an error page if email is missing
-                return BadRequest();
+                return Unauthorized(new { message = "Email is missing." });
             }
 
-            // Fetch user from the database based on the email
             var user = await _userRepositoryInterface.GetUserByEmailAsync(userEmail);
 
             if (user == null)
             {
-                // Redirect to registration or error page if the user doesn't exist
-                return BadRequest(new{message = "User not found.", redirectUrl = "https://digi-film-react.vercel.app/home"});
+                return NotFound(new { message = "User not found." });
             }
 
-            // Generate your own JWT
             var accessToken = GenerateJwtToken(user);
             var refreshToken = GenerateRefreshToken();
             var hashedRefreshToken = _passwordService.HashPassword(refreshToken);
 
-            // Save the refresh token in the database
             await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, hashedRefreshToken);
 
-            // Set the tokens in cookies
             return Ok(new
             {
-                accessToken = accessToken,
-                refreshToken = refreshToken,
+                accessToken,
+                refreshToken,
                 redirectUrl = "https://digi-film-react.vercel.app/home"
             });
         }
+
 
         
         
