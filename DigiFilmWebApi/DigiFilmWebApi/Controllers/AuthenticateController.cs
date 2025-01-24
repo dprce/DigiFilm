@@ -24,13 +24,16 @@ namespace DigiFilmWebApi.Controllers
         private readonly IConfiguration _configuration;
         private readonly UserRepositoryInterface _userRepositoryInterface;
         private readonly PasswordService _passwordService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        
 
-        public AuthenticateController(UserService userService, IConfiguration configuration, UserRepositoryInterface userRepositoryInterface, PasswordService passwordService)
+        public AuthenticateController(IHttpContextAccessor httpContextAccessor, UserService userService, IConfiguration configuration, UserRepositoryInterface userRepositoryInterface, PasswordService passwordService)
         {
             _userService = userService;
             _configuration = configuration;
             _userRepositoryInterface = userRepositoryInterface;
             _passwordService = passwordService;
+            _httpContextAccessor = httpContextAccessor;
         }
         [HttpGet("ping")]
         [Authorize]
@@ -78,7 +81,7 @@ namespace DigiFilmWebApi.Controllers
             await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, hashedRefreshToken);
 
             // Set the tokens in cookies
-            Response.Cookies.Append("accessToken", accessToken, new CookieOptions
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("accessToken", accessToken, new CookieOptions
             {
                 HttpOnly = true, // Ensures the cookie is not accessible via JavaScript
                 SameSite = SameSiteMode.None, // Required for cross-origin requests
@@ -87,7 +90,7 @@ namespace DigiFilmWebApi.Controllers
                 Domain = "digi-film-react.vercel.app" // Use the exact domain of your deployed app
             });
 
-            Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
             {
                 HttpOnly = true,
                 SameSite = SameSiteMode.None,
