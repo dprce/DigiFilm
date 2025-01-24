@@ -10,11 +10,6 @@ import AddEmployee from "./pages/addemployeepage/AddEmployee.jsx";
 import "./App.css";
 import "./index.css";
 import EmployeeBatchList from "./pages/employeebatchlist/EmployeeBatchList.jsx";
-<<<<<<< HEAD
-import ProtectedRoute from "./pages/protectedroute/ProtectedRoute.jsx";
-=======
-
->>>>>>> parent of cf4c385 (auth changes)
 
 const App = () => {
   return (
