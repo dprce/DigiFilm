@@ -29,7 +29,7 @@ const HomePage = () => {
         const accessToken = urlParams.get("accessToken");
         const refreshToken = urlParams.get("refreshToken");
 
-        if (!isAuthenticated()) {
+        if (!accessToken) {
             console.warn("User is not authenticated. Redirecting to login...");
             navigate("/");
         } else {
@@ -48,10 +48,8 @@ const HomePage = () => {
             // Remove tokens from the URL after saving them
             const cleanUrl = window.location.origin + window.location.pathname;
             window.history.replaceState({}, document.title, cleanUrl);
-        } else {
-            console.warn("Tokens not found in URL. Redirecting to login...");
-            navigate("/login"); // Redirect to login page if tokens are missing
-        }
+        } 
+        
     }, [navigate]);
 
     return (
