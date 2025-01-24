@@ -58,6 +58,7 @@ const AddEmployee = () => {
                 roleId: "",
             });
             setError("");
+            alert("Employee added successfully.")
         } catch (error) {
             console.error("Error registering employee:", error);
             setError("Failed to register employee. Please try again.");
