@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
 import "./HomePage.css";
@@ -22,35 +22,55 @@ const decodeToken = (token) => {
 
 const HomePage = () => {
     const navigate = useNavigate();
+    const [isInitialized, setIsInitialized] = useState(false); // Track if the tokens are already processed
 
     useEffect(() => {
-        // Get query parameters from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const accessToken = urlParams.get("accessToken");
-        const refreshToken = urlParams.get("refreshToken");
+        // Check if tokens are already processed
+        const tokensProcessed = localStorage.getItem("tokensProcessed");
 
-        if (!accessToken) {
-            console.warn("User is not authenticated. Redirecting to login...");
-            navigate("/");
-        } else {
-            console.log("User is authenticated.");
+        if (!tokensProcessed) {
+            console.log("Processing tokens from URL...");
+            // Get query parameters from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const accessToken = urlParams.get("accessToken");
+            const refreshToken = urlParams.get("refreshToken");
 
-            // Decode the access token and extract the role
-            const decodedToken = decodeToken(accessToken);
-            if (decodedToken) {
-                const { role } = decodedToken;
-                localStorage.setItem("role", role); // Store the role in localStorage
-                console.log("Decoded Role:", role);
+            if (accessToken && refreshToken) {
+                // Store tokens in localStorage
+                localStorage.setItem("accessToken", accessToken);
+                localStorage.setItem("refreshToken", refreshToken);
+
+                // Decode the access token and extract the role
+                const decodedToken = decodeToken(accessToken);
+                if (decodedToken) {
+                    const { role } = decodedToken;
+                    localStorage.setItem("role", role); // Store the role in localStorage
+                    console.log("Decoded Role:", role);
+                } else {
+                    console.warn("Failed to decode access token.");
+                }
+
+                // Mark tokens as processed
+                localStorage.setItem("tokensProcessed", "true");
+
+                // Remove tokens from the URL after saving them
+                const cleanUrl = window.location.origin + window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
             } else {
-                console.warn("Failed to decode access token.");
+                console.warn("Tokens not found in URL. Redirecting to login...");
+                navigate("/"); // Redirect to login page if tokens are missing
             }
+        } else {
+            console.log("Tokens already processed. Skipping URL parsing.");
+        }
 
-            // Remove tokens from the URL after saving them
-            const cleanUrl = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, cleanUrl);
-        } 
-        
+        setIsInitialized(true); // Set initialization complete
     }, [navigate]);
+
+    if (!isInitialized) {
+        // Show a loading indicator while processing tokens
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="app-container">
