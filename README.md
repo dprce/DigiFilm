@@ -1,4 +1,6 @@
 # Programsko inženjerstvo
+# Link na aplikaciju
+https://digi-film-react.vercel.app
 # Opis projekta
 Ovaj projekt je rezultat timskog rada u sklopu projektnog zadatka kolegija [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz) na Fakultetu elektrotehnike i računarstva Sveučilišta u Zagrebu, akademske godine 2024./2025. Motivacija za razvoj aplikacije je problem digitalizacije arhivskih filmskih materijala koja je u današnje vrijeme neophodna zbog zastarjelosti nekadašnjeg načina pohrane zapisa na filmske trake. Aplikacija omogućuje unos, potvrdu te izmjenu već postojećih podataka o filmskim zapisima kao i nadziranje samog procesa digitalizacije. Nadziranje uključuje precizno vođenje evidencije o sudionicima u samom procesu, njihovim koracima i ograničenjima s obzirom na njihove uloge. Cilj je optimizirati proces digitalizacije arhivskih materijala. 
 # Funkcijski zahtjevi
