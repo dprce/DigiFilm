@@ -29,7 +29,7 @@ import { fetchBatches } from '../../api/RoleApi.jsx'; // Adjust as needed
 import { fetchUsers } from '../../api/RoleApi.jsx';
 import { sendReturnedBatches } from '../../api/RoleApi.jsx'; // <--- Import your helper function
 import Navbar from '../../components/Navbar.jsx';
-import {fetchCurrentUser} from "../../components/Navbar.jsx";
+import { fetchCurrentUser } from "../../components/Navbar.jsx";
 
 const SessionList = () => {
   const [batches, setBatches] = useState([]);
@@ -111,33 +111,33 @@ const SessionList = () => {
     } else {
       const lowerCaseQuery = query.toLowerCase();
       const result = batches.filter(batch =>
-          batch.movies.toLowerCase().includes(lowerCaseQuery) ||
-          batch.id.toString().includes(lowerCaseQuery) ||
-          batch.totalDuration.toLowerCase().includes(lowerCaseQuery) ||
+        batch.movies.toLowerCase().includes(lowerCaseQuery) ||
+        batch.id.toString().includes(lowerCaseQuery) ||
+        batch.totalDuration.toLowerCase().includes(lowerCaseQuery) ||
 
-          ((role ==="3" || role ==="4") && batch.createdBy.toLowerCase().includes(lowerCaseQuery))
+        ((role === "3" || role === "4") && batch.createdBy.toLowerCase().includes(lowerCaseQuery))
       );
       setFilteredBatches(result);
     }
   };
 
   const handleStatusFilter = (newFilter) => {
-    if (newFilter){
+    if (newFilter) {
       setStatusFilter(newFilter);
       const lowerCaseQuery = searchQuery.toLowerCase();
       let result = batches;
 
-      if(lowerCaseQuery !== ""){
+      if (lowerCaseQuery !== "") {
         result = batches.filter((batch) =>
-            batch.title.toLowerCase().includes(lowerCaseQuery)
+          batch.title.toLowerCase().includes(lowerCaseQuery)
         );
       }
 
-      if(newFilter !== "All"){
+      if (newFilter !== "All") {
         result = result.filter(
-            (batch) =>
-                (newFilter === "Digitalized" && batch.status === "Digitalized") ||
-                (newFilter === "Not digitalized" && batch.status === "Not Digitalized")
+          (batch) =>
+            (newFilter === "Digitalized" && batch.status === "Digitalized") ||
+            (newFilter === "Not digitalized" && batch.status === "Not Digitalized")
         )
       }
 
@@ -217,139 +217,140 @@ const SessionList = () => {
   };
 
   return (
-      <div className="app-container">
-        <Navbar /> {/* Add the Navbar here */}
-        <Box flex="1" sx={{ padding: "20px" }} >
-          <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
-            Batch List
-          </Typography>
-          <Box display="flex" alignItems="center" gap={2} mb={2}>
-            <TextField
-                label="Search batches"
-                variant="outlined"
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                sx={{ width: "70%" }}
-            />
-            <Typography sx={{ marginLeft: "5%" }}>
-                Batches found: {filteredBatches.length}
-            </Typography>
-          </Box>
-          <ToggleButtonGroup
-              value={statusFilter}
-              exclusive
-              onChange={(e, newFilter) => handleStatusFilter(newFilter)}
-              sx={{ marginBottom: "16px" }}
-          >
-            <ToggleButton value="All">All</ToggleButton>
-            <ToggleButton value="Digitalized">Digitalized</ToggleButton>
-            <ToggleButton value="Not digitalized">Not digitalized</ToggleButton>
-          </ToggleButtonGroup>
-          <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {role !== "2" &&
-                      <TableCell>Select</TableCell>
-                  }
-                  <TableCell>Batch Number</TableCell>
-                  <TableCell>Movies</TableCell>
-                  <TableCell>Total Duration</TableCell>
-                  <TableCell>Status</TableCell>
-                  {(role ==="3" || role === "4") &&
-                      <TableCell>Responsible Employee</TableCell>
-                  }
-
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredBatches.map((batch) => (
-                    <TableRow key={batch.id} hover>
-                      {(role !== "2" && role !== "1") &&
-                          <TableCell>
-                            <input
-                                type="checkbox"
-                                checked={selectedBatches.includes(batch.id)}
-                                onChange={() => handleSelectBatch(batch.id)}
-                                disabled={batch.status === "Digitalized"}
-                            />
-                          </TableCell>
-                      }
-                      <TableCell>{batch.id}</TableCell>
-                      <TableCell>{batch.movies}</TableCell>
-                      <TableCell>{batch.totalDuration}</TableCell>
-                      <TableCell>{batch.status}</TableCell>
-                      {(role ==="3" || role ==="4") &&
-                          <TableCell>{batch.createdBy}</TableCell>
-                      }
-                    </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Autocomplete
-              options={users}
-              value={selectedEmployee}
-              getOptionLabel={(option) => option.label}
-              onChange={(e, newValue) => setSelectedEmployee(newValue)}
-              renderOption={(props, option) => (
-                  <li {...props} key={option.id}>
-                    {option.label}
-                  </li>
-              )}
-              renderInput={(params) => (
-                  <TextField
-                      {...params}
-                      label="Responsible Employee"
-                      variant="outlined"
-                      fullWidth
-                  />
-              )}
-              sx={{ mt: 4 }}
+    <div className="app-container">
+      <Navbar /> {/* Add the Navbar here */}
+      <Box flex="1" sx={{ padding: "20px" }} >
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
+          Batch List
+        </Typography>
+        <Box display="flex" alignItems="center" gap={2} mb={2}>
+          <TextField
+            label="Search batches"
+            variant="outlined"
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+            sx={{ width: "70%" }}
           />
-          {selectedBatches.length > 0 && (
-              <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={generatePDF}
-                  style={{ marginTop: "20px" }}
-              >
-                Generate PDF
-              </Button>
-          )}
+          <Typography sx={{ marginLeft: "5%" }}>
+            Batches found: {filteredBatches.length}
+          </Typography>
         </Box>
-        {loading && (
-            <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "fixed",
-                  top: 0,
-                  left: 0,
-                  width: "100vw",
-                  height: "100vh",
-                  backgroundColor: "rgba(0, 0, 0, 0.3)",
-                  zIndex: 1000,
-                }}
-            >
-              <CircularProgress size={80} />
-            </Box>
-        )}
+        <ToggleButtonGroup
+          value={statusFilter}
+          exclusive
+          onChange={(e, newFilter) => handleStatusFilter(newFilter)}
+          sx={{ marginBottom: "16px" }}
+        >
+          <ToggleButton value="All">All</ToggleButton>
+          <ToggleButton value="Digitalized">Digitalized</ToggleButton>
+          <ToggleButton value="Not digitalized">Not digitalized</ToggleButton>
+        </ToggleButtonGroup>
+        <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: 2 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {role !== "2" &&
+                  <TableCell>Select</TableCell>
+                }
+                <TableCell>Batch Number</TableCell>
+                <TableCell>Movies</TableCell>
+                <TableCell>Total Duration</TableCell>
+                <TableCell>Status</TableCell>
+                {(role === "3" || role === "4") &&
+                  <TableCell>Responsible Employee</TableCell>
+                }
 
-        <Dialog open={dialogOpen} onClose={handleDialogClose}>
-          <DialogTitle>Confirmation</DialogTitle>
-          <DialogContent>
-            <DialogContentText>{dialogMessage}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDialogClose} color="primary">
-              OK
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <Footer />
-      </div>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredBatches.map((batch) => (
+                <TableRow key={batch.id} hover>
+                  {(role !== "2" && role !== "1") &&
+                    <TableCell>
+                      <input
+                        type="checkbox"
+                        checked={selectedBatches.includes(batch.id)}
+                        onChange={() => handleSelectBatch(batch.id)}
+                        disabled={batch.status === "Digitalized"}
+                      />
+                    </TableCell>
+                  }
+                  <TableCell>{batch.id}</TableCell>
+                  <TableCell>{batch.movies}</TableCell>
+                  <TableCell>{batch.totalDuration}</TableCell>
+                  <TableCell>{batch.status}</TableCell>
+                  {(role === "3" || role === "4") &&
+                    <TableCell>{batch.createdBy}</TableCell>
+                  }
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {role !== "1" && role !== "2" && <Autocomplete
+          options={users}
+          value={selectedEmployee}
+          getOptionLabel={(option) => option.label}
+          onChange={(e, newValue) => setSelectedEmployee(newValue)}
+          renderOption={(props, option) => (
+            <li {...props} key={option.id}>
+              {option.label}
+            </li>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Responsible Employee"
+              variant="outlined"
+              fullWidth
+            />
+          )}
+          sx={{ mt: 4 }}
+        />}
+
+        {selectedBatches.length > 0 && (
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={generatePDF}
+            style={{ marginTop: "20px" }}
+          >
+            Generate PDF
+          </Button>
+        )}
+      </Box>
+      {loading && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            zIndex: 1000,
+          }}
+        >
+          <CircularProgress size={80} />
+        </Box>
+      )}
+
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{dialogMessage}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Footer />
+    </div>
   );
 };
 

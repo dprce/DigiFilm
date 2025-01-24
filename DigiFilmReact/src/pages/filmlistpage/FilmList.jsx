@@ -31,8 +31,8 @@ import Footer from "../../components/Footer.jsx";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Navbar from "../../components/Navbar.jsx";
 import "./FilmList.css";
-import {useNavigate} from "react-router-dom";
-import {fetchCurrentUser} from "../../components/Navbar.jsx";
+import { useNavigate } from "react-router-dom";
+import { fetchCurrentUser } from "../../components/Navbar.jsx";
 import "../../css/common.css"
 
 // Fetch films from backend
@@ -250,13 +250,13 @@ const FilmList = () => {
         const lowerCaseQuery = query.toLowerCase();
         let result = movies;
 
-        if(lowerCaseQuery !== ""){
+        if (lowerCaseQuery !== "") {
             result = movies.filter((movie) =>
                 movie.title.toLowerCase().includes(lowerCaseQuery)
             );
         }
 
-        if(statusFilter !== "All"){
+        if (statusFilter !== "All") {
             result = result.filter(
                 (movie) =>
                     (statusFilter === "Digitalized" && movie.status === "Digitalized") ||
@@ -268,18 +268,18 @@ const FilmList = () => {
     }
 
     const handleStatusFilter = (newFilter) => {
-        if (newFilter){
+        if (newFilter) {
             setStatusFilter(newFilter);
             const lowerCaseQuery = searchQuery.toLowerCase();
             let result = movies;
 
-            if(lowerCaseQuery !== ""){
+            if (lowerCaseQuery !== "") {
                 result = movies.filter((movie) =>
                     movie.title.toLowerCase().includes(lowerCaseQuery)
                 );
             }
 
-            if(newFilter !== "All"){
+            if (newFilter !== "All") {
                 result = result.filter(
                     (movie) =>
                         (newFilter === "Digitalized" && movie.status === "Digitalized") ||
@@ -295,7 +295,7 @@ const FilmList = () => {
         const film = await fetchFilmById(movie.id);
         //setFilmToEdit(film);
         console.log(film);
-        navigate("/editData", {state: {film: film, isEditing: true}});
+        navigate("/editData", { state: { film: film, isEditing: true } });
     };
 
     const groupMoviesIntoBatches = () => {
@@ -417,7 +417,7 @@ const FilmList = () => {
         <ThemeProvider theme={theme}>
             <div className="app-container">
                 <Navbar />
-                <Box sx={{ padding: "24px 40px", maxWidth: "1200px", /*margin: "auto",*/  gap: 3, display:"flex", flex:1, flexDirection: {xs: 'column', md: 'row'} }}>
+                <Box sx={{ padding: "24px 40px", maxWidth: "1200px", /*margin: "auto",*/  gap: 3, display: "flex", flex: 1, flexDirection: { xs: 'column', md: 'row' } }}>
                     {/* Film List */}
                     <Box flex={2} >
                         <Typography variant="h4" gutterBottom>
@@ -470,7 +470,7 @@ const FilmList = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        {(role !== "2" && role !== "1")  &&
+                                        {(role !== "2" && role !== "1") &&
                                             <TableCell>Select</TableCell>
                                         }
                                         <TableCell>Title</TableCell>
@@ -550,7 +550,7 @@ const FilmList = () => {
                                 </MenuItem>
                             ))}
                         </TextField>*/}
-                        <Autocomplete
+                        {(role !== "1" && role !== "2") && <Autocomplete
                             options={users}
                             value={users.find((user) => user.id === selectedUser) || null} // Match selected user by ID
                             onChange={(e, newValue) => {
@@ -577,25 +577,25 @@ const FilmList = () => {
                                     variant="outlined"
                                 />
                             )}
-                        />
-                        <Button
-                            disabled={role === "1"}
+                        />}
+                        {(role !== "1" && role !== "2") && <Button
+
                             variant="contained"
                             color="primary"
                             onClick={groupMoviesIntoBatches}
                             sx={{ mb: 2 }}
                         >
                             Group Movies into Batches
-                        </Button>
-                        <Button
-                            disabled={role === "1"}
+                        </Button>}
+                        {(role !== "1" && role !== "2") && <Button
                             variant="contained"
                             //color="warning"
                             onClick={handleReset}
-                            sx={{ mb: 2 , backgroundColor: "#c62828", color: "#ffebee"}}
+                            sx={{ mb: 2, backgroundColor: "#c62828", color: "#ffebee" }}
                         >
                             Reset
-                        </Button>
+                        </Button>}
+
                         <DragDropContext onDragEnd={handleDragEnd}>
                             {batches.map((batch, index) => (
                                 <Droppable droppableId={`${index}`} key={index}>
@@ -650,7 +650,7 @@ const FilmList = () => {
                                 </Droppable>
                             ))}
                         </DragDropContext>
-                        <Button
+                        {(role !== "1" && role !== "2") && <Button
                             variant="contained"
                             color="secondary"
                             onClick={handleGeneratePDF}
@@ -661,7 +661,8 @@ const FilmList = () => {
                             }}
                         >
                             Confirm batches and generate pdf
-                        </Button>
+                        </Button>}
+
                     </Box>
                 </Box>
 
