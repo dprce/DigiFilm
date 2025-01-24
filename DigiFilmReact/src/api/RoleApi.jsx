@@ -36,6 +36,7 @@ export async function registerEmployee(employeeData) {
         if (response.ok) {
             const data = await response.json();
             console.log("Registration successful:", data);
+            alert("Employee registered successfully.")
             return data;
         } else {
             const errorData = await response.json();
