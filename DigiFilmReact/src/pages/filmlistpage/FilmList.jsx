@@ -118,8 +118,8 @@ const FilmList = () => {
     const [disableGeneratePdf, setDisableGeneratePdf] = useState(false);
     const [totalSelectedDuration, setTotalSelectedDuration] = useState(0);
     const [users, setUsers] = useState([]);
-    const [selectedUser, setSelectedUser] = useState("");
-    const [selectedUserId, setSelectedUserId] = useState("");
+    const [selectedUser, setSelectedUser] = useState(""); // Store the user ID
+    const [selectedUserName, setSelectedUserName] = useState(""); // Store the user name
     const [loading, setLoading] = useState(false); // Spinner state
     const [dialogOpen, setDialogOpen] = useState(false); // Dialog state
     const [dialogMessage, setDialogMessage] = useState(""); // Dialog message
@@ -191,8 +191,8 @@ const FilmList = () => {
 
         const requestBody = {
             Batches: batches.map((batch) => batch.map((movie) => parseInt(movie.id))),
-            UserId: selectedUser,
-            CreatedBy: selectedUser,
+            CreatedBy: selectedUserName, // Send the user's name
+            UserId: selectedUser, // Optionally send the user ID if needed
         };
 
         try {
@@ -550,16 +550,18 @@ const FilmList = () => {
                             ))}
                         </TextField>*/}
                         <Autocomplete
-                            freeSolo
                             options={users}
-                            value={selectedUser}
-                            onChange={(e, value) => {
-                                setSelectedUser(value?.id);
-                                setCreatedBy(value?.label); // This stores the user's full name
+                            value={users.find((user) => user.id === selectedUser) || null} // Match selected user by ID
+                            onChange={(e, newValue) => {
+                                if (newValue) {
+                                    setSelectedUser(newValue.id); // Set the user ID
+                                    setSelectedUserName(newValue.label); // Set the user name
+                                } else {
+                                    setSelectedUser(""); // Reset if no user selected
+                                    setSelectedUserName("");
+                                }
                             }}
-                            getOptionLabel={(option) =>
-                                typeof option === "string" ? option : option.label
-                            }
+                            getOptionLabel={(option) => (typeof option === "string" ? option : option.label)} // Display the user name
                             renderOption={(props, option) => (
                                 <li {...props} key={option.id || option.label}>
                                     {option.label}
