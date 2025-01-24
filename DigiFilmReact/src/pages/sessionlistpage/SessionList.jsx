@@ -265,13 +265,13 @@ const SessionList = () => {
               <TableBody>
                 {filteredBatches.map((batch) => (
                     <TableRow key={batch.id} hover>
-                      {role !== "2" &&
+                      {(role !== "2" && role !== "1") &&
                           <TableCell>
                             <input
                                 type="checkbox"
                                 checked={selectedBatches.includes(batch.id)}
                                 onChange={() => handleSelectBatch(batch.id)}
-                                disabled={batch.status === "Digitalized" || role === "1"}
+                                disabled={batch.status === "Digitalized"}
                             />
                           </TableCell>
                       }

@@ -470,7 +470,7 @@ const FilmList = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        {role !== "2" &&
+                                        {(role !== "2" && role !== "1")  &&
                                             <TableCell>Select</TableCell>
                                         }
                                         <TableCell>Title</TableCell>
