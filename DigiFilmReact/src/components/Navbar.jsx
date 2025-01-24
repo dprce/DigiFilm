@@ -25,33 +25,7 @@ const Navbar = () => {
         //getUserData();
     }, []);
 
-    const PAGES = role === "4"
-        ? [
-            { title: "Scan Barcode", href: "/scanBarcode" },
-            { title: "Edit Data", href: "/editData" },
-            { title: "Home", href: "/home" },
-            { title: "Session list", href: "/sessionList" },
-            { title: "Film list", href: "/filmList" },
-            { title: "Add Employee", href: "/addEmployee" }, 
-            {title: "View employee stats", href: "/employeeBatchData"}
-        ]
-        : [
-            { title: "Scan Barcode", href: "/scanBarcode" },
-            { title: "Edit Data", href: "/editData" },
-            { title: "Home", href: "/home" },
-            { title: "Session list", href: "/sessionList" },
-            { title: "Film list", href: "/filmList" }
-        ];
-    console.log(role);
-
-    const [anchorElNav, setAnchorElNav] = React.useState(null);
-
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
+    
 
     const handleLogout = async () => {
         try {
@@ -64,128 +38,62 @@ const Navbar = () => {
 
 
     return (
-        <AppBar position="static" sx={{backgroundColor: '#bcaaa4'}}>
-            <Container maxWidth="xl">
-                <Toolbar disableGutters>
-                    <TheatersIcon sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}/>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="h6"
-                        sx={{
-                            mr: 2,
-                            display: {xs: 'none', md: 'flex'},
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        DigiFilm
-                    </Typography>
-
-                    <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                        >
-                            <MenuIcon/>
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom', horizontal: 'left',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top', horizontal: 'left',
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{display: {xs: 'block', md: 'none'}}}
-                        >
-                            {PAGES.map((page, index) => (
-                                <MenuItem key={index}
-                                          onClick={() => navigate(page.href)}>
-                                <Typography sx={{textAlign: 'center'}}>{page.title}</Typography>
-                            </MenuItem>))}
-                        </Menu>
-                    </Box>
-                    <TheatersIcon sx={{display: {xs: 'flex', md: 'none'}, mr: 1}}/>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="h6"
-                        sx={{
-                            mr: 2,
-                            display: {xs: 'flex', md: 'none'},
-                            flexGrow: 1,
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        DigiFilm
-                    </Typography>
-                    <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-                        {PAGES.map((page, index) => (<Button
-                            key={index}
-                            onClick={() => navigate(page.href)}
-                            sx={{my: 2, color: 'white', display: 'block'}}
-                        >
-                            {page.title}
-                        </Button>))}
-                    </Box>
-                    <Box sx={{flexGrow: 0}}>
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            sx={{
-                                backgroundColor: "#ffebee", color: "#5d4037", '&:hover': {
-                                    backgroundColor: "#9e9e9e",
-                                },
-                            }}
-                            onClick={handleLogout}
-                        >
-                            Logout
-                        </Button>
-                    </Box>
-                </Toolbar>
-            </Container>
-        </AppBar>
-
-       /* <AppBar position="static" sx={{ backgroundColor: '#bcaaa4' }}>
+        <AppBar position="static" style={{ backgroundColor: "#5d4037" }}>
             <Toolbar>
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                    <Button color="inherit" onClick={() => navigate('/home')} sx={{ color: '#5d4037' }}>
-                        Home
-                    </Button>
-                    <Button color="inherit" onClick={() => navigate('/scanBarcode')} sx={{ color: '#5d4037' }}>
-                        Scan Barcode
-                    </Button>
-                    <Button color="inherit" onClick={() => navigate('/editData')} sx={{ color: '#5d4037' }}>
+                {/* App Title */}
+                <Typography
+                    variant="h6"
+                    style={{ flexGrow: 1, cursor: "pointer" }}
+                    onClick={() => navigate("/home")}
+                >
+                    DigiFilm
+                </Typography>
+
+                {/* Home Button (Visible to All Roles) */}
+                <Button color="inherit" onClick={() => navigate("/home")}>
+                    Home
+                </Button>
+
+                {/* Edit Data (Visible to Roles 4, 3, 2) */}
+                {(role === "4" || role === "3" || role === "2") && (
+                    <Button color="inherit" onClick={() => navigate("/editData")}>
                         Edit Data
                     </Button>
-                    <Button color="inherit" onClick={() => navigate('/filmList')} sx={{ color: '#5d4037' }}>
-                        Film list
+                )}
+
+                {/* Film List (Visible to All Roles) */}
+                <Button color="inherit" onClick={() => navigate("/filmList")}>
+                    Film List
+                </Button>
+
+                {/* Session List (Visible to All Roles) */}
+                <Button color="inherit" onClick={() => navigate("/sessionList")}>
+                    Sessions
+                </Button>
+
+                {/* Add Employee (Visible to Role 4 Only) */}
+                {role === "4" && (
+                    <Button color="inherit" onClick={() => navigate("/addEmployee")}>
+                        Add Employee
                     </Button>
-                    <Button color="inherit" onClick={() => navigate('/sessionList')} sx={{ color: '#5d4037' }}>
-                        Batch list
+                )}
+
+                {/* Employee Stats (Visible to Role 4 Only) */}
+                {role === "4" && (
+                    <Button color="inherit" onClick={() => navigate("/employeeBatchData")}>
+                        Employee Stats
                     </Button>
-                    {role === "4" && (
-                        <Button color="inherit" onClick={() => navigate('/addEmployee')} sx={{ color: '#5d4037' }}>
-                            Add Employee
-                        </Button>
-                    )}
-                </Box>
+                )}
+
+                {/* Logout Button (Visible to All Roles) */}
+                <Button
+                    color="inherit"
+                    onClick={() => handleLogout()}
+                >
+                    Logout
+                </Button>
             </Toolbar>
-        </AppBar>*/
+        </AppBar>
     );
 };
 

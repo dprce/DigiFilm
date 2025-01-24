@@ -47,6 +47,7 @@ export const logout = async () => {
 
         if (response.ok) {
             // Redirect to the redirect URI after logout
+            localStorage.clear();
             window.location.href = "https://digi-film-react.vercel.app";
         } else {
             console.error("Failed to log out:", response.status, response.statusText);
