@@ -192,7 +192,7 @@ const FilmList = () => {
         const requestBody = {
             Batches: batches.map((batch) => batch.map((movie) => parseInt(movie.id))),
             CreatedBy: selectedUserName, // Send the user's name
-            UserId: selectedUser, // Optionally send the user ID if needed
+            UserId: parseInt(selectedUser), // Optionally send the user ID if needed
         };
 
         try {
