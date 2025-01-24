@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     Container,
@@ -6,15 +6,13 @@ import {
     Typography,
     TextField,
     Button,
-    GlobalStyles,
     Icon,
     InputAdornment,
-    IconButton
+    IconButton,
 } from "@mui/material";
-import { login } from "../../api/AuthApi.jsx"; // Assuming AuthApi.js contains login logic
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "./LoginPage.css";
 import "./separator.css";
-import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 const hexToRgba = (hex, alpha) => {
     const r = parseInt(hex.slice(1, 3), 16);
@@ -23,12 +21,29 @@ const hexToRgba = (hex, alpha) => {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-
 const LoginPage = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+
+    // Extract tokens from query parameters after redirect
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get("accessToken");
+        const refreshToken = urlParams.get("refreshToken");
+        const redirectUrl = urlParams.get("redirectUrl");
+
+        if (accessToken && refreshToken) {
+            // Save tokens to localStorage
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+
+            // Navigate to the home page or provided redirect URL
+            navigate(redirectUrl || "/home");
+        }
+    }, [navigate]);
 
     const isUsernameValid = () => {
         return username.endsWith("@fer.hr") || username.endsWith("@fer.unizg.hr");
@@ -37,38 +52,13 @@ const LoginPage = () => {
     const handleLogin = async () => {
         try {
             // Trigger the backend login process
-            const response = await fetch(
-                "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login",
-                {
-                    method: "GET",
-                    //credentials: "include", // Include cookies for authentication
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-    
-            const data = await response.json();
-    
-            if (response.ok) {
-                // Store tokens locally if needed
-                localStorage.setItem("accessToken", data.accessToken);
-                localStorage.setItem("refreshToken", data.refreshToken);
-    
-                // Navigate to the frontend home page
-                navigate(data.redirectUrl);
-            } else {
-                setError(data.message || "Login failed.");
-            }
+            window.location.href =
+                "https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login";
         } catch (error) {
             console.error("Login error:", error);
             setError("An error occurred during login.");
         }
     };
-    
-    
-    
-    
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -99,15 +89,9 @@ const LoginPage = () => {
         }
     };
 
-    const [showPassword, setShowPassword] = React.useState(false);
-
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-    };
-
-    const handleMouseUpPassword = (event) => {
         event.preventDefault();
     };
 
@@ -166,7 +150,7 @@ const LoginPage = () => {
                         />
                         <TextField
                             variant="outlined"
-                            type={showPassword ? 'text' : 'password'} // Prikazivanje ili sakrivanje lozinke
+                            type={showPassword ? "text" : "password"}
                             name="password"
                             placeholder="Password"
                             label="Password"
@@ -177,7 +161,7 @@ const LoginPage = () => {
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton
-                                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                            aria-label={showPassword ? "Hide password" : "Show password"}
                                             onClick={handleClickShowPassword}
                                             onMouseDown={handleMouseDownPassword}
                                         >
@@ -201,7 +185,7 @@ const LoginPage = () => {
                             Log In
                         </Button>
                         <div className="separator">OR</div>
-                        {<Button
+                        <Button
                             variant="contained"
                             startIcon={microsoftIcon}
                             sx={{
@@ -215,7 +199,7 @@ const LoginPage = () => {
                             onClick={handleLogin}
                         >
                             Sign in with Microsoft
-                        </Button>}
+                        </Button>
                     </form>
                 </Paper>
             </Container>

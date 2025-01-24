@@ -77,14 +77,11 @@ namespace DigiFilmWebApi.Controllers
 
             await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, hashedRefreshToken);
 
-            // Return tokens and redirect URL as JSON
-            return Ok(new
-            {
-                accessToken,
-                refreshToken,
-                redirectUrl = "https://digi-film-react.vercel.app/home"
-            });
+            // Redirect with tokens included in query parameters
+            var redirectUrl = $"https://digi-film-react.vercel.app/home?accessToken={accessToken}&refreshToken={refreshToken}";
+            return Redirect(redirectUrl);
         }
+
 
 
         
