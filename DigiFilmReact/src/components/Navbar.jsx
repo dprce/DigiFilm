@@ -6,27 +6,8 @@ import {logout}  from "../api/AuthApi.jsx";
 import { useNavigate } from 'react-router-dom';
 
 export const fetchCurrentUser = async () => {
-    try {
-        const response = await fetch('https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/claims', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        });
+    const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
 
-        if (response.status === 401) {
-            console.error("Unauthorized access. Token may be invalid or expired.");
-            return null;
-        }
-
-        const userData = await response.json();
-        console.log("User Data:", userData);
-        return userData;
-    } catch (error) {
-        console.error("Error fetching user data:", error);
-        return null;
-    }
 };
 
 const Navbar = () => {

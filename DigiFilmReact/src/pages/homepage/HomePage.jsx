@@ -8,6 +8,18 @@ import Navbar from "../../components/Navbar.jsx";
 import "../../css/common.css";
 import filmtape from "../../../public/filmtape.jpg";
 
+const decodeToken = (token) => {
+    try {
+        const base64Url = token.split(".")[1]; // Extract the payload part
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const decodedPayload = atob(base64); // Decode base64 string
+        return JSON.parse(decodedPayload); // Parse the JSON string
+    } catch (error) {
+        console.error("Error decoding token:", error);
+        return null;
+    }
+};
+
 const HomePage = () => {
     const navigate = useNavigate();
 
@@ -21,6 +33,16 @@ const HomePage = () => {
             // Store tokens in localStorage
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("refreshToken", refreshToken);
+
+            // Decode the access token and extract the role
+            const decodedToken = decodeToken(accessToken);
+            if (decodedToken) {
+                const { role } = decodedToken;
+                localStorage.setItem("role", role); // Store the role in localStorage
+                console.log("Decoded Role:", role);
+            } else {
+                console.warn("Failed to decode access token.");
+            }
 
             // Remove tokens from the URL after saving them
             const cleanUrl = window.location.origin + window.location.pathname;

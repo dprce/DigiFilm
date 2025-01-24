@@ -50,7 +50,7 @@ export async function registerEmployee(employeeData) {
 
 export async function fetchFilms() {
     try {
-        const response = await fetch(`hhttps://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/get-all-films`, {
+        const response = await fetch(`https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Film/get-all-films`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
