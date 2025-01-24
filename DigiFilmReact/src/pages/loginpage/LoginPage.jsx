@@ -38,7 +38,7 @@ const LoginPage = () => {
         try {
             // Trigger the backend login process
             const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login", {
-                method: "POST",
+                method: "GET",
                 credentials: "include", // Ensure cookies are included
                 headers: {
                     "Content-Type": "application/json",
