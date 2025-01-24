@@ -37,7 +37,7 @@ const LoginPage = () => {
     const handleLogin = async () => {
         try {
             const response = await fetch("https://digifilm-bmcje7bndqefb7e9.italynorth-01.azurewebsites.net/Authenticate/login", {
-                method: "POST",
+                method: "GET",
                 credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
