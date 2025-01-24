@@ -46,27 +46,25 @@ namespace DigiFilmWebApi.Controllers
         public IActionResult Login()
         {
             var redirectUri = Url.Action("PostLoginRedirect", "Authenticate", null, Request.Scheme);
-            var microsoftLoginUrl = $"https://login.microsoftonline.com/{_configuration["AzureAd:TenantId"]}/oauth2/v2.0/authorize" +
-                                    $"?client_id={_configuration["AzureAd:ClientId"]}" +
-                                    $"&response_type=code" +
-                                    $"&redirect_uri={redirectUri}" +
-                                    $"&response_mode=query" +
-                                    $"&scope=openid email profile";
-
-            return Ok(new { redirectUrl = microsoftLoginUrl });
+            return Challenge(new AuthenticationProperties
+            {
+                RedirectUri = redirectUri // Redirect to the PostLoginRedirect endpoint
+            }, OpenIdConnectDefaults.AuthenticationScheme);
         }
 
         [HttpGet("post-login-redirect")]
         public async Task<IActionResult> PostLoginRedirect()
         {
+            // Extract user claims from the current context
             var userPrincipal = User;
             var userEmail = userPrincipal?.FindFirst("preferred_username")?.Value;
 
             if (string.IsNullOrEmpty(userEmail))
             {
-                return Unauthorized(new { message = "Email is missing." });
+                return Unauthorized(new { message = "User email is missing." });
             }
 
+            // Fetch the user from the database
             var user = await _userRepositoryInterface.GetUserByEmailAsync(userEmail);
 
             if (user == null)
@@ -74,12 +72,15 @@ namespace DigiFilmWebApi.Controllers
                 return NotFound(new { message = "User not found." });
             }
 
+            // Generate tokens
             var accessToken = GenerateJwtToken(user);
             var refreshToken = GenerateRefreshToken();
             var hashedRefreshToken = _passwordService.HashPassword(refreshToken);
 
+            // Save the refresh token in the database
             await _userRepositoryInterface.SaveRefreshTokenAsync(user.Id, hashedRefreshToken);
 
+            // Return the tokens and the frontend redirect URL in a JSON response
             return Ok(new
             {
                 accessToken,
@@ -87,8 +88,6 @@ namespace DigiFilmWebApi.Controllers
                 redirectUrl = "https://digi-film-react.vercel.app/home"
             });
         }
-        
-
 
         
         
