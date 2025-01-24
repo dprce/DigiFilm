@@ -44,21 +44,21 @@ const SessionList = () => {
   const [dialogMessage, setDialogMessage] = useState(""); // Dialog message
   const [doneBatches, setDoneBatches] = useState([]);
   const [statusFilter, setStatusFilter] = useState("All");
-  const [role, setRole] = useState(null); // Role state
+  let role = localStorage.getItem("role");
 
   useEffect(() => {
     const initializeUserRole = async () => {
       try {
-        const userData = await fetchCurrentUser();
-        const roleClaim = userData?.find((claim) => claim.type === 'RoleId');
-        setRole(roleClaim?.value || null);
+        //const userData = await fetchCurrentUser();
+        //const roleClaim = userData?.find((claim) => claim.type === 'RoleId');
+        //setRole(roleClaim?.value || null);
       } catch (error) {
         console.error("Error fetching user data:", error);
-        setRole(null);
+        //setRole(null);
       }
     };
 
-    initializeUserRole();
+    //initializeUserRole();
   }, []);
 
 

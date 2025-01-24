@@ -6,24 +6,23 @@ import {logout}  from "../api/AuthApi.jsx";
 import { useNavigate } from 'react-router-dom';
 
 export const fetchCurrentUser = async () => {
-    const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage
-
+    const token = localStorage.getItem("accessToken"); // Retrieve token from localStorage 
 };
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const [role, setRole] = useState(null);
+    let role = localStorage.getItem("role");
 
     useEffect(() => {
         const getUserData = async () => {
             const userData = await fetchCurrentUser();
             if (userData) {
                 const roleClaim = userData.find((claim) => claim.type === 'RoleId');
-                setRole(roleClaim?.value || null);
+                //setRole(roleClaim?.value || null);
             }
         };
 
-        getUserData();
+        //getUserData();
     }, []);
 
     const PAGES = role === "4"
