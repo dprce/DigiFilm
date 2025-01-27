@@ -54,6 +54,12 @@ const Navbar = () => {
                     Home
                 </Button>
 
+                {role !== "1" && (
+                    <Button color="inherit" onClick={() => navigate("/scanBarcode")}>
+                        Add Employee
+                    </Button>
+                )}
+
                 {/* Edit Data (Visible to Roles 4, 3, 2) */}
                 {(role === "4" || role === "3" || role === "2") && (
                     <Button color="inherit" onClick={() => navigate("/editData")}>
