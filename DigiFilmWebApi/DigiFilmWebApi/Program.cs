@@ -48,29 +48,27 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
     options.SaveTokens = true;
-
-    // Existing OnTokenValidated (if any)
-    options.Events.OnTokenValidated = context =>
+    
+    // Force Azure AD to show the login prompt every time
+    options.Events.OnRedirectToIdentityProvider = context =>
     {
+        context.ProtocolMessage.Prompt = "login"; 
+        // or "select_account" to let the user choose from multiple accounts
         return Task.CompletedTask;
     };
 
-    // Add this for sign-out:
     options.Events.OnRedirectToIdentityProviderForSignOut = async context =>
     {
-        // Retrieve the ID token for the signed-in user
         var idToken = await context.HttpContext.GetTokenAsync("id_token");
         if (!string.IsNullOrEmpty(idToken))
         {
-            // Pass the ID token as a hint to your OIDC provider
             context.ProtocolMessage.IdTokenHint = idToken;
         }
-
-        // After successful sign-out at Azure AD, your user should land here
+        // Make sure PostLogoutRedirectUri is valid in Azure AD app registration
         context.ProtocolMessage.PostLogoutRedirectUri = "https://digi-film-react.vercel.app";
     };
 
-    // Cookies / Correlation config
+    // Keep your cookie settings as is
     options.NonceCookie.SameSite = SameSiteMode.None;
     options.NonceCookie.SecurePolicy = CookieSecurePolicy.Always;
     options.CorrelationCookie.SameSite = SameSiteMode.None;
