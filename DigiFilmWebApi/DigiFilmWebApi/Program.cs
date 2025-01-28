@@ -10,6 +10,7 @@ using System.Security.Claims;
 using DigiFilmWebApi.BAL;
 using DigiFilmWebApi.DAL;
 using DigiFilmWebApi.Modeli;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 
@@ -46,14 +47,30 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 // Configure OpenID Connect Options
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
-    options.SaveTokens = true; // Save tokens to properties
+    options.SaveTokens = true;
+
+    // Existing OnTokenValidated (if any)
     options.Events.OnTokenValidated = context =>
     {
-        // Custom claims logic is now handled in the controller, so no need to add RoleId or TenantId here
         return Task.CompletedTask;
     };
 
-    // Configure cookies to handle cross-origin scenarios
+    // Add this for sign-out:
+    options.Events.OnRedirectToIdentityProviderForSignOut = async context =>
+    {
+        // Retrieve the ID token for the signed-in user
+        var idToken = await context.HttpContext.GetTokenAsync("id_token");
+        if (!string.IsNullOrEmpty(idToken))
+        {
+            // Pass the ID token as a hint to your OIDC provider
+            context.ProtocolMessage.IdTokenHint = idToken;
+        }
+
+        // After successful sign-out at Azure AD, your user should land here
+        context.ProtocolMessage.PostLogoutRedirectUri = "https://digi-film-react.vercel.app";
+    };
+
+    // Cookies / Correlation config
     options.NonceCookie.SameSite = SameSiteMode.None;
     options.NonceCookie.SecurePolicy = CookieSecurePolicy.Always;
     options.CorrelationCookie.SameSite = SameSiteMode.None;
