@@ -386,7 +386,7 @@ const FilmList = () => {
         doc.text(`Time: ${new Date().toLocaleTimeString()}`, 20, 50);
 
         if (selectedUser) {
-            doc.text(`Responsible User: ${selectedUser}`, 20, 60);
+            doc.text(`Responsible User: ${selectedUserName}`, 20, 60);
         }
 
         let yPosition = 80;
