@@ -135,56 +135,6 @@ const LoginPage = () => {
                         </Typography>
                     </div>
                     <form className="login-form" onSubmit={handleSubmit}>
-                        {error && <p className="error">{error}</p>}
-
-                        <TextField
-                            variant="outlined"
-                            type="text"
-                            name="username"
-                            placeholder="Username"
-                            label="Username"
-                            value={username}
-                            className="text-field"
-                            onBlur={handleUsernameBlur}
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
-                        <TextField
-                            variant="outlined"
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            placeholder="Password"
-                            label="Password"
-                            className="password-field"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label={showPassword ? "Hide password" : "Show password"}
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                        >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                        <Button
-                            variant="contained"
-                            type="submit"
-                            sx={{
-                                backgroundColor: "#fafafa",
-                                color: "#5d4037",
-                                "&:hover": {
-                                    backgroundColor: "#9e9e9e",
-                                },
-                            }}
-                        >
-                            Log In
-                        </Button>
-                        <div className="separator">OR</div>
                         <Button
                             variant="contained"
                             startIcon={microsoftIcon}

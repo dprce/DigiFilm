@@ -110,16 +110,7 @@ const AddEmployee = () => {
                             onChange={handleChange}
                             required
                         />
-                        <TextField
-                            fullWidth
-                            label="Initial Password"
-                            name="initialPassword"
-                            placeholder="Initial Password"
-                            type="password"
-                            value={employee.initialPassword}
-                            onChange={handleChange}
-                            required
-                        />
+                        
                         <TextField
                             fullWidth
                             label="Phone Number"
