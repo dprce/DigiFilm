@@ -32,8 +32,7 @@ const EmployeeBatchList = () => {
   const formatDateTime = (isoString) => {
     if (!isoString) return "";
     const dateObj = new Date(isoString);
-    // You could also combine them like:
-    // return dateObj.toLocaleDateString() + " " + dateObj.toLocaleTimeString();
+    dateObj.setHours(dateObj.getHours() + 1); // Add 1 hour
     return dateObj.toLocaleString(); 
   };
 
